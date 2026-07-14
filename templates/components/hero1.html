@@ -171,148 +171,7 @@
         }
 
         /* ==========================
-           LARGE LAPTOP
-        ========================== */
-
-        @media (max-width:1200px){
-
-            .hero{
-                background-size:48%;
-            }
-
-            .hero-content h1{
-                font-size:48px;
-            }
-
-        }
-
-        /* ==========================
-           TABLET
-        ========================== */
-
-        @media (max-width:992px){
-
-            .hero{
-
-                background-position:130% center;
-                background-size:60%;
-
-            }
-
-            .hero-content{
-
-                text-align:center;
-                margin:auto;
-
-            }
-
-            .hero-content h1{
-
-                font-size:42px;
-
-            }
-
-            .hero-content p{
-
-                font-size:18px;
-                margin-left:auto;
-                margin-right:auto;
-
-            }
-
-            .buttons{
-
-                justify-content:center;
-
-            }
-
-        }
-
-        /* ==========================
-           MOBILE
-        ========================== */
-
-        @media (max-width:768px){
-
-            .hero{
-
-                min-height:90vh;
-
-                background-image:
-                    linear-gradient(
-                        rgba(15,23,42,.93),
-                        rgba(15,23,42,.93)
-                    ),
-                    url("{% static 'images/hero4.png' %}");
-
-                background-repeat:no-repeat;
-                background-position:center bottom;
-                background-size:80%;
-
-                padding:80px 0;
-
-            }
-
-            .hero-content{
-
-                text-align:center;
-
-            }
-
-            .hero-content h1{
-
-                font-size:34px;
-
-            }
-
-            .hero-content p{
-
-                font-size:16px;
-
-            }
-
-            .buttons{
-
-                flex-direction:column;
-
-            }
-
-            .btn{
-
-                width:100%;
-
-            }
-
-        }
-
-        /* ==========================
-           SMALL MOBILE
-        ========================== */
-
-        @media (max-width:480px){
-
-            .hero-content h1{
-
-                font-size:28px;
-
-            }
-
-            .hero-content p{
-
-                font-size:15px;
-
-            }
-
-            .hero{
-
-                background-size:95%;
-
-            }
-
-        }
-
-            /* ==========================
-          HERO UPDATE BADGE
+           HERO BADGE
         ========================== */
 
         .hero-badge{
@@ -334,8 +193,7 @@
             font-size:15px;
             font-weight:600;
 
-            box-shadow:
-                0 8px 30px rgba(0,0,0,.15);
+            box-shadow:0 8px 30px rgba(0,0,0,.15);
 
             margin-bottom:35px;
 
@@ -343,107 +201,234 @@
         }
 
         .hero-badge:hover{
-
             transform:translateY(-3px);
-
             background:rgba(255,255,255,.12);
-
-            box-shadow:
-                0 12px 35px rgba(0,0,0,.20);
-
+            box-shadow:0 12px 35px rgba(0,0,0,.20);
         }
-
-        /* Live Dot */
 
         .live-dot{
-
             width:10px;
             height:10px;
-
             background:#22c55e;
-
             border-radius:50%;
-
             position:relative;
-
             flex-shrink:0;
-
         }
 
-        /* Pulse Animation */
-
         .live-dot::before{
-
             content:'';
-
             position:absolute;
-
             inset:-6px;
-
             border-radius:50%;
-
             border:2px solid #22c55e;
-
             animation:pulse 2s infinite;
-
         }
 
         @keyframes pulse{
-
             0%{
-
                 transform:scale(.5);
                 opacity:1;
-
             }
-
             100%{
-
                 transform:scale(2.3);
                 opacity:0;
-
             }
-
         }
-
-        /* Time Text */
 
         .update-time-text{
-
             color:#60a5fa;
-
             font-weight:700;
-
         }
 
-        /* Mobile */
+        /* ==========================
+           RESPONSIVE BREAKPOINTS
+        ========================== */
 
-        @media(max-width:768px){
+        /* Large Laptop */
+        @media (max-width:1200px){
+            .hero{
+                background-size:48%;
+            }
+            .hero-content h1{
+                font-size:48px;
+            }
+        }
+
+        /* Tablet */
+        @media (max-width:992px){
+            .hero{
+                background-position:130% center;
+                background-size:60%;
+                min-height:90vh;
+            }
+
+            .hero-content{
+                text-align:center;
+                margin:auto;
+                max-width:100%;
+            }
+
+            .hero-content h1{
+                font-size:42px;
+            }
+
+            .hero-content p{
+                font-size:18px;
+                margin-left:auto;
+                margin-right:auto;
+                max-width:100%;
+            }
+
+            .buttons{
+                justify-content:center;
+            }
 
             .hero-badge{
-
-                font-size:13px;
-
+                font-size:14px;
                 padding:10px 18px;
-
                 gap:8px;
-
+                margin-bottom:30px;
+                justify-content:center;
             }
 
             .live-dot{
+                width:9px;
+                height:9px;
+            }
+        }
 
-                width:8px;
-                height:8px;
-
+        /* Mobile (portrait) */
+        @media (max-width:768px){
+            .hero{
+                min-height:90vh;
+                background-image:
+                    linear-gradient(
+                        rgba(15,23,42,.93),
+                        rgba(15,23,42,.93)
+                    ),
+                    url("{% static 'images/hero4.png' %}");
+                background-repeat:no-repeat;
+                background-position:center bottom;
+                background-size:80%;
+                padding:80px 0;
+                align-items:center;
             }
 
+            .hero-content{
+                text-align:center;
+                max-width:100%;
+                padding:0 10px;
+            }
+
+            .hero-content h1{
+                font-size:34px;
+                margin-bottom:20px;
+            }
+
+            .hero-content p{
+                font-size:16px;
+                margin-bottom:30px;
+                line-height:1.7;
+            }
+
+            .buttons{
+                flex-direction:column;
+                align-items:center;
+                gap:14px;
+            }
+
+            .btn{
+                width:100%;
+                max-width:320px;
+                padding:14px 30px;
+                font-size:15px;
+                justify-content:center;
+            }
+
+            .hero-badge{
+                font-size:13px;
+                padding:8px 16px;
+                gap:6px;
+                margin-bottom:25px;
+                justify-content:center;
+                flex-wrap:wrap;
+            }
+
+            .live-dot{
+                width:8px;
+                height:8px;
+            }
+
+            .live-dot::before{
+                inset:-5px;
+            }
+        }
+
+        /* Small Mobile */
+        @media (max-width:480px){
+            .hero{
+                min-height:85vh;
+                padding:60px 0;
+                background-size:100%;
+            }
+
+            .hero-content h1{
+                font-size:28px;
+                line-height:1.2;
+            }
+
+            .hero-content p{
+                font-size:15px;
+                margin-bottom:25px;
+            }
+
+            .btn{
+                padding:12px 24px;
+                font-size:14px;
+                max-width:280px;
+            }
+
+            .hero-badge{
+                font-size:12px;
+                padding:6px 14px;
+                gap:5px;
+                margin-bottom:20px;
+            }
+
+            .live-dot{
+                width:7px;
+                height:7px;
+            }
+
+            .live-dot::before{
+                inset:-4px;
+            }
+        }
+
+        /* Very small screens (e.g., iPhone SE) */
+        @media (max-width:380px){
+            .hero-content h1{
+                font-size:24px;
+            }
+
+            .hero-content p{
+                font-size:14px;
+            }
+
+            .btn{
+                font-size:13px;
+                padding:10px 20px;
+            }
+
+            .hero-badge{
+                font-size:11px;
+                padding:5px 12px;
+            }
         }
 
     </style>
 
-
 </head>
-
 <body>
 
 <section class="hero">
