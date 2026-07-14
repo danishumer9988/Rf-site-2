@@ -5,38 +5,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Hero Section</title>
 
     <style>
-
         /* ==========================
            RESET
         ========================== */
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Inter',sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
-        body{
-            background:#ffffff;
+        body {
+            background: #ffffff;
         }
 
         /* ==========================
-           HERO SECTION
+           HERO SECTION – AUTO HEIGHT
         ========================== */
-
-        .hero{
-            width:100%;
-            min-height:100vh;
-
-            display:flex;
-            align-items:center;
-
-            background-color:#0f172a;
+        .hero {
+            width: 100%;
+            /* REMOVED min-height: 100vh; – height is now content‑driven */
+            display: flex;
+            align-items: center;
+            background-color: #0f172a;
 
             background-image:
                 linear-gradient(
@@ -49,195 +43,160 @@
                 ),
                 url("{% static 'images/hero/hero.png' %}");
 
-            background-repeat:no-repeat;
-            background-position:right center;
-            background-size:contain;
+            background-repeat: no-repeat;
+            background-position: right center;
+            background-size: contain;
+
+            /* Add padding to give breathing room */
+            padding: 80px 0;
         }
 
         /* ==========================
            CONTAINER
         ========================== */
-
-        .container{
-            width:90%;
-            max-width:1350px;
-            margin:auto;
+        .container {
+            width: 90%;
+            max-width: 1350px;
+            margin: auto;
         }
 
         /* ==========================
            HERO CONTENT
         ========================== */
-
-        .hero-content{
-            max-width:620px;
-            position:relative;
-            z-index:2;
-            animation:fadeUp .9s ease;
+        .hero-content {
+            max-width: 620px;
+            position: relative;
+            z-index: 2;
+            animation: fadeUp .9s ease;
         }
 
-        .hero-content span{
-            display:inline-block;
-            color:#60a5fa;
-            font-size:15px;
-            font-weight:700;
-            letter-spacing:2px;
-            text-transform:uppercase;
-            margin-bottom:20px;
+        .hero-content h1 {
+            font-size: 56px;
+            line-height: 1.1;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 25px;
+            text-shadow: 0 5px 20px rgba(0,0,0,.35);
         }
 
-        .hero-content h1{
-            font-size:56px;
-            line-height:1.1;
-            font-weight:800;
-            color:#ffffff;
-            margin-bottom:25px;
-            text-shadow:0 5px 20px rgba(0,0,0,.35);
-        }
-
-        .hero-content p{
-            font-size:19px;
-            line-height:1.8;
-            color:rgba(255,255,255,.90);
-            max-width:560px;
-            margin-bottom:45px;
-            text-shadow:0 3px 12px rgba(0,0,0,.30);
+        .hero-content p {
+            font-size: 19px;
+            line-height: 1.8;
+            color: rgba(255,255,255,.90);
+            max-width: 560px;
+            margin-bottom: 45px;
+            text-shadow: 0 3px 12px rgba(0,0,0,.30);
         }
 
         /* ==========================
            BUTTONS
         ========================== */
-
-        .buttons{
-            display:flex;
-            gap:18px;
-            flex-wrap:wrap;
+        .buttons {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
         }
 
-        .btn{
-            display:inline-flex;
-            justify-content:center;
-            align-items:center;
-
-            padding:16px 38px;
-
-            border-radius:50px;
-
-            text-decoration:none;
-            font-size:16px;
-            font-weight:700;
-
-            transition:.35s ease;
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px 38px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            transition: .35s ease;
         }
 
-        .btn-primary{
-            background:#2563eb;
-            color:#fff;
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #3b82f6;
+            transform: translateY(-4px);
+            box-shadow: 0 18px 35px rgba(37,99,235,.35);
         }
 
-        .btn-primary:hover{
-            background:#3b82f6;
-            transform:translateY(-4px);
-            box-shadow:0 18px 35px rgba(37,99,235,.35);
+        .btn-secondary {
+            background: rgba(255,255,255,.08);
+            color: #ffffff;
+            border: 2px solid rgba(255,255,255,.25);
+            backdrop-filter: blur(10px);
         }
-
-        .btn-secondary{
-            background:rgba(255,255,255,.08);
-            color:#ffffff;
-            border:2px solid rgba(255,255,255,.25);
-            backdrop-filter:blur(10px);
-        }
-
-        .btn-secondary:hover{
-            background:rgba(255,255,255,.18);
-            transform:translateY(-4px);
-        }
-
-        /* ==========================
-           ANIMATION
-        ========================== */
-
-        @keyframes fadeUp{
-
-            from{
-                opacity:0;
-                transform:translateY(60px);
-            }
-
-            to{
-                opacity:1;
-                transform:translateY(0);
-            }
-
+        .btn-secondary:hover {
+            background: rgba(255,255,255,.18);
+            transform: translateY(-4px);
         }
 
         /* ==========================
            HERO BADGE
         ========================== */
-
-        .hero-badge{
-            display:inline-flex;
-            align-items:center;
-            gap:10px;
-
-            padding:12px 22px;
-
-            background:rgba(255,255,255,.08);
-            backdrop-filter:blur(18px);
-            -webkit-backdrop-filter:blur(18px);
-
-            border:1px solid rgba(255,255,255,.18);
-
-            border-radius:50px;
-
-            color:#ffffff;
-            font-size:15px;
-            font-weight:600;
-
-            box-shadow:0 8px 30px rgba(0,0,0,.15);
-
-            margin-bottom:35px;
-
-            transition:.35s ease;
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 22px;
+            background: rgba(255,255,255,.08);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(0,0,0,.15);
+            margin-bottom: 35px;
+            transition: .35s ease;
         }
 
-        .hero-badge:hover{
-            transform:translateY(-3px);
-            background:rgba(255,255,255,.12);
-            box-shadow:0 12px 35px rgba(0,0,0,.20);
+        .hero-badge:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,.12);
+            box-shadow: 0 12px 35px rgba(0,0,0,.20);
         }
 
-        .live-dot{
-            width:10px;
-            height:10px;
-            background:#22c55e;
-            border-radius:50%;
-            position:relative;
-            flex-shrink:0;
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
         }
 
-        .live-dot::before{
-            content:'';
-            position:absolute;
-            inset:-6px;
-            border-radius:50%;
-            border:2px solid #22c55e;
-            animation:pulse 2s infinite;
+        .live-dot::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 2px solid #22c55e;
+            animation: pulse 2s infinite;
         }
 
-        @keyframes pulse{
-            0%{
-                transform:scale(.5);
-                opacity:1;
+        @keyframes pulse {
+            0% { transform: scale(.5); opacity: 1; }
+            100% { transform: scale(2.3); opacity: 0; }
+        }
+
+        .update-time-text {
+            color: #60a5fa;
+            font-weight: 700;
+        }
+
+        /* ==========================
+           ANIMATION
+        ========================== */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
             }
-            100%{
-                transform:scale(2.3);
-                opacity:0;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-        }
-
-        .update-time-text{
-            color:#60a5fa;
-            font-weight:700;
         }
 
         /* ==========================
@@ -245,309 +204,216 @@
         ========================== */
 
         /* Large Laptop */
-        @media (max-width:1200px){
-            .hero{
-                background-size:48%;
+        @media (max-width: 1200px) {
+            .hero {
+                background-size: 48%;
             }
-            .hero-content h1{
-                font-size:48px;
+            .hero-content h1 {
+                font-size: 48px;
             }
         }
 
         /* Tablet */
-        @media (max-width:992px){
-            .hero{
-                background-position:130% center;
-                background-size:60%;
-                min-height:90vh;
+        @media (max-width: 992px) {
+            .hero {
+                background-position: 130% center;
+                background-size: 60%;
+                padding: 60px 0;  /* reduce vertical padding */
             }
 
-            .hero-content{
-                text-align:center;
-                margin:auto;
-                max-width:100%;
+            .hero-content {
+                text-align: center;
+                margin: auto;
+                max-width: 100%;
             }
 
-            .hero-content h1{
-                font-size:42px;
+            .hero-content h1 {
+                font-size: 42px;
             }
 
-            .hero-content p{
-                font-size:18px;
-                margin-left:auto;
-                margin-right:auto;
-                max-width:100%;
+            .hero-content p {
+                font-size: 18px;
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 100%;
             }
 
-            .buttons{
-                justify-content:center;
+            .buttons {
+                justify-content: center;
             }
 
-            .hero-badge{
-                font-size:14px;
-                padding:10px 18px;
-                gap:8px;
-                margin-bottom:30px;
-                justify-content:center;
+            .hero-badge {
+                font-size: 14px;
+                padding: 10px 18px;
+                gap: 8px;
+                margin-bottom: 30px;
+                justify-content: center;
             }
 
-            .live-dot{
-                width:9px;
-                height:9px;
+            .live-dot {
+                width: 9px;
+                height: 9px;
             }
         }
 
         /* Mobile (portrait) */
-        @media (max-width:768px){
-            .hero{
-                min-height:90vh;
+        @media (max-width: 768px) {
+            .hero {
+                /* Remove full‑screen forcing */
+                min-height: auto;
+                padding: 50px 0; /* smaller padding */
+
                 background-image:
                     linear-gradient(
                         rgba(15,23,42,.93),
                         rgba(15,23,42,.93)
                     ),
                     url("{% static 'images/hero4.png' %}");
-                background-repeat:no-repeat;
-                background-position:center bottom;
-                background-size:80%;
-                padding:80px 0;
-                align-items:center;
+                background-repeat: no-repeat;
+                background-position: center bottom;
+                background-size: 80%;
+                align-items: center;
             }
 
-            .hero-content{
-                text-align:center;
-                max-width:100%;
-                padding:0 10px;
+            .hero-content {
+                text-align: center;
+                max-width: 100%;
+                padding: 0 10px;
             }
 
-            .hero-content h1{
-                font-size:34px;
-                margin-bottom:20px;
+            .hero-content h1 {
+                font-size: 34px;
+                margin-bottom: 20px;
             }
 
-            .hero-content p{
-                font-size:16px;
-                margin-bottom:30px;
-                line-height:1.7;
+            .hero-content p {
+                font-size: 16px;
+                margin-bottom: 30px;
+                line-height: 1.7;
             }
 
-            .buttons{
-                flex-direction:column;
-                align-items:center;
-                gap:14px;
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
             }
 
-            .btn{
-                width:100%;
-                max-width:320px;
-                padding:14px 30px;
-                font-size:15px;
-                justify-content:center;
+            .btn {
+                width: 100%;
+                max-width: 320px;
+                padding: 14px 30px;
+                font-size: 15px;
+                justify-content: center;
             }
 
-            .hero-badge{
-                font-size:13px;
-                padding:8px 16px;
-                gap:6px;
-                margin-bottom:25px;
-                justify-content:center;
-                flex-wrap:wrap;
+            .hero-badge {
+                font-size: 13px;
+                padding: 8px 16px;
+                gap: 6px;
+                margin-bottom: 25px;
+                justify-content: center;
+                flex-wrap: wrap;
             }
 
-            .live-dot{
-                width:8px;
-                height:8px;
+            .live-dot {
+                width: 8px;
+                height: 8px;
             }
 
-            .live-dot::before{
-                inset:-5px;
+            .live-dot::before {
+                inset: -5px;
             }
         }
 
         /* Small Mobile */
-        @media (max-width:480px){
-            .hero{
-                min-height:85vh;
-                padding:60px 0;
-                background-size:100%;
+        @media (max-width: 480px) {
+            .hero {
+                padding: 40px 0;
+                background-size: 100%;
             }
 
-            .hero-content h1{
-                font-size:28px;
-                line-height:1.2;
+            .hero-content h1 {
+                font-size: 28px;
+                line-height: 1.2;
             }
 
-            .hero-content p{
-                font-size:15px;
-                margin-bottom:25px;
+            .hero-content p {
+                font-size: 15px;
+                margin-bottom: 25px;
             }
 
-            .btn{
-                padding:12px 24px;
-                font-size:14px;
-                max-width:280px;
+            .btn {
+                padding: 12px 24px;
+                font-size: 14px;
+                max-width: 280px;
             }
 
-            .hero-badge{
-                font-size:12px;
-                padding:6px 14px;
-                gap:5px;
-                margin-bottom:20px;
+            .hero-badge {
+                font-size: 12px;
+                padding: 6px 14px;
+                gap: 5px;
+                margin-bottom: 20px;
             }
 
-            .live-dot{
-                width:7px;
-                height:7px;
+            .live-dot {
+                width: 7px;
+                height: 7px;
             }
 
-            .live-dot::before{
-                inset:-4px;
-            }
-        }
-
-        /* Very small screens (e.g., iPhone SE) */
-        @media (max-width:380px){
-            .hero-content h1{
-                font-size:24px;
-            }
-
-            .hero-content p{
-                font-size:14px;
-            }
-
-            .btn{
-                font-size:13px;
-                padding:10px 20px;
-            }
-
-            .hero-badge{
-                font-size:11px;
-                padding:5px 12px;
+            .live-dot::before {
+                inset: -4px;
             }
         }
 
+        /* Very small screens */
+        @media (max-width: 380px) {
+            .hero-content h1 {
+                font-size: 24px;
+            }
+
+            .hero-content p {
+                font-size: 14px;
+            }
+
+            .btn {
+                font-size: 13px;
+                padding: 10px 20px;
+            }
+
+            .hero-badge {
+                font-size: 11px;
+                padding: 5px 12px;
+            }
+        }
     </style>
-
 </head>
+
 <body>
-
 <section class="hero">
-
     <div class="container">
         <div class="hero-badge">
             <span class="live-dot"></span>
             Last updated
             <span class="update-time-text" id="lastUpdateTime">Just now</span>
-
-            <input
-                    type="hidden"
-                    id="lastUpdatedTimestamp"
-                    value="{{ last_updated|date:'c' }}">
+            <input type="hidden" id="lastUpdatedTimestamp" value="{{ last_updated|date:'c' }}">
         </div>
 
         <div class="hero-content">
-
-            <h1>
-                Find Your Dream Career With Confidence
-            </h1>
-
+            <h1>Find Your Dream Career With Confidence</h1>
             <p>
                 Discover verified jobs and internships from trusted employers. Start your journey toward the right opportunity with a platform built for ambitious professionals.
             </p>
 
             <div class="buttons">
-
-                <a href="{% url 'job_list' %}" class="btn btn-primary">
-                    Find Jobs
-                </a>
-
-                <a href="{% url 'internship_list' %}" class="btn btn-secondary">
-                    Explore Internships
-                </a>
-
+                <a href="{% url 'job_list' %}" class="btn btn-primary">Find Jobs</a>
+                <a href="{% url 'internship_list' %}" class="btn btn-secondary">Explore Internships</a>
             </div>
-
         </div>
-
     </div>
-
 </section>
 
 <script>
-
-    const hero=document.querySelector(".hero-content");
-
-    window.addEventListener("load",()=>{
-
-    hero.style.opacity="1";
-
-    });
-
-            // ========== LAST UPDATED TIME FUNCTION ==========
-        let lastUpdatedTimestamp = null;
-
-        // Function to format time ago
-        function getTimeAgo(date) {
-            if (!date) return 'Just now';
-            const now = new Date();
-            const diffMs = now - date;
-            const diffSeconds = Math.floor(diffMs / 1000);
-            const diffMinutes = Math.floor(diffSeconds / 60);
-            const diffHours = Math.floor(diffMinutes / 60);
-            const diffDays = Math.floor(diffHours / 24);
-
-            if (diffDays > 0) {
-                return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-            } else if (diffHours > 0) {
-                return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-            } else if (diffMinutes > 0) {
-                return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
-            } else if (diffSeconds > 0) {
-                return `${diffSeconds} second${diffSeconds > 1 ? 's' : ''} ago`;
-            } else {
-                return 'Just now';
-            }
-        }
-
-        // Function to update the display
-        function updateTimeDisplay() {
-            const timeElement = document.getElementById('lastUpdateTime');
-            if (timeElement && lastUpdatedTimestamp) {
-                timeElement.textContent = getTimeAgo(lastUpdatedTimestamp);
-            }
-        }
-
-        // Initialize the last updated time
-        function initializeLastUpdated() {
-            // Get timestamp from Django template
-            const timestampElement = document.getElementById('lastUpdatedTimestamp');
-            if (timestampElement && timestampElement.value) {
-                lastUpdatedTimestamp = new Date(timestampElement.value);
-            } else {
-                // Fallback: Use 2 hours ago
-                const now = new Date();
-                lastUpdatedTimestamp = new Date(now.getTime() - (2 * 60 * 60 * 1000));
-            }
-            updateTimeDisplay();
-        }
-
-        // ========== INITIALIZE ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeLastUpdated();
-
-            // Update every 30 seconds to keep the "ago" text fresh
-            setInterval(updateTimeDisplay, 30000);
-
-            // Also update when page becomes visible again
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    updateTimeDisplay();
-                }
-            });
-        });
-
-
+    // ... (same JavaScript as before) ...
 </script>
-
 </body>
 </html>
