@@ -1,0 +1,895 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}FAQ - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    /* ============================================================
+       FAQ PAGE - Glassmorphism Design
+       ============================================================ */
+    :root {
+        --faq-primary: #2563eb;
+        --faq-primary-dark: #1d4ed8;
+        --faq-primary-light: #eff6ff;
+        --faq-gray-50: #f8fafc;
+        --faq-gray-100: #f1f5f9;
+        --faq-gray-200: #e2e8f0;
+        --faq-gray-300: #cbd5e1;
+        --faq-gray-400: #94a3b8;
+        --faq-gray-500: #64748b;
+        --faq-gray-600: #475569;
+        --faq-gray-700: #334155;
+        --faq-gray-800: #1e293b;
+        --faq-gray-900: #0f172a;
+        --faq-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --faq-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+        --faq-shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+        --faq-radius-sm: 8px;
+        --faq-radius-md: 12px;
+        --faq-radius-lg: 16px;
+        --faq-radius-xl: 20px;
+        --faq-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ===== HERO SECTION ===== */
+    .faq-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 4rem 5% 3rem;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid var(--faq-primary);
+        text-align: center;
+    }
+
+    .faq-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .faq-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .faq-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .faq-hero-content .faq-icon-large {
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 1rem;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .faq-hero-content h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .faq-hero-content h1 span {
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .faq-hero-content p {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .faq-search {
+        max-width: 600px;
+        margin: -1.5rem auto 2.5rem;
+        padding: 0 5%;
+        position: relative;
+        z-index: 5;
+    }
+
+    .faq-search-wrapper {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--faq-radius-xl);
+        padding: 0.25rem;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        transition: var(--faq-transition);
+    }
+
+    .faq-search-wrapper:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--faq-shadow-lg);
+    }
+
+    .faq-search-wrapper input {
+        flex: 1;
+        padding: 0.8rem 1rem;
+        border: none;
+        background: transparent;
+        font-size: 0.95rem;
+        color: var(--faq-gray-800);
+        font-family: inherit;
+        outline: none;
+    }
+
+    .faq-search-wrapper input::placeholder {
+        color: var(--faq-gray-400);
+    }
+
+    .faq-search-wrapper .search-icon {
+        padding: 0.8rem 1rem 0.8rem 1.5rem;
+        color: var(--faq-gray-400);
+        font-size: 1.1rem;
+    }
+
+    .faq-search-wrapper .search-clear {
+        padding: 0.8rem 1.5rem 0.8rem 0.5rem;
+        color: var(--faq-gray-400);
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: none;
+        transition: var(--faq-transition);
+    }
+
+    .faq-search-wrapper .search-clear:hover {
+        color: var(--faq-danger);
+    }
+
+    .faq-search-wrapper .search-clear.visible {
+        display: block;
+    }
+
+    /* ===== CATEGORY TABS ===== */
+    .faq-categories {
+        max-width: 820px;
+        margin: 0 auto 2rem;
+        padding: 0 5%;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .faq-category-tab {
+        padding: 0.4rem 1.2rem;
+        border-radius: 30px;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        background: rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--faq-gray-600);
+        transition: var(--faq-transition);
+        font-family: inherit;
+        white-space: nowrap;
+    }
+
+    .faq-category-tab:hover {
+        border-color: var(--faq-primary);
+        color: var(--faq-primary);
+        background: rgba(255, 255, 255, 0.6);
+    }
+
+    .faq-category-tab.active {
+        background: var(--faq-primary);
+        color: white;
+        border-color: var(--faq-primary);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .faq-category-tab .count {
+        background: rgba(0, 0, 0, 0.06);
+        padding: 0.05rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.6rem;
+        font-weight: 600;
+        margin-left: 0.25rem;
+    }
+
+    .faq-category-tab.active .count {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* ===== FAQ CONTAINER ===== */
+    .faq-container {
+        max-width: 820px;
+        margin: 0 auto 4rem;
+        padding: 0 5%;
+    }
+
+    .faq-item {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--faq-radius-md);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: var(--faq-transition);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+
+    .faq-item:hover {
+        box-shadow: var(--faq-shadow-md);
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .faq-item.active {
+        border-color: var(--faq-primary);
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .faq-question {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--faq-gray-800);
+        background: transparent;
+        transition: background 0.2s;
+        gap: 1rem;
+        user-select: none;
+    }
+
+    .faq-question:hover {
+        background: rgba(0, 0, 0, 0.02);
+    }
+
+    .faq-question .faq-icon {
+        font-size: 1.2rem;
+        color: var(--faq-primary);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        flex-shrink: 0;
+        width: 24px;
+        text-align: center;
+    }
+
+    .faq-item.active .faq-question .faq-icon {
+        transform: rotate(180deg);
+    }
+
+    .faq-question .faq-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--faq-primary-light);
+        color: var(--faq-primary);
+        font-size: 0.7rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .faq-answer {
+        padding: 0 1.5rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, padding 0.3s ease;
+        color: var(--faq-gray-600);
+        line-height: 1.7;
+        background: transparent;
+    }
+
+    .faq-item.active .faq-answer {
+        max-height: 500px;
+        padding: 0 1.5rem 1.5rem;
+    }
+
+    .faq-answer p {
+        margin-bottom: 0.75rem;
+    }
+
+    .faq-answer ul {
+        margin-left: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .faq-answer ul li {
+        margin-bottom: 0.25rem;
+    }
+
+    .faq-answer a {
+        color: var(--faq-primary);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .faq-answer a:hover {
+        color: var(--faq-primary-dark);
+        text-decoration: underline;
+    }
+
+    /* ===== CONTACT SECTION ===== */
+    .faq-contact {
+        text-align: center;
+        margin-top: 2.5rem;
+        padding: 2.5rem 2rem;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--faq-radius-lg);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        transition: var(--faq-transition);
+    }
+
+    .faq-contact:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--faq-shadow-md);
+    }
+
+    .faq-contact h3 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--faq-gray-800);
+        margin-bottom: 0.5rem;
+    }
+
+    .faq-contact p {
+        color: var(--faq-gray-500);
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        padding: 0.7rem 2rem;
+        background: linear-gradient(135deg, var(--faq-primary) 0%, var(--faq-primary-dark) 100%);
+        color: white;
+        border: none;
+        border-radius: var(--faq-radius-sm);
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--faq-transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: inherit;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    /* ===== NO RESULTS ===== */
+    .faq-no-results {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--faq-gray-500);
+        display: none;
+    }
+
+    .faq-no-results .no-results-icon {
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .faq-no-results h4 {
+        color: var(--faq-gray-700);
+        margin-bottom: 0.25rem;
+    }
+
+    /* ===== DARK MODE ===== */
+    body.dark-mode .faq-search-wrapper {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .faq-search-wrapper:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .faq-search-wrapper input {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .faq-search-wrapper input::placeholder {
+        color: #64748b;
+    }
+
+    body.dark-mode .faq-category-tab {
+        background: rgba(30, 41, 59, 0.3);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .faq-category-tab:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+        background: rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .faq-category-tab.active {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+
+    body.dark-mode .faq-item {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .faq-item:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .faq-item.active {
+        border-color: #60a5fa;
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .faq-question {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .faq-answer {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .faq-contact {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .faq-contact:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .faq-contact h3 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .faq-question .faq-number {
+        background: rgba(96, 165, 250, 0.15);
+        color: #60a5fa;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .faq-hero-content h1 {
+            font-size: 2rem;
+        }
+
+        .faq-hero {
+            padding: 2.5rem 4% 2rem;
+        }
+
+        .faq-question {
+            font-size: 0.95rem;
+            padding: 1rem;
+        }
+
+        .faq-answer {
+            padding: 0 1rem;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 1rem 1rem;
+        }
+
+        .faq-contact {
+            padding: 1.5rem;
+        }
+
+        .faq-categories {
+            gap: 0.3rem;
+        }
+
+        .faq-category-tab {
+            font-size: 0.75rem;
+            padding: 0.3rem 0.8rem;
+        }
+
+        .faq-search-wrapper {
+            padding: 0;
+        }
+
+        .faq-search-wrapper input {
+            font-size: 0.85rem;
+            padding: 0.6rem 0.8rem;
+        }
+
+        .faq-search-wrapper .search-icon {
+            padding: 0.6rem 0.8rem 0.6rem 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .faq-hero-content h1 {
+            font-size: 1.6rem;
+        }
+
+        .faq-hero-content .faq-icon-large {
+            font-size: 3rem;
+        }
+
+        .faq-question {
+            font-size: 0.85rem;
+            padding: 0.8rem;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 0.8rem 0.8rem;
+        }
+
+        .faq-answer {
+            font-size: 0.9rem;
+        }
+
+        .faq-category-tab {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.6rem;
+        }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+        animation: slideUp 0.4s ease-out forwards;
+    }
+
+    .animate-in.delay-1 { animation-delay: 0.05s; opacity: 0; }
+    .animate-in.delay-2 { animation-delay: 0.1s; opacity: 0; }
+    .animate-in.delay-3 { animation-delay: 0.15s; opacity: 0; }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="faq-hero">
+    <div class="faq-hero-content">
+        <span class="faq-icon-large">❓</span>
+        <h1>Frequently Asked <span>Questions</span></h1>
+        <p>Find answers to the most common questions about using Job Reference Hub.</p>
+    </div>
+</div>
+
+<!-- ===== SEARCH BAR ===== -->
+<div class="faq-search animate-in">
+    <div class="faq-search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="faqSearch" placeholder="Search for questions..." onkeyup="searchFAQ()">
+        <span class="search-clear" id="searchClear" onclick="clearSearch()">✕</span>
+    </div>
+</div>
+
+<!-- ===== CATEGORY TABS ===== -->
+<div class="faq-categories animate-in delay-1">
+    <button class="faq-category-tab active" data-category="all" onclick="filterCategory('all')">
+        📌 All <span class="count">{{ faq_items|length|default:11 }}</span>
+    </button>
+    <button class="faq-category-tab" data-category="general" onclick="filterCategory('general')">
+        🏠 General <span class="count">2</span>
+    </button>
+    <button class="faq-category-tab" data-category="jobs" onclick="filterCategory('jobs')">
+        💼 Jobs <span class="count">3</span>
+    </button>
+    <button class="faq-category-tab" data-category="account" onclick="filterCategory('account')">
+        👤 Account <span class="count">3</span>
+    </button>
+    <button class="faq-category-tab" data-category="employer" onclick="filterCategory('employer')">
+        🏢 Employers <span class="count">2</span>
+    </button>
+    <button class="faq-category-tab" data-category="technical" onclick="filterCategory('technical')">
+        ⚙️ Technical <span class="count">1</span>
+    </button>
+</div>
+
+<!-- ===== FAQ CONTAINER ===== -->
+<div class="faq-container animate-in delay-2">
+    <div class="faq-no-results" id="noResults">
+        <span class="no-results-icon">🔍</span>
+        <h4>No results found</h4>
+        <p>Try adjusting your search terms or browse the categories above.</p>
+    </div>
+
+    <!-- General -->
+    <div class="faq-item active" data-category="general">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">01</span>
+            <span>What is Job Reference Hub?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>Job Reference Hub is a career platform that connects job seekers with employers. We list thousands of job and internship opportunities across various industries, with a focus on tech, remote, and on‑site roles.</p>
+        </div>
+    </div>
+
+    <div class="faq-item" data-category="general">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">02</span>
+            <span>Is Job Reference Hub free?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>Yes, creating an account, browsing jobs, and applying for positions is completely free for job seekers. Employers may pay for premium job postings or featured listings.</p>
+        </div>
+    </div>
+
+    <!-- Jobs & Internships -->
+    <div class="faq-item" data-category="jobs">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">03</span>
+            <span>How do I find jobs and internships?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>You can use the search bar on the homepage to filter by keyword, location, job type (remote/on‑site), or category. You can also browse by industry or use the "All Jobs" and "All Internships" pages.</p>
+        </div>
+    </div>
+
+    <div class="faq-item" data-category="jobs">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">04</span>
+            <span>How do I save a job or internship?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>When you are logged in, click the heart icon (🤍) on any job or internship card. The icon will turn red (❤️) and the listing will be saved to your "Saved Jobs" or "Saved Internships" section in your dashboard.</p>
+        </div>
+    </div>
+
+    <div class="faq-item" data-category="jobs">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">05</span>
+            <span>How do I apply for a job?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>Click the "View Details" button on a job card, then follow the application instructions provided by the employer. Some listings may allow you to apply directly through our "Quick Apply" modal.</p>
+        </div>
+    </div>
+
+    <!-- Accounts & Profile -->
+    <div class="faq-item" data-category="account">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">06</span>
+            <span>How do I create an account?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>Click the "Sign Up Free" button in the top‑right corner of the page. Fill in your email, choose a password, and complete your profile to start applying.</p>
+        </div>
+    </div>
+
+    <div class="faq-item" data-category="account">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">07</span>
+            <span>I forgot my password. What should I do?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>On the login page, click "Forgot Password?" and follow the instructions to reset your password via email.</p>
+        </div>
+    </div>
+
+    <div class="faq-item" data-category="account">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">08</span>
+            <span>How do I update my profile?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>Log in and go to your Dashboard, then click "My Profile" or "Settings" to update your personal information, resume, and preferences.</p>
+        </div>
+    </div>
+
+    <!-- Employers -->
+    <div class="faq-item" data-category="employer">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">09</span>
+            <span>How do I post a job or internship?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>After logging in as an employer, click the "Post a Job" link in the navigation bar. Fill in the required details (title, description, location, etc.) and submit. Your listing will be reviewed and published.</p>
+        </div>
+    </div>
+
+    <div class="faq-item" data-category="employer">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">10</span>
+            <span>Can I edit or remove a job posting?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>Yes, go to your Dashboard and select "My Job Posts." From there, you can edit or delete any of your active listings.</p>
+        </div>
+    </div>
+
+    <!-- Technical -->
+    <div class="faq-item" data-category="technical">
+        <div class="faq-question" onclick="toggleFaq(this)">
+            <span class="faq-number">11</span>
+            <span>Is my data secure?</span>
+            <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-answer">
+            <p>We take data security seriously. We use encryption, secure servers, and regular monitoring to protect your personal information. For more details, please read our <a href="{% url 'privacy' %}">Privacy Policy</a>.</p>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="faq-contact animate-in delay-3">
+        <h3>📬 Still have questions?</h3>
+        <p>Our support team is here to help. Reach out to us and we'll get back to you within 24 hours.</p>
+        <a href="{% url 'contact' %}" class="btn-primary">
+            Contact Us <span>→</span>
+        </a>
+    </div>
+</div>
+
+<script>
+    // ========== TOGGLE FAQ ==========
+    function toggleFaq(element) {
+        const item = element.closest('.faq-item');
+        const isActive = item.classList.contains('active');
+
+        // Close all other items
+        document.querySelectorAll('.faq-item').forEach(el => {
+            if (el !== item) el.classList.remove('active');
+        });
+
+        item.classList.toggle('active');
+    }
+
+    // ========== SEARCH FAQ ==========
+    function searchFAQ() {
+        const searchTerm = document.getElementById('faqSearch').value.toLowerCase();
+        const items = document.querySelectorAll('.faq-item');
+        const clearBtn = document.getElementById('searchClear');
+        let hasResults = false;
+
+        // Show/hide clear button
+        if (searchTerm.length > 0) {
+            clearBtn.classList.add('visible');
+        } else {
+            clearBtn.classList.remove('visible');
+        }
+
+        items.forEach(item => {
+            const question = item.querySelector('.faq-question span:not(.faq-number):not(.faq-icon)').textContent.toLowerCase();
+            const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+            const matches = question.includes(searchTerm) || answer.includes(searchTerm);
+
+            if (searchTerm.length === 0) {
+                item.style.display = 'block';
+                hasResults = true;
+            } else if (matches) {
+                item.style.display = 'block';
+                hasResults = true;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Show/hide no results message
+        const noResults = document.getElementById('noResults');
+        if (searchTerm.length > 0 && !hasResults) {
+            noResults.style.display = 'block';
+        } else {
+            noResults.style.display = 'none';
+        }
+
+        // Deactivate category tabs when searching
+        if (searchTerm.length > 0) {
+            document.querySelectorAll('.faq-category-tab').forEach(tab => tab.classList.remove('active'));
+        } else {
+            // Reactivate "All" tab
+            document.querySelector('.faq-category-tab[data-category="all"]').classList.add('active');
+        }
+    }
+
+    // ========== CLEAR SEARCH ==========
+    function clearSearch() {
+        document.getElementById('faqSearch').value = '';
+        document.getElementById('searchClear').classList.remove('visible');
+        searchFAQ();
+        document.getElementById('faqSearch').focus();
+    }
+
+    // ========== FILTER BY CATEGORY ==========
+    function filterCategory(category) {
+        const items = document.querySelectorAll('.faq-item');
+        const tabs = document.querySelectorAll('.faq-category-tab');
+        const searchTerm = document.getElementById('faqSearch').value.toLowerCase();
+
+        // Update active tab
+        tabs.forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.category === category);
+        });
+
+        // Clear search
+        document.getElementById('faqSearch').value = '';
+        document.getElementById('searchClear').classList.remove('visible');
+
+        items.forEach(item => {
+            const itemCategory = item.dataset.category;
+            if (category === 'all' || itemCategory === category) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Hide no results
+        document.getElementById('noResults').style.display = 'none';
+
+        // Close all items when filtering
+        items.forEach(item => item.classList.remove('active'));
+    }
+
+    // ========== KEYBOARD SHORTCUTS ==========
+    document.addEventListener('keydown', function(e) {
+        // Ctrl+F or / to focus search
+        if ((e.ctrlKey && e.key === 'f') || (e.key === '/' && !e.ctrlKey && !e.metaKey)) {
+            if (!['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                e.preventDefault();
+                document.getElementById('faqSearch').focus();
+                document.getElementById('faqSearch').select();
+            }
+        }
+        // Escape to clear search
+        if (e.key === 'Escape') {
+            const searchInput = document.getElementById('faqSearch');
+            if (document.activeElement === searchInput) {
+                clearSearch();
+                searchInput.blur();
+            }
+        }
+    });
+
+    console.log('❓ FAQ Page Loaded');
+    console.log('💡 Tip: Press Ctrl+F or / to search FAQ');
+</script>
+{% endblock %}

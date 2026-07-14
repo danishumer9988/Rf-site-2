@@ -1,0 +1,724 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Posted Jobs - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    .mpj-container {
+        max-width: 1200px;
+        margin: 0 auto 4rem;
+        padding: 0 5%;
+    }
+
+    .mpj-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 3.5rem 5% 2.5rem;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid #2563eb;
+        margin-bottom: 2.5rem;
+    }
+
+    .mpj-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .mpj-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .mpj-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+    }
+
+    .mpj-hero-icon {
+        font-size: 4rem;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .mpj-hero-text {
+        flex: 1;
+    }
+
+    .mpj-hero-text .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+    }
+
+    .mpj-hero-text .breadcrumb a {
+        color: #94a3b8;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .mpj-hero-text .breadcrumb a:hover {
+        color: #60a5fa;
+    }
+
+    .mpj-hero-text .breadcrumb .separator {
+        color: #475569;
+    }
+
+    .mpj-hero-text h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.5px;
+    }
+
+    .mpj-hero-text h1 span {
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .mpj-hero-text p {
+        color: #94a3b8;
+        font-size: 1.05rem;
+        max-width: 500px;
+        line-height: 1.6;
+    }
+
+    .mpj-hero-actions {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .mpj-btn {
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .mpj-btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .mpj-btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .mpj-btn-outline {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #e2e8f0;
+    }
+
+    .mpj-btn-outline:hover {
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateY(-2px);
+    }
+
+    .mpj-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        max-width: 1200px;
+        margin: -1.5rem auto 2rem;
+        padding: 0 5%;
+        position: relative;
+        z-index: 10;
+    }
+
+    .mpj-stat-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        transition: all 0.3s;
+    }
+
+    .mpj-stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .mpj-stat-card .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #0f172a;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .mpj-stat-card .stat-label {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 0.15rem;
+    }
+
+    .mpj-alert {
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .mpj-alert-info {
+        border-left: 4px solid #2563eb;
+    }
+
+    .mpj-alert-warning {
+        border-left: 4px solid #f59e0b;
+    }
+
+    .mpj-alert-success {
+        border-left: 4px solid #10b981;
+    }
+
+    .mpj-alert .alert-icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .mpj-alert .alert-content {
+        flex: 1;
+        color: #334155;
+        font-size: 0.95rem;
+    }
+
+    .mpj-alert .alert-content strong {
+        color: #0f172a;
+    }
+
+    .mpj-job-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s;
+    }
+
+    .mpj-job-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        border-color: #2563eb;
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .mpj-job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .mpj-job-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #0f172a;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .mpj-job-title:hover {
+        color: #2563eb;
+    }
+
+    .mpj-job-company {
+        color: #64748b;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .mpj-job-badges {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .mpj-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        border: 1px solid transparent;
+    }
+
+    .mpj-badge-active {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .mpj-badge-inactive {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .mpj-badge-submitted {
+        background: rgba(139, 92, 246, 0.1);
+        color: #7c3aed;
+        border-color: rgba(139, 92, 246, 0.2);
+    }
+
+    .mpj-job-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin: 0.75rem 0;
+        padding: 0.75rem 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .mpj-job-stats span {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+
+    .mpj-job-stats .stat-value {
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .mpj-job-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+
+    .mpj-posted-date {
+        color: #94a3b8;
+        font-size: 0.85rem;
+    }
+
+    .mpj-action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .mpj-btn-sm {
+        padding: 0.35rem 1rem;
+        font-size: 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .mpj-btn-primary-sm {
+        background: #2563eb;
+        color: white;
+    }
+
+    .mpj-btn-primary-sm:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .mpj-btn-warning-sm {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .mpj-btn-warning-sm:hover {
+        background: #d97706;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .mpj-btn-outline-sm {
+        background: transparent;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: #475569;
+    }
+
+    .mpj-btn-outline-sm:hover {
+        border-color: #2563eb;
+        color: #2563eb;
+        transform: translateY(-2px);
+    }
+
+    .mpj-empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        border: 2px dashed rgba(0, 0, 0, 0.08);
+    }
+
+    .mpj-empty-state .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .mpj-empty-state h3 {
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+
+    .mpj-empty-state p {
+        color: #64748b;
+        max-width: 400px;
+        margin: 0 auto 1.5rem;
+    }
+
+    /* Dark Mode */
+    body.dark-mode .mpj-stat-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .mpj-stat-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .mpj-stat-card .stat-number {
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    body.dark-mode .mpj-alert {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .mpj-alert .alert-content {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .mpj-alert .alert-content strong {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .mpj-job-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .mpj-job-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: #60a5fa;
+    }
+
+    body.dark-mode .mpj-job-title {
+        color: #ffffff;
+    }
+
+    body.dark-mode .mpj-job-title:hover {
+        color: #60a5fa;
+    }
+
+    body.dark-mode .mpj-job-stats span {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .mpj-job-stats .stat-value {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .mpj-empty-state {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .mpj-empty-state h3 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .mpj-btn-outline-sm {
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .mpj-btn-outline-sm:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+    }
+
+    @media (max-width: 768px) {
+        .mpj-hero-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        .mpj-hero-text h1 {
+            font-size: 1.8rem;
+        }
+
+        .mpj-hero-text p {
+            margin: 0 auto;
+        }
+
+        .mpj-hero-actions {
+            justify-content: center;
+        }
+
+        .mpj-hero-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 3rem;
+        }
+
+        .mpj-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .mpj-job-header {
+            flex-direction: column;
+        }
+
+        .mpj-job-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .mpj-action-buttons {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .mpj-hero {
+            padding: 2rem 4% 1.5rem;
+        }
+
+        .mpj-hero-text h1 {
+            font-size: 1.5rem;
+        }
+
+        .mpj-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .mpj-stat-card .stat-number {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="mpj-hero">
+    <div class="mpj-hero-content">
+        <div class="mpj-hero-icon">📊</div>
+        <div class="mpj-hero-text">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">›</span>
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <span class="separator">›</span>
+                <span>My Posted Jobs</span>
+            </div>
+            <h1>My <span>Posted Jobs</span></h1>
+            <p>Track and manage all the jobs you've posted on Job Reference Hub.</p>
+            <div class="mpj-hero-actions">
+                <a href="{% url 'post_job' %}" class="mpj-btn mpj-btn-primary">
+                    <i class="fas fa-plus-circle"></i> Post a Job
+                </a>
+                <a href="{% url 'dashboard' %}" class="mpj-btn mpj-btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== STATS OVERVIEW ===== -->
+<div class="mpj-stats">
+    <div class="mpj-stat-card mpj-animate">
+        <div class="stat-number">{{ total_jobs|default:0 }}</div>
+        <div class="stat-label">Total Jobs</div>
+    </div>
+    <div class="mpj-stat-card mpj-animate delay-1">
+        <div class="stat-number">{{ total_views|default:0 }}</div>
+        <div class="stat-label">Total Views</div>
+    </div>
+    <div class="mpj-stat-card mpj-animate delay-2">
+        <div class="stat-number">{{ total_likes|default:0 }}</div>
+        <div class="stat-label">Total Likes</div>
+    </div>
+    <div class="mpj-stat-card mpj-animate delay-3">
+        <div class="stat-number">{{ total_clicks|default:0 }}</div>
+        <div class="stat-label">Total Clicks</div>
+    </div>
+    <div class="mpj-stat-card mpj-animate delay-4">
+        <div class="stat-number">{{ total_comments|default:0 }}</div>
+        <div class="stat-label">Total Comments</div>
+    </div>
+</div>
+
+<!-- ===== ALERTS ===== -->
+<div class="mpj-container">
+    {% if pending_applications > 0 %}
+    <div class="mpj-alert mpj-alert-info mpj-animate">
+        <span class="alert-icon">⏳</span>
+        <div class="alert-content">
+            You have <strong>{{ pending_applications }}</strong> job post(s) pending approval.
+            You'll receive an email when they're approved.
+        </div>
+    </div>
+    {% endif %}
+
+    {% if approved_without_job > 0 %}
+    <div class="mpj-alert mpj-alert-warning mpj-animate">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-content">
+            <strong>Action Required:</strong>
+            {{ approved_without_job }} of your jobs were approved but are not published.
+            <a href="/contact/" style="color: #f59e0b; font-weight: 600;">Contact support</a> to resolve this.
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ===== JOBS LIST ===== -->
+    {% if jobs %}
+    {% for job in jobs %}
+    <div class="mpj-job-card mpj-animate delay-{{ forloop.counter|add:1|slice:':1' }}">
+        <div class="mpj-job-header">
+            <div>
+                <a href="{% url 'job_detail' job.slug %}" class="mpj-job-title" target="_blank">
+                    {{ job.title }}
+                </a>
+                <div class="mpj-job-company">
+                    <i class="fas fa-building"></i> {{ job.company }}
+                </div>
+            </div>
+            <div class="mpj-job-badges">
+                <span class="mpj-badge {% if job.is_active %}mpj-badge-active{% else %}mpj-badge-inactive{% endif %}">
+                    {% if job.is_active %}✅ Active{% else %}❌ Inactive{% endif %}
+                </span>
+                <span class="mpj-badge mpj-badge-submitted">
+                    👤 {{ job.get_employment_type_display }}
+                </span>
+            </div>
+        </div>
+
+        <div class="mpj-job-stats">
+            <span>👁️ <span class="stat-value">{{ job.views }}</span> views</span>
+            <span>❤️ <span class="stat-value">{{ job.likes }}</span> likes</span>
+            <span>💬 <span class="stat-value">{{ job.comments.count }}</span> comments</span>
+            <span>🖱️ <span class="stat-value">{{ job.clicks }}</span> clicks</span>
+            <span>📅 <span class="stat-value">{{ job.posted_at|date:"M d, Y" }}</span></span>
+        </div>
+
+        <div class="mpj-job-footer">
+            <span class="mpj-posted-date">📆 Posted: {{ job.posted_at|date:"M d, Y" }}</span>
+            <div class="mpj-action-buttons">
+                <a href="{% url 'my_job_analytics' job.slug %}" class="mpj-btn-primary-sm mpj-btn-sm">
+                    📊 Analytics
+                </a>
+                <a href="{% url 'edit_posted_job' job.slug %}" class="mpj-btn-warning-sm mpj-btn-sm">
+                    ✏️ Edit
+                </a>
+                <a href="{% url 'job_detail' job.slug %}" class="mpj-btn-outline-sm mpj-btn-sm" target="_blank">
+                    👁️ View
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="mpj-empty-state mpj-animate">
+        <div class="empty-icon">📝</div>
+        <h3>No jobs posted yet</h3>
+        <p>You haven't posted any jobs yet. Post your first job to start receiving applications!</p>
+        <a href="{% url 'post_job' %}" class="mpj-btn mpj-btn-primary">📝 Post a Job</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Job Reference Hub - Find Your Dream Job & Internship{% endblock %}
+
+{% block content %}
+
+<!-- ==================== HERO SECTION ==================== -->
+{% include 'components/hero1.html' %}
+
+<!-- ==================== STATS + SEARCH SECTION ==================== -->
+{% include 'components/stats_search.html' %}
+<!-- ==================== SLIDER ==================== -->
+{% include 'components/slider.html' %}
+<!-- ==================== LATEST JOBS SECTION ==================== -->
+{% include 'components/latest_jobs.html' %}
+
+<!-- ==================== LATEST INTERNSHIPS SECTION ==================== -->
+{% include 'components/latest_internships.html' %}
+
+<!-- ==================== CATEGORIES SECTION ==================== -->
+{% include 'components/categories.html' %}
+
+<!-- ==================== TESTIMONIALS SECTION ==================== -->
+{% include 'components/testimonials.html' %}
+
+<!-- ==================== NEWSLETTER SECTION ==================== -->
+{% include 'components/newsletter.html' %}
+
+<!-- ==================== CTA SECTION ==================== -->
+{% include 'components/cta.html' %}
+
+{% endblock %}

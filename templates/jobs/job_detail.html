@@ -1,0 +1,1354 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ job.title }} at {{ job.company }}{% endblock %}
+
+{% block content %}
+<style>
+    /* ============================================================
+       JOB DETAIL PAGE - Unified Design
+       ============================================================ */
+    :root {
+        --jd-primary: #2563eb;
+        --jd-primary-dark: #1d4ed8;
+        --jd-primary-light: #eff6ff;
+        --jd-success: #10b981;
+        --jd-warning: #f59e0b;
+        --jd-danger: #ef4444;
+        --jd-purple: #8b5cf6;
+        --jd-gray-50: #f8fafc;
+        --jd-gray-100: #f1f5f9;
+        --jd-gray-200: #e2e8f0;
+        --jd-gray-300: #cbd5e1;
+        --jd-gray-400: #94a3b8;
+        --jd-gray-500: #64748b;
+        --jd-gray-600: #475569;
+        --jd-gray-700: #334155;
+        --jd-gray-800: #1e293b;
+        --jd-gray-900: #0f172a;
+        --jd-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --jd-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+        --jd-shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+        --jd-radius-sm: 8px;
+        --jd-radius-md: 12px;
+        --jd-radius-lg: 16px;
+        --jd-radius-xl: 20px;
+        --jd-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .jd-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 3rem 5% 2.5rem;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid var(--jd-primary);
+    }
+
+    .jd-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .jd-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .jd-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+    }
+
+    .jd-hero-icon {
+        font-size: 4rem;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: var(--jd-radius-xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .jd-hero-text {
+        flex: 1;
+    }
+
+    .jd-hero-text .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+    }
+
+    .jd-hero-text .breadcrumb a {
+        color: #94a3b8;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .jd-hero-text .breadcrumb a:hover {
+        color: #60a5fa;
+    }
+
+    .jd-hero-text .breadcrumb .separator {
+        color: #475569;
+    }
+
+    .jd-hero-text h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.5px;
+    }
+
+    .jd-hero-text .company-name {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .jd-hero-text .company-name i {
+        color: #64748b;
+    }
+
+    .jd-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+
+    .jd-hero-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .jd-hero-meta i {
+        color: #64748b;
+        width: 16px;
+        text-align: center;
+    }
+
+    .jd-hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .jd-badge {
+        padding: 0.25rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid transparent;
+    }
+
+    .jd-badge-fulltime {
+        background: rgba(37, 99, 235, 0.15);
+        color: #60a5fa;
+        border-color: rgba(37, 99, 235, 0.2);
+    }
+
+    .jd-badge-parttime {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .jd-badge-contract {
+        background: rgba(139, 92, 246, 0.15);
+        color: #a78bfa;
+        border-color: rgba(139, 92, 246, 0.2);
+    }
+
+    .jd-badge-daily {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .jd-badge-remote {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+        border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .jd-badge-onsite {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .jd-badge-urgent {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border-color: rgba(239, 68, 68, 0.2);
+        animation: urgentPulse 1.5s ease-in-out infinite;
+    }
+
+    .jd-badge-immediate {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border-color: rgba(239, 68, 68, 0.2);
+        animation: urgentPulse 1.5s ease-in-out infinite;
+    }
+
+    .jd-badge-featured {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border-color: rgba(245, 158, 11, 0.2);
+        animation: featuredPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes urgentPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    @keyframes featuredPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .jd-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 5%;
+    }
+
+    .jd-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 2.5rem;
+        padding: 2rem 0 4rem;
+    }
+
+    .jd-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--jd-gray-500);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: var(--jd-transition);
+        margin-bottom: 0.5rem;
+        padding: 0.4rem 0;
+    }
+
+    .jd-back-link:hover {
+        color: var(--jd-primary);
+        gap: 0.75rem;
+    }
+
+    .jd-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .jd-btn {
+        padding: 0.6rem 1.5rem;
+        border-radius: var(--jd-radius-sm);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--jd-transition);
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        background: rgba(255, 255, 255, 0.1);
+        color: #e2e8f0;
+    }
+
+    .jd-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .jd-btn-primary {
+        background: var(--jd-primary);
+        color: white;
+    }
+
+    .jd-btn-primary:hover {
+        background: var(--jd-primary-dark);
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .jd-btn-save {
+        background: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .jd-btn-save:hover {
+        border-color: #ef4444;
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    .jd-btn-save.saved {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: #ef4444;
+        color: #ef4444;
+    }
+
+    .jd-btn-like {
+        background: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .jd-btn-like:hover {
+        border-color: #f59e0b;
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.1);
+    }
+
+    .jd-btn-like.liked {
+        background: rgba(245, 158, 11, 0.15);
+        border-color: #f59e0b;
+        color: #f59e0b;
+    }
+
+    .jd-btn-outline {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #e2e8f0;
+    }
+
+    .jd-btn-outline:hover {
+        border-color: var(--jd-primary);
+        color: var(--jd-primary);
+        background: rgba(37, 99, 235, 0.1);
+    }
+
+    .jd-section {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--jd-radius-lg);
+        padding: 1.75rem 2rem;
+        box-shadow: var(--jd-shadow-sm);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: var(--jd-transition);
+        margin-bottom: 1.5rem;
+    }
+
+    .jd-section:hover {
+        box-shadow: var(--jd-shadow-md);
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .jd-section h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--jd-gray-900);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .jd-section h2 i {
+        color: var(--jd-primary);
+        width: 24px;
+        text-align: center;
+    }
+
+    .jd-section p {
+        color: var(--jd-gray-700);
+        line-height: 1.8;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+
+    .jd-section .description-text {
+        white-space: pre-wrap;
+    }
+
+    .jd-sidebar {
+        position: sticky;
+        top: 90px;
+        align-self: start;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .jd-sidebar-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--jd-radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--jd-shadow-sm);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: var(--jd-transition);
+    }
+
+    .jd-sidebar-card:hover {
+        box-shadow: var(--jd-shadow-md);
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .jd-sidebar-card h3 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--jd-gray-900);
+        margin-bottom: 1rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .jd-sidebar-card h3 i {
+        color: var(--jd-primary);
+        width: 20px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    .jd-info-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .jd-info-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        font-size: 0.85rem;
+    }
+
+    .jd-info-list li:last-child {
+        border-bottom: none;
+    }
+
+    .jd-info-list .label {
+        color: var(--jd-gray-500);
+    }
+
+    .jd-info-list .value {
+        font-weight: 500;
+        color: var(--jd-gray-800);
+        text-align: right;
+    }
+
+    .jd-apply-card {
+        background: linear-gradient(135deg, var(--jd-primary) 0%, var(--jd-primary-dark) 100%);
+        color: white;
+        border-radius: var(--jd-radius-lg);
+        padding: 1.75rem 1.5rem;
+        text-align: center;
+        box-shadow: var(--jd-shadow-md);
+        transition: var(--jd-transition);
+    }
+
+    .jd-apply-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--jd-shadow-lg);
+    }
+
+    .jd-apply-card h3 {
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .jd-apply-card p {
+        opacity: 0.85;
+        margin-bottom: 1.25rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .jd-apply-card .jd-btn-apply {
+        display: inline-block;
+        padding: 0.7rem 2.5rem;
+        background: white;
+        color: var(--jd-primary);
+        border-radius: var(--jd-radius-sm);
+        font-weight: 700;
+        text-decoration: none;
+        transition: var(--jd-transition);
+        font-size: 0.95rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .jd-apply-card .jd-btn-apply:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+
+    .jd-company-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--jd-radius-sm);
+        color: var(--jd-gray-700);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.85rem;
+        transition: var(--jd-transition);
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    .jd-company-link:hover {
+        border-color: var(--jd-primary);
+        color: var(--jd-primary);
+        transform: translateY(-2px);
+        box-shadow: var(--jd-shadow-sm);
+    }
+
+    .jd-analytics-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    .jd-analytics-grid .jd-stat {
+        text-align: center;
+        background: rgba(0, 0, 0, 0.03);
+        padding: 0.6rem 0.3rem;
+        border-radius: var(--jd-radius-sm);
+        transition: var(--jd-transition);
+    }
+
+    .jd-analytics-grid .jd-stat:hover {
+        background: var(--jd-primary-light);
+    }
+
+    .jd-analytics-grid .jd-stat .number {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--jd-gray-800);
+        display: block;
+    }
+
+    .jd-analytics-grid .jd-stat .label {
+        font-size: 0.6rem;
+        color: var(--jd-gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .jd-analytics-grid .jd-stat .label i {
+        font-size: 0.6rem;
+        margin-right: 0.2rem;
+    }
+
+    .jd-btn-analytics {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 0.5rem;
+        margin-top: 0.75rem;
+        background: var(--jd-primary-light);
+        color: var(--jd-primary);
+        border: none;
+        border-radius: var(--jd-radius-sm);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--jd-transition);
+        font-family: inherit;
+        cursor: pointer;
+    }
+
+    .jd-btn-analytics:hover {
+        background: var(--jd-primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .jd-comment-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .jd-comment-item {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        display: flex;
+        gap: 1rem;
+    }
+
+    .jd-comment-item:last-child {
+        border-bottom: none;
+    }
+
+    .jd-comment-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--jd-primary), #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .jd-comment-content {
+        flex: 1;
+    }
+
+    .jd-comment-author {
+        font-weight: 600;
+        color: var(--jd-gray-800);
+        font-size: 0.9rem;
+    }
+
+    .jd-comment-time {
+        font-size: 0.7rem;
+        color: var(--jd-gray-400);
+        margin-left: 0.5rem;
+    }
+
+    .jd-comment-text {
+        color: var(--jd-gray-600);
+        margin-top: 0.15rem;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .jd-comment-form textarea {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--jd-radius-sm);
+        font-size: 0.9rem;
+        font-family: inherit;
+        transition: all 0.3s;
+        resize: vertical;
+        min-height: 70px;
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    .jd-comment-form textarea:focus {
+        outline: none;
+        border-color: var(--jd-primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .jd-comment-form .jd-btn-submit {
+        margin-top: 0.5rem;
+        padding: 0.5rem 1.5rem;
+        background: var(--jd-primary);
+        color: white;
+        border: none;
+        border-radius: var(--jd-radius-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--jd-transition);
+        font-family: inherit;
+        font-size: 0.85rem;
+    }
+
+    .jd-comment-form .jd-btn-submit:hover {
+        background: var(--jd-primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .jd-empty-comments {
+        text-align: center;
+        padding: 1.5rem;
+        color: var(--jd-gray-400);
+        font-size: 0.9rem;
+    }
+
+    .jd-empty-comments i {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--jd-gray-300);
+    }
+
+    /* Dark Mode */
+    body.dark-mode .jd-section {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jd-section:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .jd-section h2 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .jd-section p {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jd-sidebar-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jd-sidebar-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .jd-sidebar-card h3 {
+        color: #e2e8f0;
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jd-info-list .value {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .jd-info-list li {
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jd-analytics-grid .jd-stat {
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    body.dark-mode .jd-analytics-grid .jd-stat .number {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .jd-analytics-grid .jd-stat:hover {
+        background: rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .jd-comment-author {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .jd-comment-text {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jd-comment-item {
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jd-comment-form textarea {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .jd-comment-form textarea:focus {
+        background: #1e293b;
+        border-color: #60a5fa;
+    }
+
+    body.dark-mode .jd-company-link {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jd-company-link:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+    }
+
+    body.dark-mode .jd-empty-comments {
+        color: #64748b;
+    }
+
+    body.dark-mode .jd-btn-analytics {
+        background: rgba(96, 165, 250, 0.1);
+        color: #60a5fa;
+    }
+
+    body.dark-mode .jd-btn-analytics:hover {
+        background: #3b82f6;
+        color: white;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .jd-wrapper {
+            gap: 1.5rem;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .jd-wrapper {
+            grid-template-columns: 1fr;
+        }
+
+        .jd-sidebar {
+            position: static;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .jd-sidebar .jd-sidebar-card,
+        .jd-sidebar .jd-apply-card {
+            margin-bottom: 0;
+        }
+
+        .jd-sidebar .jd-apply-card {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .jd-hero-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        .jd-hero-text h1 {
+            font-size: 1.8rem;
+        }
+
+        .jd-hero-meta {
+            justify-content: center;
+        }
+
+        .jd-hero-badges {
+            justify-content: center;
+        }
+
+        .jd-actions {
+            justify-content: center;
+        }
+
+        .jd-hero-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 3rem;
+        }
+
+        .jd-section {
+            padding: 1.5rem;
+        }
+
+        .jd-sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .jd-actions .jd-btn {
+            flex: 1;
+            justify-content: center;
+            min-width: 100px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .jd-hero {
+            padding: 2rem 4% 1.5rem;
+        }
+
+        .jd-hero-text h1 {
+            font-size: 1.5rem;
+        }
+
+        .jd-section {
+            padding: 1.25rem;
+        }
+
+        .jd-actions {
+            flex-direction: column;
+        }
+
+        .jd-actions .jd-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .jd-analytics-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .jd-animate {
+        animation: fadeUp 0.4s ease-out forwards;
+    }
+
+    .jd-animate.delay-1 { animation-delay: 0.05s; opacity: 0; }
+    .jd-animate.delay-2 { animation-delay: 0.1s; opacity: 0; }
+    .jd-animate.delay-3 { animation-delay: 0.15s; opacity: 0; }
+    .jd-animate.delay-4 { animation-delay: 0.2s; opacity: 0; }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="jd-hero">
+    <div class="jd-hero-content">
+        <div class="jd-hero-icon">💼</div>
+        <div class="jd-hero-text">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">›</span>
+                <a href="{% url 'job_list' %}">Jobs</a>
+                <span class="separator">›</span>
+                <span>{{ job.title }}</span>
+            </div>
+            <h1>{{ job.title }}</h1>
+            <div class="company-name">
+                <i class="fas fa-building"></i> {{ job.company }}
+            </div>
+
+            <div class="jd-hero-meta">
+                <span><i class="fas fa-map-pin"></i> {{ job.location }}</span>
+                <span><i class="far fa-calendar-alt"></i> Posted {{ job.posted_at|date:"M d, Y" }}</span>
+                {% if job.expires_at %}
+                <span><i class="far fa-clock"></i> Expires {{ job.expires_at|date:"M d, Y" }}</span>
+                {% endif %}
+                {% if job.posted_by %}
+                <span><i class="fas fa-user"></i> Posted by {{ job.posted_by.username }}</span>
+                {% endif %}
+            </div>
+
+            <div class="jd-hero-badges">
+                <!-- Employment Type Badge -->
+                <span class="jd-badge jd-badge-{{ job.employment_type }}">
+                    {% if job.employment_type == 'full_time' %}💼 Full-Time
+                    {% elif job.employment_type == 'part_time' %}⏰ Part-Time
+                    {% elif job.employment_type == 'contract' %}📄 Contract
+                    {% elif job.employment_type == 'daily' %}⚡ Daily
+                    {% endif %}
+                </span>
+                <!-- Work Location Badge -->
+                <span class="jd-badge {% if job.work_location == 'remote' %}jd-badge-remote{% else %}jd-badge-onsite{% endif %}">
+                    {% if job.work_location == 'remote' %}🌐 Remote{% else %}🏢 On-Site{% endif %}
+                </span>
+                {% if job.is_featured %}
+                <span class="jd-badge jd-badge-featured">⭐ Featured</span>
+                {% endif %}
+                {% if job.is_urgent %}
+                <span class="jd-badge jd-badge-urgent">⚡ Urgent</span>
+                {% endif %}
+                {% if job.is_immediate %}
+                <span class="jd-badge jd-badge-immediate">⚡ Immediate</span>
+                {% endif %}
+                {% if job.category %}
+                <span class="jd-badge" style="background:rgba(139,92,246,0.15);color:#a78bfa;border-color:rgba(139,92,246,0.2);">📂 {{ job.category.name }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div class="jd-actions">
+                {% if user.is_authenticated %}
+                <button class="jd-btn jd-btn-like {% if is_liked %}liked{% endif %}" onclick="toggleLike('{{ job.slug }}', this)">
+                    <i class="fas {% if is_liked %}fa-heart{% else %}fa-heart{% endif %}"></i>
+                    {% if is_liked %}Liked{% else %}Like{% endif %}
+                </button>
+                <button class="jd-btn jd-btn-save {% if is_saved %}saved{% endif %}" onclick="toggleSave('{{ job.slug }}', this)">
+                    <i class="fas {% if is_saved %}fa-bookmark{% else %}fa-bookmark{% endif %}"></i>
+                    {% if is_saved %}Saved{% else %}Save{% endif %}
+                </button>
+                {% endif %}
+
+                {% if job.apply_url %}
+                <a href="{% url 'track_click' job.slug %}?type=apply" target="_blank" class="jd-btn jd-btn-primary">
+                    <i class="fas fa-paper-plane"></i> Apply Now
+                </a>
+                {% endif %}
+
+                {% if is_owner %}
+                <a href="{% url 'my_job_analytics' job.slug %}" class="jd-btn jd-btn-outline">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="jd-container">
+    <a href="{% url 'job_list' %}" class="jd-back-link">
+        <i class="fas fa-arrow-left"></i> Back to Jobs
+    </a>
+
+    <div class="jd-wrapper">
+        <!-- ===== LEFT COLUMN ===== -->
+        <div class="jd-left">
+            <!-- Description -->
+            <div class="jd-section jd-animate">
+                <h2><i class="fas fa-align-left"></i> About This Job</h2>
+                <p class="description-text">{{ job.description|linebreaks }}</p>
+            </div>
+
+            <!-- Requirements -->
+            {% if job.requirements %}
+            <div class="jd-section jd-animate delay-1">
+                <h2><i class="fas fa-check-circle"></i> Requirements & Qualifications</h2>
+                <p class="description-text">{{ job.requirements|linebreaks }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Comments -->
+            <div class="jd-section jd-animate delay-2">
+                <h2>
+                    <i class="fas fa-comments"></i> Comments
+                    <span style="font-size:0.7rem;background:rgba(0,0,0,0.06);color:var(--jd-gray-500);padding:0.05rem 0.5rem;border-radius:10px;font-weight:500;margin-left:0.25rem;">{{ comments.count }}</span>
+                </h2>
+
+                {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'comment_job' job.slug %}" class="jd-comment-form">
+                    {% csrf_token %}
+                    {{ comment_form.comment }}
+                    <button type="submit" class="jd-btn-submit">
+                        <i class="fas fa-paper-plane"></i> Post Comment
+                    </button>
+                </form>
+                {% else %}
+                <p style="color: var(--jd-gray-500); margin-bottom: 0.5rem; font-size: 0.9rem;">
+                    <a href="{% url 'login' %}" style="color:var(--jd-primary);font-weight:600;">Login</a> to comment
+                </p>
+                {% endif %}
+
+                <div style="margin-top: 1.25rem;">
+                    {% if comments %}
+                    <ul class="jd-comment-list">
+                        {% for comment in comments %}
+                        <li class="jd-comment-item">
+                            <div class="jd-comment-avatar">
+                                {{ comment.user.username|slice:":1"|upper }}
+                            </div>
+                            <div class="jd-comment-content">
+                                <div>
+                                    <span class="jd-comment-author">{{ comment.user.username }}</span>
+                                    <span class="jd-comment-time">{{ comment.created_at|timesince }} ago</span>
+                                </div>
+                                <div class="jd-comment-text">{{ comment.comment }}</div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="jd-empty-comments">
+                        <i class="fas fa-comment-slash"></i>
+                        <p>No comments yet. Be the first to share your thoughts!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== RIGHT COLUMN - SIDEBAR ===== -->
+        <div class="jd-sidebar">
+            <!-- Quick Info -->
+            <div class="jd-sidebar-card jd-animate delay-1">
+                <h3><i class="fas fa-circle-info"></i> Quick Info</h3>
+                <ul class="jd-info-list">
+                    <li><span class="label">Company</span><span class="value">{{ job.company }}</span></li>
+                    <li><span class="label">Location</span><span class="value">{{ job.location }}</span></li>
+                    <li><span class="label">Employment Type</span><span class="value">{{ job.get_employment_type_display }}</span></li>
+                    <li><span class="label">Work Location</span><span class="value">{{ job.get_work_location_display }}</span></li>
+
+                    <!-- Full-Time/Part-Time -->
+                    {% if job.salary %}
+                    <li><span class="label">Salary</span><span class="value">{{ job.salary }}</span></li>
+                    {% endif %}
+
+                    <!-- Contract -->
+                    {% if job.contract_type %}
+                    <li><span class="label">Contract Type</span><span class="value">{{ job.get_contract_type_display }}</span></li>
+                    {% endif %}
+                    {% if job.budget_min or job.budget_max %}
+                    <li><span class="label">Budget</span><span class="value">
+                        {% if job.budget_min and job.budget_max %}
+                            ${{ job.budget_min }} - ${{ job.budget_max }}
+                        {% elif job.budget_max %}
+                            Up to ${{ job.budget_max }}
+                        {% else %}
+                            Negotiable
+                        {% endif %}
+                    </span></li>
+                    {% endif %}
+                    {% if job.experience_level %}
+                    <li><span class="label">Experience</span><span class="value">{{ job.get_experience_level_display }}</span></li>
+                    {% endif %}
+                    {% if job.duration_type %}
+                    <li><span class="label">Duration</span><span class="value">{{ job.get_duration_type_display }}</span></li>
+                    {% endif %}
+
+                    <!-- Daily -->
+                    {% if job.payment_amount %}
+                    <li><span class="label">Payment</span><span class="value">${{ job.payment_amount }}/{{ job.get_payment_method_display|default:'day' }}</span></li>
+                    {% endif %}
+                    {% if job.start_date %}
+                    <li><span class="label">Start Date</span><span class="value">{{ job.start_date|date:"M d, Y" }}</span></li>
+                    {% endif %}
+                    {% if job.end_date %}
+                    <li><span class="label">End Date</span><span class="value">{{ job.end_date|date:"M d, Y" }}</span></li>
+                    {% endif %}
+                    {% if job.working_hours %}
+                    <li><span class="label">Working Hours</span><span class="value">{{ job.working_hours }}</span></li>
+                    {% endif %}
+
+                    <li><span class="label">Posted</span><span class="value">{{ job.posted_at|date:"M d, Y" }}</span></li>
+                </ul>
+            </div>
+
+            <!-- Performance Stats -->
+            <div class="jd-sidebar-card jd-animate delay-2">
+                <h3><i class="fas fa-chart-simple"></i> Performance</h3>
+                <div class="jd-analytics-grid">
+                    <div class="jd-stat">
+                        <span class="number">{{ analytics.views }}</span>
+                        <span class="label"><i class="far fa-eye"></i> Views</span>
+                    </div>
+                    <div class="jd-stat">
+                        <span class="number">{{ analytics.likes }}</span>
+                        <span class="label"><i class="fas fa-heart"></i> Likes</span>
+                    </div>
+                    <div class="jd-stat">
+                        <span class="number">{{ analytics.comments_count }}</span>
+                        <span class="label"><i class="fas fa-comment"></i> Comments</span>
+                    </div>
+                    <div class="jd-stat">
+                        <span class="number">{{ analytics.clicks }}</span>
+                        <span class="label"><i class="fas fa-mouse-pointer"></i> Clicks</span>
+                    </div>
+                </div>
+                {% if is_owner %}
+                <a href="{% url 'my_job_analytics' job.slug %}" class="jd-btn-analytics">
+                    <i class="fas fa-chart-line"></i> View Full Analytics
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Apply Now -->
+            {% if job.apply_url %}
+            <div class="jd-apply-card jd-animate delay-3">
+                <h3>🚀 Ready to Apply?</h3>
+                <p>Don't miss this opportunity. Apply now!</p>
+                <a href="{% url 'track_click' job.slug %}?type=apply" target="_blank" class="jd-btn-apply">
+                    Apply Now <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Company Website -->
+            {% if job.company_website %}
+            <div class="jd-sidebar-card jd-animate delay-3">
+                <a href="{% url 'track_click' job.slug %}?type=website" target="_blank" class="jd-company-link">
+                    <i class="fas fa-globe"></i> Visit Company Website
+                    <i class="fas fa-external-link-alt" style="font-size:0.65rem;opacity:0.5;"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    function toggleLike(slug, button) {
+        {% if not user.is_authenticated %}
+            window.location.href = '/login/';
+            return;
+        {% endif %}
+
+        fetch(`/jobs/${slug}/like/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (data.liked) {
+                    button.innerHTML = '<i class="fas fa-heart"></i> Liked';
+                    button.classList.add('liked');
+                    showToast(data.message, 'success');
+                } else {
+                    button.innerHTML = '<i class="fas fa-heart"></i> Like';
+                    button.classList.remove('liked');
+                    showToast(data.message, 'info');
+                }
+                // Update like count in analytics
+                const likeStat = document.querySelector('.jd-analytics-grid .jd-stat:nth-child(2) .number');
+                if (likeStat) {
+                    likeStat.textContent = data.likes_count;
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Something went wrong. Please try again.', 'error');
+        });
+    }
+
+    function toggleSave(slug, button) {
+        {% if not user.is_authenticated %}
+            window.location.href = '/login/';
+            return;
+        {% endif %}
+
+        fetch(`/jobs/${slug}/save/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (data.saved) {
+                    button.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+                    button.classList.add('saved');
+                    showToast('Job saved successfully! ✅', 'success');
+                } else {
+                    button.innerHTML = '<i class="fas fa-bookmark"></i> Save';
+                    button.classList.remove('saved');
+                    showToast('Job removed from saved.', 'info');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Something went wrong. Please try again.', 'error');
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function showToast(message, type = 'success') {
+        const colors = {
+            success: '#10b981',
+            error: '#ef4444',
+            info: '#3b82f6',
+            warning: '#f59e0b'
+        };
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: ${colors[type] || colors.success};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 9999;
+            animation: slideInToast 0.3s ease-out;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            max-width: 400px;
+        `;
+        toast.innerHTML = `<span>${message}</span>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideOutToast 0.3s ease-out forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    const toastStyle = document.createElement('style');
+    toastStyle.textContent = `
+        @keyframes slideInToast {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutToast {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(toastStyle);
+</script>
+{% endblock %}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% if action == 'Add' %}Add New{% else %}Edit{% endif %} Category - Admin - Job Reference Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ===== SAME FORM STYLES ===== */
+        :root {
+            --primary: #2563eb; --primary-dark: #1d4ed8;
+            --success: #10b981; --success-bg: #d1fae5;
+            --danger: #ef4444; --danger-bg: #fee2e2;
+            --warning: #f59e0b; --warning-bg: #fef3c7;
+            --info: #3b82f6; --info-bg: #dbeafe;
+            --gray-50: #f8fafc; --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0; --gray-300: #cbd5e1;
+            --gray-400: #94a3b8; --gray-500: #64748b;
+            --gray-600: #475569; --gray-700: #334155;
+            --gray-800: #1e293b; --gray-900: #0f172a;
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            color: var(--gray-800);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .form-wrapper { width: 100%; max-width: 600px; }
+
+        .top-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;
+        }
+        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--gray-500); }
+        .breadcrumb a { color: var(--primary); text-decoration: none; font-weight: 500; }
+        .breadcrumb a:hover { color: var(--primary-dark); text-decoration: underline; }
+        .breadcrumb .separator { color: var(--gray-400); }
+        .breadcrumb .current { color: var(--gray-700); font-weight: 600; }
+
+        .btn {
+            padding: 0.55rem 1.25rem; border: none; border-radius: var(--radius-sm);
+            cursor: pointer; font-size: 0.85rem; font-weight: 600; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            transition: var(--transition);
+            font-family: var(--font-family);
+        }
+        .btn-outline { background: white; border: 2px solid var(--gray-200); color: var(--gray-700); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--info-bg); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .btn-sm { padding: 0.4rem 0.9rem; font-size: 0.8rem; }
+
+        .form-container { background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; }
+        .form-header {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white; padding: 1.75rem 2rem;
+        }
+        .form-header h1 { font-size: 1.5rem; font-weight: 700; }
+        .badge-add { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+        .badge-edit { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+
+        .form-body { padding: 2rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.4rem; }
+        .form-group label .required { color: var(--danger); }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 0.7rem 0.9rem; border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm); font-size: 0.9rem; font-family: inherit;
+            transition: var(--transition);
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none; border-color: #7c3aed; box-shadow: 0 0 0 4px rgba(124,58,237,0.08);
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group .help-text { font-size: 0.78rem; color: var(--gray-400); margin-top: 0.3rem; }
+        .form-group .char-count { font-size: 0.75rem; color: var(--gray-400); text-align: right; margin-top: 0.25rem; }
+
+        .icon-preview { text-align: center; padding: 1.5rem; background: var(--gray-50); border-radius: var(--radius-sm); margin-bottom: 1.25rem; }
+        .icon-preview .preview-icon { font-size: 3rem; }
+
+        .form-actions { display: flex; gap: 0.75rem; justify-content: flex-end; padding-top: 1.5rem; border-top: 1px solid var(--gray-200); margin-top: 1.5rem; }
+
+        @media (max-width: 640px) {
+            body { padding: 1rem; }
+            .form-body { padding: 1.5rem; }
+            .form-header { padding: 1.5rem; }
+            .form-actions { flex-direction: column; }
+            .form-actions .btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="form-wrapper">
+    <div class="top-nav">
+        <div class="breadcrumb">
+            <a href="/">🏠 Home</a> <span class="separator">›</span>
+            <a href="{% url 'admin_dashboard' %}">Admin</a> <span class="separator">›</span>
+            <a href="{% url 'admin_categories' %}">Categories</a> <span class="separator">›</span>
+            <span class="current">{% if action == 'Add' %}Add New{% else %}Edit{% endif %}</span>
+        </div>
+        <div>
+            <a href="/" class="btn btn-outline btn-sm">🏠 Home</a>
+            <a href="{% url 'admin_categories' %}" class="btn btn-outline btn-sm">← Back</a>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h1>{% if action == 'Add' %}➕ Add New Category{% else %}✏️ Edit Category{% endif %}</h1>
+            <span class="{% if action == 'Add' %}badge-add{% else %}badge-edit{% endif %}">
+                {% if action == 'Add' %}Creating{% else %}Editing{% endif %}
+            </span>
+        </div>
+
+        <div class="form-body">
+            <div class="icon-preview">
+                <div class="preview-icon" id="iconPreview">📂</div>
+                <p style="color:var(--gray-500);font-size:0.85rem;">Icon Preview</p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Category Name <span class="required">*</span></label>
+                    {{ form.name }}
+                    <span class="char-count" id="nameCount">0/100</span>
+                </div>
+                <div class="form-group">
+                    <label>Icon (Emoji)</label>
+                    {{ form.icon }}
+                    <span class="help-text">Enter an emoji like 🐍, 💼, 🎨</span>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    {{ form.description }}
+                    <span class="char-count" id="descCount">0/500</span>
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'admin_categories' %}" class="btn btn-outline">Cancel</a>
+                    <button type="submit" class="btn btn-success">
+                        {% if action == 'Add' %}➕ Create Category{% else %}💾 Update Category{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Icon preview
+    const iconInput = document.querySelector('#{{ form.icon.id_for_label }}');
+    if (iconInput) {
+        iconInput.addEventListener('input', function() {
+            document.getElementById('iconPreview').textContent = this.value || '📂';
+        });
+    }
+
+    // Character counters
+    const nameInput = document.querySelector('#{{ form.name.id_for_label }}');
+    const descInput = document.querySelector('#{{ form.description.id_for_label }}');
+    if (nameInput) {
+        nameInput.addEventListener('input', function() {
+            document.getElementById('nameCount').textContent = this.value.length + '/100';
+        });
+    }
+    if (descInput) {
+        descInput.addEventListener('input', function() {
+            document.getElementById('descCount').textContent = this.value.length + '/500';
+        });
+    }
+
+    // Ctrl+S to save
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            document.querySelector('form').submit();
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscription Successful - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        padding: 3rem 2rem;
+        text-align: center;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .success-icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .success-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #065f46;
+        margin-bottom: 1rem;
+    }
+
+    .success-message {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.8;
+    }
+
+    .features-list {
+        text-align: left;
+        background: #f0fdf4;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .features-list h3 {
+        color: #065f46;
+        margin-bottom: 1rem;
+    }
+
+    .features-list ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .features-list li {
+        padding: 0.5rem 0;
+        color: #047857;
+    }
+
+    .features-list li::before {
+        content: '✓ ';
+        font-weight: bold;
+        color: #059669;
+    }
+</style>
+
+<div class="success-container">
+    <div class="success-icon">🎉</div>
+    <h1 class="success-title">You're Subscribed!</h1>
+    <p class="success-message">
+        Thank you for subscribing to Job Reference Hub alerts!
+        You'll now receive the latest job and internship opportunities directly in your inbox.
+    </p>
+
+    <div class="features-list">
+        <h3>What to expect:</h3>
+        <ul>
+            <li>Weekly job opportunity roundups</li>
+            <li>New internship postings alerts</li>
+            <li>Remote work opportunities</li>
+            <li>Career tips and resources</li>
+        </ul>
+    </div>
+
+    <a href="/" class="btn btn-primary" style="display: inline-block;">Back to Home</a>
+</div>
+{% endblock %}

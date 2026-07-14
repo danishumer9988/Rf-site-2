@@ -1,0 +1,257 @@
+<style>
+    .search-bar-container {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 1.75rem 2rem;
+        border-radius: var(--radius-xl);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        max-width: 900px;
+        margin: -1.5rem auto 2rem;
+        position: relative;
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+
+    .search-bar-container:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .search-form {
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr auto;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .search-field {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .search-field label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--gray-500);
+        margin-bottom: 0.35rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .search-field input,
+    .search-field select {
+        padding: 0.75rem 1rem;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--radius-sm);
+        font-size: 0.95rem;
+        transition: all 0.3s;
+        background: rgba(255, 255, 255, 0.5);
+        color: var(--gray-800);
+        width: 100%;
+    }
+
+    .search-field input:hover,
+    .search-field select:hover {
+        border-color: var(--gray-300);
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .search-field input:focus,
+    .search-field select:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .search-field select {
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.5rem;
+    }
+
+    .search-submit {
+        padding: 0.75rem 2rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        height: fit-content;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+    }
+
+    .search-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    .popular-searches {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .popular-searches .label {
+        font-size: 0.8rem;
+        color: var(--gray-400);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-right: 0.25rem;
+    }
+
+    .search-tag {
+        padding: 0.25rem 0.8rem;
+        background: rgba(0, 0, 0, 0.04);
+        color: var(--gray-600);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        font-weight: 500;
+    }
+
+    .search-tag:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Dark Mode */
+    body.dark-mode .search-bar-container {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .search-bar-container:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .search-field input,
+    body.dark-mode .search-field select {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .search-field input:hover,
+    body.dark-mode .search-field select:hover {
+        background: rgba(30, 41, 59, 0.7);
+        border-color: #334155;
+    }
+
+    body.dark-mode .search-field input:focus,
+    body.dark-mode .search-field select:focus {
+        background: #1e293b;
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .search-field label {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .popular-searches .label {
+        color: #64748b;
+    }
+
+    body.dark-mode .search-tag {
+        background: rgba(255, 255, 255, 0.05);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .search-tag:hover {
+        background: #3b82f6;
+        color: white;
+    }
+
+    @media (max-width: 968px) {
+        .search-form {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .search-submit {
+            grid-column: 1 / -1;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .search-bar-container {
+            margin: -1rem 1rem 2rem;
+            padding: 1.25rem;
+        }
+
+        .search-form {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .search-bar-container {
+            padding: 1rem;
+            margin: -0.5rem 0.5rem 1.5rem;
+        }
+
+        .popular-searches .label {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="search-bar-container">
+    <form method="GET" action="{% url 'search_jobs' %}" class="search-form">
+        <div class="search-field">
+            <label>🔍 What</label>
+            <input type="text" name="query" placeholder="Job title, skills, or keywords" value="{{ request.GET.query }}">
+        </div>
+        <div class="search-field">
+            <label>📍 Where</label>
+            <input type="text" name="location" placeholder="City, state, or remote" value="{{ request.GET.location }}">
+        </div>
+        <div class="search-field">
+            <label>📌 Type</label>
+            <select name="type">
+                <option value="">All Types</option>
+                <option value="physical" {% if request.GET.type == 'physical' %}selected{% endif %}>🏢 On-Site</option>
+                <option value="remote" {% if request.GET.type == 'remote' %}selected{% endif %}>🌐 Remote</option>
+            </select>
+        </div>
+        <button type="submit" class="search-submit">
+            <span>Search</span>
+            <span>→</span>
+        </button>
+    </form>
+
+    <div class="popular-searches">
+        <span class="label">Popular:</span>
+        <a href="?query=Python" class="search-tag">🐍 Python</a>
+        <a href="?query=JavaScript" class="search-tag">⚡ JavaScript</a>
+        <a href="?query=React&type=remote" class="search-tag">⚛️ Remote React</a>
+        <a href="?query=DevOps" class="search-tag">🚀 DevOps</a>
+        <a href="?query=Data+Science" class="search-tag">📊 Data Science</a>
+        <a href="?query=AI" class="search-tag">🤖 AI</a>
+    </div>
+</div>

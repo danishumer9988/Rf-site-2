@@ -1,0 +1,1254 @@
+<!-- components/hero.html -->
+{% load static %}
+
+<!-- Hero Section Styles - Only affects the hero area -->
+<style>
+    /* Hero Section Specific Styles */
+    .hero-section-custom {
+        position: relative;
+        z-index: 1;
+        min-height: 40vh;
+        display: flex;
+        align-items: center;
+        padding: 10px 4% 40px;
+        gap: 1.5rem;
+        background: #060918;
+        overflow: hidden;
+    }
+
+    .hero-section-custom .bg-container {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .hero-section-custom .bg-gradient {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background:
+            radial-gradient(ellipse at 20% 40%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 50%, rgba(139, 92, 246, 0.06) 0%, transparent 60%),
+            radial-gradient(ellipse at 50% 90%, rgba(6, 182, 212, 0.04) 0%, transparent 50%),
+            linear-gradient(180deg, #060918 0%, #0a0f25 50%, #060918 100%);
+    }
+
+    .hero-section-custom .digital-grid {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-image:
+            linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        animation: gridShift 15s linear infinite;
+    }
+
+    @keyframes gridShift {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(40px, 40px); }
+    }
+
+    .hero-section-custom .stars-layer {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+    }
+
+    .hero-section-custom .star-dot {
+        position: absolute;
+        background: white;
+        border-radius: 50%;
+        animation: starTwinkle var(--duration) ease-in-out infinite;
+        animation-delay: var(--delay);
+    }
+
+    @keyframes starTwinkle {
+        0%, 100% { opacity: 0.2; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.5); }
+    }
+
+    .hero-section-custom .hero-left {
+        flex: 1;
+        max-width: 550px;
+        z-index: 2;
+        position: relative;
+    }
+
+    .hero-section-custom .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 1rem;
+        background: rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 30px;
+        font-size: 0.82rem;
+        color: #60a5fa;
+        margin-bottom: 1.5rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .hero-section-custom .hero-badge .live-dot {
+        width: 7px; height: 7px;
+        background: #10b981;
+        border-radius: 50%;
+        animation: livePulse 1.5s infinite;
+        box-shadow: 0 0 8px #10b981;
+    }
+
+    @keyframes livePulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(1.8); }
+    }
+
+    .hero-section-custom .hero-badge .update-time-text {
+        font-weight: 600;
+        color: #f1f5f9;
+        margin-left: 0.15rem;
+    }
+
+    .hero-section-custom .hero-title {
+        font-size: 3.6rem;
+        font-weight: 800;
+        line-height: 1.08;
+        margin-bottom: 1.3rem;
+        color: white;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-section-custom .hero-title .glow-text {
+        background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #c084fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.5));
+        animation: textGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes textGlow {
+        0%, 100% { filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.5)); }
+        50% { filter: drop-shadow(0 0 50px rgba(139, 92, 246, 0.8)); }
+    }
+
+    .hero-section-custom .hero-desc {
+        font-size: 1.05rem;
+        color: #94a3b8;
+        line-height: 1.65;
+        margin-bottom: 1.8rem;
+        max-width: 480px;
+    }
+
+    /* Selected Country Indicator */
+    .hero-section-custom .selected-country-indicator {
+        display: none;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 1.2rem;
+        background: rgba(59, 130, 246, 0.12);
+        border: 1px solid rgba(59, 130, 246, 0.25);
+        border-radius: 30px;
+        backdrop-filter: blur(10px);
+        margin-top: 1rem;
+        animation: slideUp 0.4s ease-out;
+    }
+
+    .hero-section-custom .selected-country-indicator.show {
+        display: inline-flex;
+    }
+
+    .hero-section-custom .selected-country-indicator .country-flag {
+        font-size: 1.2rem;
+    }
+
+    .hero-section-custom .selected-country-indicator .country-name {
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .hero-section-custom .selected-country-indicator .country-jobs {
+        color: #60a5fa;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .hero-section-custom .selected-country-indicator .clear-selection {
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 1.1rem;
+        padding: 0 0.25rem;
+        transition: var(--transition);
+    }
+
+    .hero-section-custom .selected-country-indicator .clear-selection:hover {
+        color: #ef4444;
+        transform: scale(1.1);
+    }
+
+    /* Globe Container */
+    .hero-section-custom .hero-right {
+        flex: 1.3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        min-height: 350px;
+    }
+
+    .hero-section-custom .globe-wrapper {
+        position: relative;
+        width: 320px;
+        height: 320px;
+    }
+
+    .hero-section-custom canvas { display: block; width: 100%; height: 100%; }
+
+    .hero-section-custom .drag-hint {
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: #4a5568;
+        font-size: 0.75rem;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+        z-index: 5;
+    }
+
+    .hero-section-custom .drag-hint.is-hidden { opacity: 0; }
+
+    .hero-section-custom .drag-hint .hand-icon {
+        animation: handSwipe 2s ease-in-out infinite;
+        font-size: 0.9rem;
+    }
+
+    @keyframes handSwipe {
+        0%, 100% { transform: translate(-3px, 2px) rotate(-5deg); }
+        50% { transform: translate(3px, -2px) rotate(5deg); }
+    }
+
+    /* Label Layer */
+    .hero-section-custom .label-layer {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 4;
+        border-radius: 50%;
+    }
+
+    .hero-section-custom .country-label {
+        position: absolute;
+        top: 0; left: 0;
+        transform: translate(-50%, -130%);
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 3px 9px;
+        font-size: 10px;
+        font-weight: 600;
+        color: #f1f5f9;
+        white-space: nowrap;
+        background: rgba(10, 15, 35, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        backdrop-filter: blur(6px);
+        pointer-events: auto;
+        cursor: pointer;
+        box-shadow: 0 0 14px rgba(96, 165, 250, 0.12);
+        transition: opacity 0.2s linear, transform 0.2s ease, background 0.2s ease;
+        user-select: none;
+    }
+
+    .hero-section-custom .country-label .dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #60a5fa;
+        box-shadow: 0 0 6px #60a5fa;
+        flex-shrink: 0;
+    }
+
+    .hero-section-custom .country-label:hover {
+        background: rgba(59, 130, 246, 0.22);
+        border-color: rgba(96, 165, 250, 0.5);
+        transform: translate(-50%, -135%) scale(1.05);
+    }
+
+    .hero-section-custom .country-label.is-active {
+        background: rgba(59, 130, 246, 0.3);
+        border-color: #60a5fa;
+        box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+    }
+
+    /* Globe Controls */
+    .hero-section-custom .globe-controls {
+        position: absolute;
+        right: 6px;
+        bottom: 38px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        z-index: 6;
+    }
+
+    .hero-section-custom .globe-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.04);
+        color: #94a3b8;
+        font-size: 13px;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+    .hero-section-custom .globe-btn:hover {
+        background: rgba(59,130,246,0.18);
+        border-color: rgba(96,165,250,0.4);
+        color: white;
+    }
+
+    /* Globe Tooltip */
+    .hero-section-custom .globe-tooltip {
+        position: absolute;
+        top: 0; left: 0;
+        transform: translate(-50%, -135%);
+        padding: 5px 10px;
+        background: rgba(8, 12, 28, 0.92);
+        border: 1px solid rgba(167, 139, 250, 0.35);
+        border-radius: 10px;
+        font-size: 11px;
+        line-height: 1.3;
+        color: #f1f5f9;
+        pointer-events: none;
+        z-index: 6;
+        opacity: 0;
+        white-space: nowrap;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        transition: opacity 0.2s ease;
+    }
+
+    .hero-section-custom .globe-tooltip.is-visible { opacity: 1; }
+    .hero-section-custom .globe-tooltip strong { display: block; font-size: 11.5px; }
+    .hero-section-custom .globe-tooltip span { color: #60a5fa; font-size: 10px; font-weight: 600; }
+
+    /* Toast */
+    .hero-section-custom .toast {
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
+        transform: translate(-50%, 12px);
+        padding: 0.7rem 1.2rem;
+        background: rgba(15, 20, 40, 0.92);
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        border-radius: 30px;
+        font-size: 0.85rem;
+        color: #f1f5f9;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.3s;
+        z-index: 50;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .hero-section-custom .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* Responsive */
+    @media (max-width: 1300px) {
+        .hero-section-custom { gap: 1.2rem; }
+        .hero-section-custom .globe-wrapper { width: 280px; height: 280px; }
+        .hero-section-custom .hero-right { min-height: 300px; }
+    }
+
+    @media (max-width: 1100px) {
+        .hero-section-custom { flex-direction: column; text-align: center; padding-top: 20px; }
+        .hero-section-custom .hero-left { max-width: 100%; }
+        .hero-section-custom .hero-desc { margin: 0 auto 1.8rem; }
+        .hero-section-custom .globe-wrapper { width: 260px; height: 260px; }
+        .hero-section-custom .hero-right { min-height: 280px; flex-direction: column; gap: 1rem; }
+    }
+
+    @media (max-width: 768px) {
+        .hero-section-custom .hero-title { font-size: 2.3rem; }
+        .hero-section-custom .globe-wrapper { width: 200px; height: 200px; }
+        .hero-section-custom .hero-right { min-height: 220px; }
+        .hero-section-custom .country-label { font-size: 8px; padding: 2px 6px; }
+        .hero-section-custom .hero-badge { font-size: 0.7rem; padding: 0.3rem 0.8rem; }
+    }
+
+    @media (max-width: 480px) {
+        .hero-section-custom { padding: 5px 3% 30px; }
+        .hero-section-custom .hero-title { font-size: 1.8rem; }
+        .hero-section-custom .globe-wrapper { width: 160px; height: 160px; }
+        .hero-section-custom .hero-right { min-height: 180px; }
+        .hero-section-custom .hero-badge { font-size: 0.6rem; padding: 0.2rem 0.6rem; }
+    }
+</style>
+
+<!-- Hero Section HTML -->
+<section class="hero-section-custom">
+    <div class="bg-container">
+        <div class="bg-gradient"></div>
+        <div class="digital-grid"></div>
+        <div class="stars-layer" id="starsLayer"></div>
+    </div>
+
+    <div class="hero-left">
+        <div class="hero-badge">
+            <span class="live-dot"></span>
+            Last updated
+            <span class="update-time-text" id="lastUpdateTime">Just now</span>
+
+            <input
+                    type="hidden"
+                    id="lastUpdatedTimestamp"
+                    value="{{ last_updated|date:'c' }}">
+        </div>
+
+        <h1 class="hero-title">
+            Find Jobs.<br>
+            Build Your <span class="glow-text">Future.</span>
+        </h1>
+
+        <p class="hero-desc">
+            Discover thousands of jobs and internships from trusted sources worldwide.
+            Your next career opportunity is just a search away.
+        </p>
+
+        <!-- Selected Country Indicator -->
+        <div class="selected-country-indicator" id="selectedCountryIndicator">
+            <span class="country-flag" id="selectedCountryFlag">🌍</span>
+            <span class="country-name" id="selectedCountryName">Country</span>
+            <span class="country-jobs" id="selectedCountryJobs">0 jobs open</span>
+            <button class="clear-selection" id="clearCountrySelection" title="Clear selection">×</button>
+        </div>
+    </div>
+
+    <div class="hero-right">
+        <div class="globe-wrapper" id="globeWrapper">
+            <canvas id="globeCanvas"></canvas>
+            <div class="label-layer" id="labelLayer"></div>
+            <div class="globe-tooltip" id="globeTooltip"></div>
+            <div class="globe-controls">
+                <button class="globe-btn" id="zoomIn" title="Zoom in">+</button>
+                <button class="globe-btn" id="zoomOut" title="Zoom out">−</button>
+                <button class="globe-btn" id="toggleRotate" title="Pause rotation">⏸</button>
+                <button class="globe-btn" id="resetView" title="Reset view">⟲</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Hero Scripts -->
+<script>
+        // ========== LAST UPDATED TIME FUNCTION ==========
+        let lastUpdatedTimestamp = null;
+
+        // Function to format time ago
+        function getTimeAgo(date) {
+            if (!date) return 'Just now';
+            const now = new Date();
+            const diffMs = now - date;
+            const diffSeconds = Math.floor(diffMs / 1000);
+            const diffMinutes = Math.floor(diffSeconds / 60);
+            const diffHours = Math.floor(diffMinutes / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            if (diffDays > 0) {
+                return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            } else if (diffHours > 0) {
+                return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            } else if (diffMinutes > 0) {
+                return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`;
+            } else if (diffSeconds > 0) {
+                return `${diffSeconds} second${diffSeconds > 1 ? 's' : ''} ago`;
+            } else {
+                return 'Just now';
+            }
+        }
+
+        // Function to update the display
+        function updateTimeDisplay() {
+            const timeElement = document.getElementById('lastUpdateTime');
+            if (timeElement && lastUpdatedTimestamp) {
+                timeElement.textContent = getTimeAgo(lastUpdatedTimestamp);
+            }
+        }
+
+        // Initialize the last updated time
+        function initializeLastUpdated() {
+            // Get timestamp from Django template
+            const timestampElement = document.getElementById('lastUpdatedTimestamp');
+            if (timestampElement && timestampElement.value) {
+                lastUpdatedTimestamp = new Date(timestampElement.value);
+            } else {
+                // Fallback: Use 2 hours ago
+                const now = new Date();
+                lastUpdatedTimestamp = new Date(now.getTime() - (2 * 60 * 60 * 1000));
+            }
+            updateTimeDisplay();
+        }
+
+        // ========== INITIALIZE ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLastUpdated();
+
+            // Update every 30 seconds to keep the "ago" text fresh
+            setInterval(updateTimeDisplay, 30000);
+
+            // Also update when page becomes visible again
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    updateTimeDisplay();
+                }
+            });
+        });
+            // ========== STARS ==========
+            const starsLayer = document.getElementById('starsLayer');
+            for (let i = 0; i < 250; i++) {
+                const star = document.createElement('div');
+                star.className = 'star-dot';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.setProperty('--delay', (Math.random() * 3) + 's');
+                const size = Math.random() * 1.8 + 0.4;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                starsLayer.appendChild(star);
+            }
+
+            // ========== TOAST ==========
+            function showToast(msg) {
+                const toastEl = document.getElementById('toast');
+                toastEl.textContent = msg;
+                toastEl.classList.add('show');
+                clearTimeout(toastEl._t);
+                toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 2600);
+            }
+
+            // ========== COUNTRY SELECTION HANDLER ==========
+            function selectCountryOnGlobe(countryName) {
+                const indicator = document.getElementById('selectedCountryIndicator');
+                const flagEl = document.getElementById('selectedCountryFlag');
+                const nameEl = document.getElementById('selectedCountryName');
+                const jobsEl = document.getElementById('selectedCountryJobs');
+
+                const country = COUNTRIES.find(c => c.name === countryName);
+                if (!country) return;
+
+                const flag = FLAGS[countryName] || '🌍';
+
+                flagEl.textContent = flag;
+                nameEl.textContent = countryName;
+                jobsEl.textContent = `${country.jobs.toLocaleString()} jobs open`;
+                indicator.classList.add('show');
+
+                const searchInput = document.querySelector('.search-field input[name="query"]');
+                const locationInput = document.querySelector('.search-field input[name="location"]');
+                const searchForm = document.getElementById('mainSearchForm');
+                const searchBtn = searchForm?.querySelector('.search-btn');
+
+                if (searchForm && searchInput) {
+                    if (locationInput) {
+                        locationInput.value = countryName;
+                        locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+
+                    setTimeout(() => {
+                        searchForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                        if (locationInput) {
+                            locationInput.style.borderColor = '#60a5fa';
+                            locationInput.style.boxShadow = '0 0 0 4px rgba(96, 165, 250, 0.2)';
+                            setTimeout(() => {
+                                locationInput.style.borderColor = '';
+                                locationInput.style.boxShadow = '';
+                            }, 2000);
+                        }
+
+                        if (searchBtn) {
+                            searchBtn.style.transform = 'scale(1.05)';
+                            setTimeout(() => {
+                                searchBtn.style.transform = '';
+                            }, 300);
+                            searchForm.submit();
+                        }
+
+                        showToast(`🔍 Searching for opportunities in ${countryName}...`);
+                    }, 500);
+                } else {
+                    showToast(`📍 Selected: ${countryName} - ${country.jobs.toLocaleString()} jobs available`);
+                }
+
+                highlightCountry(countryName);
+            }
+
+            function clearCountrySelection() {
+                const indicator = document.getElementById('selectedCountryIndicator');
+                const locationInput = document.querySelector('.search-field input[name="location"]');
+
+                indicator.classList.remove('show');
+
+                if (locationInput) {
+                    locationInput.value = '';
+                    locationInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+
+                clearHighlight();
+                showToast('Selection cleared');
+            }
+
+            function highlightCountry(name) {
+                if (window.highlightCountryOnGlobe) {
+                    window.highlightCountryOnGlobe(name);
+                }
+            }
+
+            function clearHighlight() {
+                if (window.clearHighlightOnGlobe) {
+                    window.clearHighlightOnGlobe();
+                }
+            }
+
+            window.selectCountryOnGlobe = selectCountryOnGlobe;
+            window.clearCountrySelection = clearCountrySelection;
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const clearBtn = document.getElementById('clearCountrySelection');
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', clearCountrySelection);
+                }
+            });
+
+            let COUNTRIES = [];
+            let FLAGS = {};
+            window.__globeCountries = null;
+            window.__globeFlags = null;
+</script>
+
+<!-- Three.js Globe Script -->
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.184.0/three.module.min.js"
+        }
+    }
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+
+    const deg = d => d * Math.PI / 180;
+
+    const FLAGS = {
+        'United States': '🇺🇸', 'United Kingdom': '🇬🇧', 'Canada': '🇨🇦', 'Germany': '🇩🇪',
+        'India': '🇮🇳', 'United Arab Emirates': '🇦🇪', 'Singapore': '🇸🇬', 'Australia': '🇦🇺',
+        'France': '🇫🇷', 'China': '🇨🇳', 'Brazil': '🇧🇷', 'Pakistan': '🇵🇰', 'Japan': '🇯🇵',
+        'South Africa': '🇿🇦', 'South Korea': '🇰🇷', 'Netherlands': '🇳🇱', 'Ireland': '🇮🇪',
+        'Spain': '🇪🇸', 'Italy': '🇮🇹', 'Mexico': '🇲🇽', 'Saudi Arabia': '🇸🇦'
+    };
+
+    const COUNTRIES = [
+        { name: 'United States', lat: 39, lon: -98, jobs: 4820, major: true },
+        { name: 'India', lat: 21, lon: 79, jobs: 3960, major: true },
+        { name: 'China', lat: 35, lon: 105, jobs: 2150, major: true },
+        { name: 'United Kingdom', lat: 54, lon: -2, jobs: 1640, major: true },
+        { name: 'Germany', lat: 51, lon: 9, jobs: 1510, major: true },
+        { name: 'Australia', lat: -25, lon: 134, jobs: 1120, major: true },
+        { name: 'Canada', lat: 56, lon: -106, jobs: 980, major: true },
+        { name: 'France', lat: 46, lon: 2, jobs: 980, major: true },
+        { name: 'Brazil', lat: -10, lon: -55, jobs: 890, major: true },
+        { name: 'United Arab Emirates', lat: 24, lon: 54, jobs: 870, major: true },
+        { name: 'Japan', lat: 36, lon: 138, jobs: 860, major: true },
+        { name: 'Pakistan', lat: 30, lon: 70, jobs: 710, major: true },
+        { name: 'South Korea', lat: 36, lon: 128, jobs: 610, major: true },
+        { name: 'Singapore', lat: 1.3, lon: 104, jobs: 640, major: true },
+        { name: 'Saudi Arabia', lat: 24, lon: 45, jobs: 520, major: false },
+        { name: 'Russia', lat: 60, lon: 90, jobs: 520, major: false },
+        { name: 'Mexico', lat: 23, lon: -102, jobs: 470, major: false },
+        { name: 'Italy', lat: 42, lon: 12, jobs: 470, major: false },
+        { name: 'South Africa', lat: -30, lon: 25, jobs: 430, major: true },
+        { name: 'Indonesia', lat: -5, lon: 120, jobs: 420, major: false },
+        { name: 'Netherlands', lat: 52, lon: 5, jobs: 560, major: false },
+        { name: 'Spain', lat: 40, lon: -3, jobs: 510, major: false },
+        { name: 'Poland', lat: 52, lon: 20, jobs: 340, major: false },
+        { name: 'Malaysia', lat: 4, lon: 102, jobs: 330, major: false },
+        { name: 'Ireland', lat: 53, lon: -8, jobs: 310, major: false },
+        { name: 'Vietnam', lat: 16, lon: 106, jobs: 310, major: false },
+        { name: 'Nigeria', lat: 9, lon: 8, jobs: 310, major: false },
+        { name: 'Turkey', lat: 39, lon: 35, jobs: 300, major: false },
+        { name: 'Israel', lat: 31, lon: 35, jobs: 290, major: false },
+        { name: 'Thailand', lat: 15, lon: 100, jobs: 280, major: false },
+        { name: 'Philippines', lat: 13, lon: 122, jobs: 260, major: false },
+        { name: 'Switzerland', lat: 47, lon: 8, jobs: 260, major: false },
+        { name: 'Argentina', lat: -34, lon: -64, jobs: 260, major: false },
+        { name: 'Hong Kong', lat: 22, lon: 114, jobs: 260, major: false },
+        { name: 'Sweden', lat: 60, lon: 18, jobs: 260, major: false },
+        { name: 'Egypt', lat: 27, lon: 30, jobs: 240, major: false },
+        { name: 'Taiwan', lat: 24, lon: 121, jobs: 230, major: false },
+        { name: 'Bangladesh', lat: 24, lon: 90, jobs: 210, major: false },
+        { name: 'Qatar', lat: 25, lon: 51, jobs: 210, major: false },
+        { name: 'Colombia', lat: 4, lon: -72, jobs: 190, major: false },
+        { name: 'Norway', lat: 62, lon: 10, jobs: 190, major: false },
+        { name: 'New Zealand', lat: -41, lon: 174, jobs: 180, major: false },
+        { name: 'Chile', lat: -30, lon: -71, jobs: 170, major: false },
+        { name: 'Kenya', lat: 1, lon: 38, jobs: 160, major: false },
+        { name: 'Ukraine', lat: 49, lon: 31, jobs: 140, major: false },
+        { name: 'Denmark', lat: 56, lon: 10, jobs: 140, major: false },
+        { name: 'Belgium', lat: 51, lon: 4, jobs: 150, major: false },
+        { name: 'Portugal', lat: 39, lon: -8, jobs: 150, major: false },
+        { name: 'Morocco', lat: 32, lon: -6, jobs: 120, major: false },
+        { name: 'Austria', lat: 48, lon: 14, jobs: 120, major: false },
+        { name: 'Peru', lat: -10, lon: -76, jobs: 110, major: false },
+        { name: 'Czech Republic', lat: 50, lon: 15, jobs: 110, major: false },
+        { name: 'Finland', lat: 64, lon: 26, jobs: 110, major: false },
+        { name: 'Kazakhstan', lat: 48, lon: 68, jobs: 90, major: false },
+        { name: 'Ghana', lat: 8, lon: -2, jobs: 90, major: false },
+        { name: 'Greece', lat: 39, lon: 22, jobs: 90, major: false },
+        { name: 'Romania', lat: 46, lon: 25, jobs: 100, major: false },
+        { name: 'Kuwait', lat: 29, lon: 48, jobs: 80, major: false },
+        { name: 'Sri Lanka', lat: 7, lon: 81, jobs: 70, major: false },
+        { name: 'Jordan', lat: 31, lon: 36, jobs: 60, major: false },
+        { name: 'Iceland', lat: 65, lon: -19, jobs: 40, major: false },
+    ];
+    const COUNTRY_BY_NAME = new Map(COUNTRIES.map(c => [c.name, c]));
+
+    const CONNECTIONS = [
+        ['United States', 'United Kingdom'], ['United States', 'India'], ['United States', 'China'],
+        ['United States', 'Brazil'], ['United States', 'Germany'], ['United States', 'Australia'],
+        ['United Kingdom', 'Germany'], ['United Kingdom', 'France'], ['United Kingdom', 'United Arab Emirates'],
+        ['United Kingdom', 'India'], ['United Kingdom', 'Canada'], ['United Kingdom', 'South Africa'],
+        ['India', 'Singapore'], ['India', 'United Arab Emirates'], ['China', 'Japan'],
+        ['China', 'South Korea'], ['Japan', 'Australia'], ['United Arab Emirates', 'Saudi Arabia'],
+        ['United Arab Emirates', 'Pakistan'], ['Brazil', 'Argentina'], ['Australia', 'New Zealand'],
+        ['Singapore', 'Australia'], ['Germany', 'Poland'],
+    ];
+
+    const CONTINENTS = [
+        { color: '#4a7a52', pts: [[-165,71],[-140,70],[-125,69],[-95,68],[-80,62],[-65,50],[-66,45],[-70,41],[-74,40],[-77,35],[-81,31],[-80,26],[-81,25],[-83,29],[-89,30],[-94,29],[-97,26],[-97,20],[-90,19],[-92,16],[-90,14],[-83,9],[-79,8],[-84,10],[-87,13],[-92,15],[-97,16],[-105,20],[-110,24],[-115,30],[-117,33],[-122,37],[-124,42],[-125,49],[-130,55],[-135,58],[-150,60],[-160,59],[-166,54],[-165,65],[-165,71]] },
+        { color: '#3f7a4a', pts: [[-77,8],[-77,1],[-81,-4],[-71,-18],[-70,-23],[-71,-33],[-73,-42],[-72,-52],[-68,-54],[-65,-50],[-62,-40],[-57,-35],[-53,-32],[-48,-25],[-41,-18],[-37,-11],[-44,-2],[-50,0],[-58,4],[-60,8],[-67,10],[-72,11],[-77,8]] },
+        { color: '#b08b52', pts: [[-17,21],[-17,14],[-10,14],[10,16],[25,16],[35,28],[32,31],[25,32],[10,37],[0,36],[-6,35],[-9,31],[-13,27],[-17,21]] },
+        { color: '#3f7a45', pts: [[-10,14],[-16,7],[-10,5],[-3,5],[3,6],[9,4],[9,-1],[12,-6],[13,-9],[12,-17],[14,-22],[17,-29],[18,-34],[26,-33],[32,-29],[35,-19],[40,-15],[40,-5],[42,0],[45,2],[51,10],[45,12],[43,12],[38,15],[35,16],[25,16],[10,16],[-10,14]] },
+        { color: '#4f7a52', pts: [[-9,43],[-9,48],[-5,51],[2,51],[8,54],[12,58],[18,60],[22,65],[28,70],[40,68],[45,60],[40,52],[35,45],[28,41],[20,40],[14,38],[8,40],[3,43],[-9,43]] },
+        { color: '#4a6258', pts: [[35,68],[50,70],[65,72],[80,73],[100,73],[120,72],[140,70],[160,65],[175,62],[178,60],[160,55],[140,50],[120,48],[100,50],[85,50],[70,52],[55,55],[45,58],[35,62],[35,68]] },
+        { color: '#b08b52', pts: [[28,38],[35,37],[42,37],[48,38],[50,30],[48,24],[43,13],[38,16],[35,28],[28,32],[28,38]] },
+        { color: '#6b7a45', pts: [[68,28],[72,30],[78,28],[82,24],[80,15],[77,8],[73,11],[70,18],[68,28]] },
+        { color: '#4a7050', pts: [[80,35],[90,38],[100,40],[110,42],[122,42],[125,35],[122,28],[115,23],[108,18],[100,22],[92,28],[85,30],[80,35]] },
+        { color: '#3a7a4a', pts: [[98,20],[105,22],[108,16],[106,10],[103,3],[100,2],[98,8],[95,15],[98,20]] },
+        { color: '#3a7a4a', pts: [[95,5],[100,3],[106,-3],[112,-8],[115,-9],[110,-7],[102,1],[96,3],[95,5]] },
+        { color: '#3a7a4a', pts: [[109,4],[117,5],[119,1],[117,-4],[110,-3],[109,4]] },
+        { color: '#3a7a4a', pts: [[130,-2],[141,-3],[150,-7],[141,-9],[132,-6],[130,-2]] },
+        { color: '#3a7a4a', pts: [[121,18],[123,14],[125,10],[122,9],[120,13],[121,18]] },
+        { color: '#4a7050', pts: [[130,32],[132,34],[136,36],[140,38],[142,41],[144,44],[141,45],[138,40],[135,35],[131,31],[130,32]] },
+        { color: '#4a7a4e', pts: [[-8,51],[-6,55],[-3,58],[-1,57],[-3,53],[-6,50],[-8,51]] },
+        { color: '#dce6ec', pts: [[-45,60],[-30,65],[-25,70],[-30,77],[-45,75],[-55,70],[-50,62],[-45,60]] },
+        { color: '#4a7a45', pts: [[44,-13],[50,-16],[47,-25],[43,-22],[43,-17],[44,-13]] },
+        { color: '#3f7a4a', pts: [[173,-41],[178,-38],[176,-34],[172,-41],[166,-46],[168,-44],[173,-41]] },
+        { color: '#b89a5e', pts: [[113,-22],[122,-18],[130,-12],[137,-12],[142,-11],[145,-16],[148,-20],[153,-27],[150,-33],[150,-37],[146,-39],[140,-38],[136,-35],[132,-32],[128,-32],[122,-34],[115,-34],[113,-26],[113,-22]] },
+    ];
+
+    const wrapperEl = document.getElementById('globeWrapper');
+    const canvas = document.getElementById('globeCanvas');
+    const labelLayer = document.getElementById('labelLayer');
+    const tooltipEl = document.getElementById('globeTooltip');
+    const dragHintEl = document.querySelector('.drag-hint');
+
+    if (!window.WebGLRenderingContext) {
+        wrapperEl.innerHTML = '<div style="color:#64748b;font-size:0.85rem;text-align:center;padding-top:40%;">3D globe needs WebGL, which this browser does not support.</div>';
+    } else {
+        try { initGlobe(); } catch (err) { console.error('Globe init failed:', err); }
+    }
+
+    function showToast(msg) {
+        const toastEl = document.getElementById('toast');
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        clearTimeout(toastEl._t);
+        toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 2600);
+    }
+
+    function initGlobe() {
+        const R = 120;
+        const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(42, 1, 1, 4000);
+
+        const globeGroup = new THREE.Group();
+        scene.add(globeGroup);
+
+        function lonLatPx(lon, lat, w, h) { return [((lon + 180) / 360) * w, ((90 - lat) / 180) * h]; }
+        function blobPath(ctx, pts, w, h) {
+            ctx.beginPath();
+            pts.forEach(([lon, lat], i) => {
+                const [x, y] = lonLatPx(lon, lat, w, h);
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+        }
+
+        function buildEarthTextures() {
+            const w = 1024, h = 512;
+            const c = document.createElement('canvas'); c.width = w; c.height = h;
+            const ctx = c.getContext('2d');
+
+            const ocean = ctx.createLinearGradient(0, 0, 0, h);
+            ocean.addColorStop(0, '#081226');
+            ocean.addColorStop(0.15, '#0c2854');
+            ocean.addColorStop(0.5, '#12497f');
+            ocean.addColorStop(0.85, '#0c2854');
+            ocean.addColorStop(1, '#081226');
+            ctx.fillStyle = ocean;
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(10, 25, 18, 0.4)';
+            CONTINENTS.forEach(blob => {
+                blobPath(ctx, blob.pts, w, h);
+                ctx.fillStyle = blob.color;
+                ctx.fill();
+                ctx.stroke();
+            });
+
+            const iceFrac = (90 - 75) / 180;
+            let g = ctx.createLinearGradient(0, 0, 0, h * iceFrac);
+            g.addColorStop(0, 'rgba(225,238,250,0.95)');
+            g.addColorStop(1, 'rgba(225,238,250,0)');
+            ctx.fillStyle = g; ctx.fillRect(0, 0, w, h * iceFrac);
+            g = ctx.createLinearGradient(0, h * (1 - iceFrac), 0, h);
+            g.addColorStop(0, 'rgba(225,238,250,0)');
+            g.addColorStop(1, 'rgba(225,238,250,0.95)');
+            ctx.fillStyle = g; ctx.fillRect(0, h * (1 - iceFrac), w, h * iceFrac);
+
+            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+            ctx.lineWidth = 1;
+            for (let lat = -60; lat <= 60; lat += 30) {
+                const y = lonLatPx(0, lat, w, h)[1];
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            }
+            for (let lon = -150; lon <= 180; lon += 30) {
+                const x = lonLatPx(lon, 0, w, h)[0];
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+            }
+
+            const spec = document.createElement('canvas'); spec.width = w; spec.height = h;
+            const sctx = spec.getContext('2d');
+            sctx.fillStyle = '#ffffff'; sctx.fillRect(0, 0, w, h);
+            sctx.fillStyle = '#141414';
+            CONTINENTS.forEach(blob => { blobPath(sctx, blob.pts, w, h); sctx.fill(); });
+
+            const mapTex = new THREE.CanvasTexture(c);
+            mapTex.colorSpace = THREE.SRGBColorSpace;
+            const specTex = new THREE.CanvasTexture(spec);
+            return { mapTex, specTex };
+        }
+
+        function buildCloudTexture() {
+            const w = 512, h = 256;
+            const c = document.createElement('canvas'); c.width = w; c.height = h;
+            const ctx = c.getContext('2d');
+            for (let i = 0; i < 80; i++) {
+                const x = Math.random() * w, y = Math.random() * h * 0.85 + h * 0.05;
+                const r = 12 + Math.random() * 35;
+                const a = 0.04 + Math.random() * 0.16;
+                const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+                g.addColorStop(0, `rgba(255,255,255,${a})`);
+                g.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+            }
+            return new THREE.CanvasTexture(c);
+        }
+
+        function buildDotTexture(rgb) {
+            const s = 48;
+            const c = document.createElement('canvas'); c.width = s; c.height = s;
+            const ctx = c.getContext('2d');
+            const g = ctx.createRadialGradient(s/2, s/2, 0, s/2, s/2, s/2);
+            g.addColorStop(0, `rgba(${rgb},1)`);
+            g.addColorStop(0.45, `rgba(${rgb},0.9)`);
+            g.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(s/2, s/2, s/2, 0, Math.PI * 2); ctx.fill();
+            return new THREE.CanvasTexture(c);
+        }
+
+        const { mapTex, specTex } = buildEarthTextures();
+        const cloudTex = buildCloudTexture();
+        const dotMajorTex = buildDotTexture('125,211,252');
+        const dotMinorTex = buildDotTexture('167,139,250');
+        const ringTex = buildDotTexture('103,232,249');
+
+        const earthGeo = new THREE.SphereGeometry(R, 48, 36);
+        const earthMat = new THREE.MeshPhongMaterial({
+            map: mapTex, specularMap: specTex, specular: 0x445566, shininess: 14
+        });
+        globeGroup.add(new THREE.Mesh(earthGeo, earthMat));
+
+        const cloudMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(R * 1.012, 32, 24),
+            new THREE.MeshLambertMaterial({ map: cloudTex, transparent: true, opacity: 0.55, depthWrite: false })
+        );
+        globeGroup.add(cloudMesh);
+
+        const atmosMat = new THREE.ShaderMaterial({
+            uniforms: { glowColor: { value: new THREE.Color(0x60a5fa) } },
+            vertexShader: `
+                varying vec3 vNormal;
+                void main() {
+                    vNormal = normalize(normalMatrix * normal);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 glowColor;
+                varying vec3 vNormal;
+                void main() {
+                    float intensity = pow(0.62 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 3.0);
+                    gl_FragColor = vec4(glowColor, 1.0) * clamp(intensity, 0.0, 1.0);
+                }
+            `,
+            blending: THREE.AdditiveBlending,
+            side: THREE.BackSide,
+            transparent: true,
+            depthWrite: false
+        });
+        scene.add(new THREE.Mesh(new THREE.SphereGeometry(R * 1.1, 32, 24), atmosMat));
+
+        scene.add(new THREE.AmbientLight(0x404060, 1.15));
+        const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+        sun.position.set(6, 3, 6);
+        scene.add(sun);
+
+        function lonLatToVec3(lon, lat, r) {
+            const phi = deg(lon + 180), theta = deg(90 - lat);
+            return new THREE.Vector3(
+                -r * Math.cos(phi) * Math.sin(theta),
+                r * Math.cos(theta),
+                r * Math.sin(phi) * Math.sin(theta)
+            );
+        }
+
+        const raycastTargets = [];
+        COUNTRIES.forEach(c => {
+            const pos = lonLatToVec3(c.lon, c.lat, R * 1.004);
+            const mat = new THREE.SpriteMaterial({
+                map: c.major ? dotMajorTex : dotMinorTex,
+                depthTest: false,
+                transparent: true
+            });
+            const sprite = new THREE.Sprite(mat);
+            sprite.position.copy(pos);
+            const baseScale = c.major ? 11 : 6 + Math.min(4, Math.sqrt(c.jobs) * 0.08);
+            sprite.scale.set(baseScale, baseScale, 1);
+            sprite.userData = { country: c.name, baseScale };
+            globeGroup.add(sprite);
+            c.sprite = sprite;
+            raycastTargets.push(sprite);
+
+            if (c.major) {
+                const ringMat = new THREE.SpriteMaterial({ map: ringTex, depthTest: false, transparent: true, opacity: 0.5 });
+                const ring = new THREE.Sprite(ringMat);
+                ring.position.copy(pos);
+                ring.userData = { isRing: true, phase: Math.random() * Math.PI * 2 };
+                globeGroup.add(ring);
+                c.ring = ring;
+            }
+
+            if (c.major) {
+                const div = document.createElement('div');
+                div.className = 'country-label';
+                div.innerHTML = `<span class="dot"></span>${c.name}`;
+                div.addEventListener('click', () => selectCountry(c.name));
+                labelLayer.appendChild(div);
+                c.labelEl = div;
+            }
+        });
+
+        CONNECTIONS.forEach(([a, b]) => {
+            const ca = COUNTRY_BY_NAME.get(a), cb = COUNTRY_BY_NAME.get(b);
+            if (!ca || !cb) return;
+            const pa = lonLatToVec3(ca.lon, ca.lat, R * 1.002);
+            const pb = lonLatToVec3(cb.lon, cb.lat, R * 1.002);
+            const mid = pa.clone().add(pb).multiplyScalar(0.5).normalize().multiplyScalar(R * 1.25);
+            const curve = new THREE.QuadraticBezierCurve3(pa, mid, pb);
+            const geo = new THREE.TubeGeometry(curve, 16, 0.35, 4, false);
+            const mat = new THREE.MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0.35 });
+            globeGroup.add(new THREE.Mesh(geo, mat));
+        });
+
+        const DEFAULT_DIST = 400, MIN_DIST = 250, MAX_DIST = 700;
+        let yaw = 0.35, pitch = -0.18;
+        let targetYaw = yaw, targetPitch = pitch;
+        let camDist = DEFAULT_DIST, targetDist = DEFAULT_DIST;
+        let velYaw = 0, velPitch = 0;
+        let isDragging = false, flyingTo = false, autoRotateEnabled = true;
+        let lastInteraction = 0;
+        let selectedCountryName = null;
+
+        function angleDiff(a, b) {
+            let d = (b - a) % (Math.PI * 2);
+            if (d > Math.PI) d -= Math.PI * 2;
+            if (d < -Math.PI) d += Math.PI * 2;
+            return d;
+        }
+
+        function computeYawTo(lon, lat) {
+            const phi = deg(lon + 180), theta = deg(90 - lat);
+            const dx = -Math.cos(phi) * Math.sin(theta);
+            const dz = Math.sin(phi) * Math.sin(theta);
+            let y = Math.atan2(-dx, dz);
+            const zPrime = -dx * Math.sin(y) + dz * Math.cos(y);
+            if (zPrime < 0) y += Math.PI;
+            return y;
+        }
+
+        function selectCountry(name) {
+            const c = COUNTRY_BY_NAME.get(name);
+            if (!c) return;
+
+            selectedCountryName = name;
+            targetYaw = computeYawTo(c.lon, c.lat);
+            targetPitch = clamp(deg(c.lat), -1.3, 1.3);
+            flyingTo = true;
+            autoRotateEnabled = false;
+
+            COUNTRIES.forEach(country => {
+                if (country.labelEl) {
+                    country.labelEl.classList.toggle('is-active', country.name === name);
+                }
+            });
+
+            if (window.selectCountryOnGlobe) {
+                window.selectCountryOnGlobe(name);
+            } else {
+                showToast(`📍 ${name} - ${c.jobs.toLocaleString()} jobs available`);
+            }
+
+            lastInteraction = performance.now();
+            setTimeout(() => { autoRotateEnabled = true; }, 5000);
+        }
+
+        function highlightOnly(name) {
+            COUNTRIES.forEach(c => {
+                if (!c.sprite) return;
+                const active = c.name === name;
+                c.sprite.material.opacity = active ? 1 : 0.45;
+                if (c.labelEl) c.labelEl.classList.toggle('is-active', active);
+            });
+        }
+
+        function clearHighlight() {
+            COUNTRIES.forEach(c => {
+                if (c.sprite) c.sprite.material.opacity = 1;
+                if (c.labelEl) c.labelEl.classList.remove('is-active');
+            });
+        }
+
+        window.highlightCountryOnGlobe = highlightOnly;
+        window.clearHighlightOnGlobe = clearHighlight;
+
+        canvas.style.touchAction = 'none';
+        let downX = 0, downY = 0, downTime = 0, moved = false, lastX = 0, lastY = 0;
+        const pointers = new Map();
+
+        function hideHint() { if (dragHintEl) dragHintEl.classList.add('is-hidden'); }
+
+        canvas.addEventListener('pointerdown', e => {
+            pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (pointers.size === 1) {
+                isDragging = true; flyingTo = false;
+                lastX = e.clientX; lastY = e.clientY;
+                downX = e.clientX; downY = e.clientY; downTime = performance.now(); moved = false;
+            }
+            canvas.setPointerCapture(e.pointerId);
+            hideHint();
+            lastInteraction = performance.now();
+        });
+
+        canvas.addEventListener('pointermove', e => {
+            if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+            if (pointers.size === 2) {
+                const pts = [...pointers.values()];
+                const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+                if (canvas._pinchDist) {
+                    targetDist = clamp(targetDist - (dist - canvas._pinchDist) * 1.2, MIN_DIST, MAX_DIST);
+                }
+                canvas._pinchDist = dist;
+                return;
+            }
+
+            if (isDragging) {
+                const dx = e.clientX - lastX, dy = e.clientY - lastY;
+                if (Math.abs(e.clientX - downX) + Math.abs(e.clientY - downY) > 4) moved = true;
+                const s = 0.0055;
+                yaw += dx * s;
+                pitch = clamp(pitch + dy * s, -1.45, 1.45);
+                targetYaw = yaw; targetPitch = pitch;
+                velYaw = dx * s; velPitch = dy * s;
+                lastX = e.clientX; lastY = e.clientY;
+            } else {
+                handleHover(e);
+            }
+        });
+
+        function endPointer(e) {
+            pointers.delete(e.pointerId);
+            if (pointers.size < 2) canvas._pinchDist = null;
+            if (pointers.size === 0 && isDragging) {
+                isDragging = false;
+                if (!moved && (performance.now() - downTime) < 450) handleClick(e);
+                lastInteraction = performance.now();
+            }
+        }
+        canvas.addEventListener('pointerup', endPointer);
+        canvas.addEventListener('pointercancel', endPointer);
+        canvas.addEventListener('pointerleave', () => { tooltipEl.classList.remove('is-visible'); canvas.style.cursor = 'grab'; });
+
+        canvas.addEventListener('wheel', e => {
+            e.preventDefault();
+            targetDist = clamp(targetDist + e.deltaY * 0.4, MIN_DIST, MAX_DIST);
+            lastInteraction = performance.now();
+        }, { passive: false });
+
+        const raycaster = new THREE.Raycaster();
+        raycaster.params.Sprite = { threshold: 4 };
+        const pointerNDC = new THREE.Vector2();
+
+        function pickCountry(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            pointerNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            pointerNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(pointerNDC, camera);
+            const hits = raycaster.intersectObjects(raycastTargets, false);
+            return hits.length ? hits[0].object.userData.country : null;
+        }
+
+        let hoveredName = null;
+        function handleHover(e) {
+            const name = pickCountry(e.clientX, e.clientY);
+            canvas.style.cursor = name ? 'pointer' : 'grab';
+            if (name) {
+                const c = COUNTRY_BY_NAME.get(name);
+                const rect = wrapperEl.getBoundingClientRect();
+                tooltipEl.style.left = (e.clientX - rect.left) + 'px';
+                tooltipEl.style.top = (e.clientY - rect.top) + 'px';
+                tooltipEl.innerHTML = `<strong>${FLAGS[name] ? FLAGS[name] + ' ' : ''}${name}</strong><span>${c.jobs.toLocaleString()} jobs open</span>`;
+                tooltipEl.classList.add('is-visible');
+            } else {
+                tooltipEl.classList.remove('is-visible');
+            }
+            hoveredName = name;
+        }
+
+        function handleClick(e) {
+            const name = pickCountry(e.clientX, e.clientY);
+            if (name) selectCountry(name);
+        }
+
+        document.getElementById('zoomIn').addEventListener('click', () => { targetDist = clamp(targetDist - 90, MIN_DIST, MAX_DIST); lastInteraction = performance.now(); });
+        document.getElementById('zoomOut').addEventListener('click', () => { targetDist = clamp(targetDist + 90, MIN_DIST, MAX_DIST); lastInteraction = performance.now(); });
+        document.getElementById('resetView').addEventListener('click', () => {
+            targetYaw = 0.35; targetPitch = -0.18; targetDist = DEFAULT_DIST; flyingTo = true; lastInteraction = performance.now();
+        });
+        const toggleBtn = document.getElementById('toggleRotate');
+        toggleBtn.addEventListener('click', () => {
+            autoRotateEnabled = !autoRotateEnabled;
+            toggleBtn.textContent = autoRotateEnabled ? '⏸' : '▶';
+        });
+
+        function applySize(size) {
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            renderer.setSize(size, size, false);
+            camera.aspect = 1;
+            camera.updateProjectionMatrix();
+        }
+        new ResizeObserver(entries => {
+            for (const entry of entries) applySize(entry.contentRect.width);
+        }).observe(wrapperEl);
+        applySize(wrapperEl.clientWidth || 320);
+
+        const tmpVec = new THREE.Vector3();
+        const tmpNormal = new THREE.Vector3();
+        function updateLabels() {
+            const rect = wrapperEl.getBoundingClientRect();
+            const camDir = camera.position.clone().normalize();
+            COUNTRIES.forEach(c => {
+                if (!c.labelEl) return;
+                c.sprite.getWorldPosition(tmpVec);
+                tmpNormal.copy(tmpVec).normalize();
+                const facing = tmpNormal.dot(camDir);
+                if (facing < 0.1) { c.labelEl.style.opacity = '0'; c.labelEl.style.pointerEvents = 'none'; return; }
+                const ndc = tmpVec.clone().project(camera);
+                const x = (ndc.x * 0.5 + 0.5) * rect.width;
+                const y = (1 - (ndc.y * 0.5 + 0.5)) * rect.height;
+                c.labelEl.style.transform = `translate(${x}px, ${y}px) translate(-50%, -130%)`;
+                c.labelEl.style.opacity = String(clamp((facing - 0.1) / 0.3, 0, 1));
+                c.labelEl.style.pointerEvents = 'auto';
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const now = performance.now();
+            const idle = now - lastInteraction > 1500;
+
+            if (flyingTo) {
+                yaw += angleDiff(yaw, targetYaw) * 0.08;
+                pitch += (targetPitch - pitch) * 0.08;
+                if (Math.abs(angleDiff(yaw, targetYaw)) < 0.008 && Math.abs(pitch - targetPitch) < 0.008) flyingTo = false;
+            } else if (!isDragging) {
+                velYaw *= 0.94; velPitch *= 0.94;
+                yaw += velYaw; pitch = clamp(pitch + velPitch, -1.45, 1.45);
+                if (idle && autoRotateEnabled && Math.abs(velYaw) < 0.0005) yaw += 0.0022;
+            }
+
+            camDist += (targetDist - camDist) * 0.1;
+            globeGroup.rotation.y = yaw;
+            camera.position.set(0, camDist * Math.sin(pitch), camDist * Math.cos(pitch));
+            camera.lookAt(0, 0, 0);
+
+            cloudMesh.rotation.y += 0.0006;
+            COUNTRIES.forEach(c => {
+                if (c.ring) {
+                    const t = (now * 0.001 + c.ring.userData.phase) % 2;
+                    const s = c.sprite.userData.baseScale * (1.2 + t * 1.1);
+                    c.ring.scale.set(s, s, 1);
+                    c.ring.material.opacity = Math.max(0, 0.5 - t * 0.25);
+                }
+            });
+
+            renderer.render(scene, camera);
+            updateLabels();
+        }
+        animate();
+
+        console.log('Globe ready —', COUNTRIES.length, 'countries,', CONNECTIONS.length, 'routes');
+    }
+</script>

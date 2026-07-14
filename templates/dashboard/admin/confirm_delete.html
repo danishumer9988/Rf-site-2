@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Confirm Delete - Admin - Job Reference Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ===== SAME BASE STYLES ===== */
+        :root {
+            --danger: #ef4444; --danger-dark: #dc2626;
+            --gray-50: #f8fafc; --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0; --gray-400: #94a3b8;
+            --gray-500: #64748b; --gray-600: #475569;
+            --gray-700: #334155; --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .confirm-box {
+            background: white;
+            padding: 3rem 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .warning-icon { font-size: 5rem; margin-bottom: 1rem; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        h2 { font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.75rem; }
+        .warning-text { color: var(--danger); font-weight: 600; font-size: 0.9rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+
+        .object-info {
+            background: #fef2f2;
+            padding: 1.25rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.5rem;
+            border: 2px solid #fecaca;
+        }
+        .object-type { font-size: 0.8rem; text-transform: uppercase; color: var(--gray-500); letter-spacing: 1px; margin-bottom: 0.25rem; }
+        .object-name { font-weight: 600; color: var(--gray-800); font-size: 1.1rem; word-break: break-all; }
+
+        p { color: var(--gray-600); margin-bottom: 1.5rem; line-height: 1.6; }
+
+        .btn-group { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-family);
+        }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: var(--danger-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239,68,68,0.4); }
+        .btn-outline { background: white; border: 2px solid var(--gray-200); color: var(--gray-700); }
+        .btn-outline:hover { border-color: var(--danger); color: var(--danger); }
+        .btn-ghost { background: transparent; color: var(--gray-500); }
+        .btn-ghost:hover { color: var(--gray-700); }
+
+        @media (max-width: 480px) { .confirm-box { padding: 2rem 1.5rem; } }
+    </style>
+</head>
+<body>
+<div class="confirm-box">
+    <div class="warning-icon">⚠️</div>
+    <h2>Confirm Deletion</h2>
+    <div class="warning-text">🚨 This action cannot be undone!</div>
+    <div class="object-info">
+        <div class="object-type">{{ type }}</div>
+        <div class="object-name">{{ object }}</div>
+    </div>
+    <p>Are you absolutely sure you want to permanently delete this {{ type|lower }}? All associated data will be lost forever.</p>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="btn-group">
+            <a href="javascript:history.back()" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Go Back</a>
+            <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Delete Permanently</button>
+        </div>
+    </form>
+    <a href="/" class="btn btn-ghost" style="margin-top:1.5rem;"><i class="fas fa-home"></i> Return to Home</a>
+</div>
+</body>
+</html>

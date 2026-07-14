@@ -1,0 +1,409 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Privacy Policy - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    /* ============================================================
+       PRIVACY POLICY - Glassmorphism Design
+       ============================================================ */
+    :root {
+        --legal-primary: #2563eb;
+        --legal-primary-dark: #1d4ed8;
+        --legal-primary-light: #eff6ff;
+        --legal-gray-50: #f8fafc;
+        --legal-gray-100: #f1f5f9;
+        --legal-gray-200: #e2e8f0;
+        --legal-gray-300: #cbd5e1;
+        --legal-gray-400: #94a3b8;
+        --legal-gray-500: #64748b;
+        --legal-gray-600: #475569;
+        --legal-gray-700: #334155;
+        --legal-gray-800: #1e293b;
+        --legal-gray-900: #0f172a;
+        --legal-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --legal-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+        --legal-shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+        --legal-radius-sm: 8px;
+        --legal-radius-md: 12px;
+        --legal-radius-lg: 16px;
+        --legal-radius-xl: 20px;
+        --legal-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ===== HERO SECTION ===== */
+    .legal-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 4rem 5% 3rem;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid var(--legal-primary);
+        text-align: center;
+    }
+
+    .legal-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .legal-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .legal-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .legal-hero-content .legal-icon-large {
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 1rem;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .legal-hero-content h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .legal-hero-content h1 span {
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .legal-hero-content p {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    /* ===== CONTENT ===== */
+    .legal-content {
+        max-width: 900px;
+        margin: -1.5rem auto 4rem;
+        padding: 0 5%;
+        position: relative;
+        z-index: 5;
+    }
+
+    .legal-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--legal-radius-xl);
+        padding: 2.5rem;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: var(--legal-transition);
+    }
+
+    .legal-card:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--legal-shadow-lg);
+    }
+
+    .legal-card h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--legal-gray-800);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .legal-card h2:first-of-type {
+        margin-top: 0;
+    }
+
+    .legal-card h2 .section-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--legal-primary-light);
+        color: var(--legal-primary);
+        font-size: 0.8rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .legal-card p {
+        color: var(--legal-gray-600);
+        line-height: 1.8;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .legal-card ul {
+        margin-left: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .legal-card ul li {
+        color: var(--legal-gray-600);
+        line-height: 1.7;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .legal-card ul li strong {
+        color: var(--legal-gray-700);
+    }
+
+    .legal-card .last-updated {
+        font-size: 0.9rem;
+        color: var(--legal-gray-400);
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .legal-card a {
+        color: var(--legal-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--legal-transition);
+    }
+
+    .legal-card a:hover {
+        color: var(--legal-primary-dark);
+        text-decoration: underline;
+    }
+
+    .legal-card .contact-email {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(37, 99, 235, 0.05);
+        border-radius: var(--legal-radius-sm);
+        border: 1px solid rgba(37, 99, 235, 0.1);
+        font-family: monospace;
+        font-size: 0.95rem;
+        color: var(--legal-primary);
+        margin-top: 0.5rem;
+    }
+
+    /* ===== DARK MODE ===== */
+    body.dark-mode .legal-card {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .legal-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .legal-card h2 {
+        color: #e2e8f0;
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .legal-card h2 .section-number {
+        background: rgba(96, 165, 250, 0.15);
+        color: #60a5fa;
+    }
+
+    body.dark-mode .legal-card p {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .legal-card ul li {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .legal-card ul li strong {
+        color: #cbd5e1;
+    }
+
+    body.dark-mode .legal-card .last-updated {
+        border-top-color: rgba(255, 255, 255, 0.05);
+        color: #64748b;
+    }
+
+    body.dark-mode .legal-card .contact-email {
+        background: rgba(96, 165, 250, 0.1);
+        border-color: rgba(96, 165, 250, 0.15);
+        color: #60a5fa;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .legal-hero-content h1 {
+            font-size: 2rem;
+        }
+
+        .legal-hero {
+            padding: 2.5rem 4% 2rem;
+        }
+
+        .legal-card {
+            padding: 1.5rem;
+        }
+
+        .legal-card h2 {
+            font-size: 1.2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .legal-hero-content h1 {
+            font-size: 1.6rem;
+        }
+
+        .legal-hero-content .legal-icon-large {
+            font-size: 3rem;
+        }
+
+        .legal-card {
+            padding: 1.25rem;
+        }
+
+        .legal-card h2 {
+            font-size: 1.1rem;
+        }
+
+        .legal-card p,
+        .legal-card ul li {
+            font-size: 0.9rem;
+        }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+        animation: slideUp 0.4s ease-out forwards;
+    }
+
+    .animate-in.delay-1 { animation-delay: 0.05s; opacity: 0; }
+    .animate-in.delay-2 { animation-delay: 0.1s; opacity: 0; }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="legal-hero">
+    <div class="legal-hero-content">
+        <span class="legal-icon-large">🔒</span>
+        <h1>Privacy <span>Policy</span></h1>
+        <p>Your privacy matters to us. Learn how we collect, use, and protect your information.</p>
+    </div>
+</div>
+
+<!-- ===== CONTENT ===== -->
+<div class="legal-content">
+    <div class="legal-card animate-in">
+        <h2>
+            <span class="section-number">01</span>
+            Information We Collect
+        </h2>
+        <p>We collect information you provide directly, such as when you create an account, apply for a job, post a job, or contact us. This may include your name, email address, phone number, resume, and any other details you choose to share.</p>
+        <p>We also automatically collect certain data when you visit our site, including your IP address, browser type, pages visited, and referring URLs.</p>
+
+        <h2>
+            <span class="section-number">02</span>
+            How We Use Your Information
+        </h2>
+        <ul>
+            <li><strong>To provide and improve our services</strong> — including job matching and recommendations.</li>
+            <li><strong>To communicate with you</strong> — about your account, applications, or job postings.</li>
+            <li><strong>To send you job alerts</strong> — newsletters and promotional content (you may opt out at any time).</li>
+            <li><strong>To analyze site usage</strong> — and enhance user experience.</li>
+            <li><strong>To comply with legal obligations</strong> — and prevent fraud.</li>
+        </ul>
+
+        <h2>
+            <span class="section-number">03</span>
+            Cookies and Tracking
+        </h2>
+        <p>We use cookies and similar technologies to remember your preferences, analyze traffic, and personalize content. You can manage your cookie preferences in your browser settings.</p>
+
+        <h2>
+            <span class="section-number">04</span>
+            Data Sharing and Disclosure
+        </h2>
+        <p>We do not sell your personal information. We may share your data with:</p>
+        <ul>
+            <li><strong>Employers or recruiters</strong> — when you apply for a job or internship.</li>
+            <li><strong>Service providers</strong> — who help us operate our platform (e.g., hosting, analytics, email delivery).</li>
+            <li><strong>Law enforcement</strong> — or regulatory bodies when required by law.</li>
+        </ul>
+
+        <h2>
+            <span class="section-number">05</span>
+            Data Security
+        </h2>
+        <p>We implement industry-standard security measures to protect your data against unauthorized access, alteration, or destruction. However, no method of transmission over the internet is 100% secure.</p>
+
+        <h2>
+            <span class="section-number">06</span>
+            Your Rights
+        </h2>
+        <p>Depending on your location, you may have the right to access, correct, delete, or restrict the processing of your personal data. To exercise these rights, please contact us at:</p>
+        <div class="contact-email">📧 privacy@jobreferencehub.com</div>
+
+        <h2>
+            <span class="section-number">07</span>
+            Children's Privacy
+        </h2>
+        <p>Our services are not directed to individuals under the age of 16. We do not knowingly collect personal information from children.</p>
+
+        <h2>
+            <span class="section-number">08</span>
+            Changes to This Policy
+        </h2>
+        <p>We may update this policy from time to time. We will notify you of significant changes by posting a notice on our site or sending an email.</p>
+
+        <div class="last-updated">
+            📅 Last updated: April 2025
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>{% if action == 'Add' %}Add New{% else %}Edit{% endif %} Job - Admin - Job Reference Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ===== SAME FORM STYLES ===== */
+        :root {
+            --primary: #2563eb; --primary-dark: #1d4ed8;
+            --success: #10b981; --success-bg: #d1fae5;
+            --danger: #ef4444; --danger-bg: #fee2e2;
+            --warning: #f59e0b; --warning-bg: #fef3c7;
+            --info: #3b82f6; --info-bg: #dbeafe;
+            --gray-50: #f8fafc; --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0; --gray-300: #cbd5e1;
+            --gray-400: #94a3b8; --gray-500: #64748b;
+            --gray-600: #475569; --gray-700: #334155;
+            --gray-800: #1e293b; --gray-900: #0f172a;
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            color: var(--gray-800);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .form-wrapper { width: 100%; max-width: 900px; }
+
+        .top-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;
+        }
+        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--gray-500); }
+        .breadcrumb a { color: var(--primary); text-decoration: none; font-weight: 500; }
+        .breadcrumb a:hover { color: var(--primary-dark); text-decoration: underline; }
+        .breadcrumb .separator { color: var(--gray-400); }
+        .breadcrumb .current { color: var(--gray-700); font-weight: 600; }
+
+        .btn {
+            padding: 0.55rem 1.25rem; border: none; border-radius: var(--radius-sm);
+            cursor: pointer; font-size: 0.85rem; font-weight: 600; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            transition: var(--transition);
+            font-family: var(--font-family);
+        }
+        .btn-outline { background: white; border: 2px solid var(--gray-200); color: var(--gray-700); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--info-bg); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .btn-sm { padding: 0.4rem 0.9rem; font-size: 0.8rem; }
+        .btn-save-draft { background: white; border: 2px dashed var(--gray-300); color: var(--gray-600); }
+        .btn-save-draft:hover { border-color: var(--primary); color: var(--primary); background: var(--info-bg); }
+        .btn-preview { background: white; border: 2px solid var(--gray-200); color: var(--gray-700); }
+        .btn-preview:hover { border-color: var(--primary); color: var(--primary); }
+
+        .form-container { background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; }
+        .form-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white; padding: 2rem 2.5rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .form-header h1 { font-size: 1.75rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem; }
+        .badge-add { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); padding: 0.3rem 0.85rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-edit { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); padding: 0.3rem 0.85rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+
+        .form-body { padding: 2.5rem; }
+        .form-section { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--gray-100); }
+        .form-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+        .section-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .section-icon.basic { background: var(--info-bg); color: var(--primary); }
+        .section-icon.details { background: var(--success-bg); color: var(--success); }
+        .section-icon.links { background: #ede9fe; color: #7c3aed; }
+        .section-icon.settings { background: var(--warning-bg); color: var(--warning); }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.35rem; }
+        .form-group label .required { color: var(--danger); font-size: 0.75rem; }
+        .form-group label .optional { color: var(--gray-400); font-size: 0.72rem; font-weight: 400; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 0.7rem 0.9rem; border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm); font-size: 0.9rem; font-family: inherit;
+            transition: var(--transition); background: white; color: var(--gray-800);
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+        }
+        .form-group textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+        .form-group .help-text { font-size: 0.78rem; color: var(--gray-400); margin-top: 0.3rem; }
+        .form-group .error-text { font-size: 0.8rem; color: var(--danger); margin-top: 0.3rem; display: flex; align-items: center; gap: 0.25rem; }
+        .form-group .char-count { font-size: 0.75rem; color: var(--gray-400); text-align: right; margin-top: 0.25rem; }
+
+        .checkbox-group {
+            display: flex; align-items: center; gap: 0.65rem;
+            padding: 0.75rem 1rem; background: var(--gray-50);
+            border-radius: var(--radius-sm); border: 2px solid var(--gray-200);
+        }
+        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+
+        .form-actions {
+            display: flex; gap: 0.75rem; justify-content: space-between;
+            align-items: center; padding-top: 2rem; border-top: 2px solid var(--gray-100);
+            margin-top: 2rem; flex-wrap: wrap;
+        }
+
+        /* Preview Modal */
+        .preview-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center;
+        }
+        .preview-overlay.active { display: flex; }
+        .preview-modal {
+            background: white; border-radius: var(--radius-lg); padding: 2rem;
+            max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+        .preview-close { float: right; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-500); }
+
+        /* Animations */
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .shake { animation: shake 0.4s ease-in-out; }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .form-body { padding: 1.5rem; }
+            .form-header { padding: 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+            .form-actions > div { width: 100%; }
+            .form-actions .btn { flex: 1; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="form-wrapper">
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="breadcrumb">
+            <a href="/">🏠 Home</a> <span class="separator">›</span>
+            <a href="{% url 'admin_dashboard' %}">Admin</a> <span class="separator">›</span>
+            <a href="{% url 'admin_jobs' %}">Jobs</a> <span class="separator">›</span>
+            <span class="current">{% if action == 'Add' %}Add New{% else %}Edit{% endif %}</span>
+        </div>
+        <div>
+            <a href="/" class="btn btn-outline btn-sm">🏠 Home</a>
+            <a href="{% url 'admin_jobs' %}" class="btn btn-outline btn-sm">← Back</a>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+        <div class="form-header">
+            <div>
+                <h1>{% if action == 'Add' %}➕ Add New Job{% else %}✏️ Edit Job{% endif %}</h1>
+                <span class="{% if action == 'Add' %}badge-add{% else %}badge-edit{% endif %}">
+                    {% if action == 'Add' %}Creating New Listing{% else %}Editing Existing{% endif %}
+                </span>
+            </div>
+            <div>
+                <button type="button" class="btn btn-sm" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;" onclick="togglePreview()">👁️ Preview</button>
+            </div>
+        </div>
+
+        <div class="form-body">
+            <form method="POST" id="jobForm" onsubmit="return validateForm()">
+                {% csrf_token %}
+
+                <!-- Section 1: Basic Information -->
+                <div class="form-section" id="section1">
+                    <h3 class="section-title"><span class="section-icon basic">📋</span> Basic Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Job Title <span class="required">*</span></label>
+                            {{ form.title }}
+                            <span class="char-count" id="titleCount">0/200</span>
+                            {% if form.title.errors %}
+                            <span class="error-text">⚠️ {{ form.title.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label>Company Name <span class="required">*</span></label>
+                            {{ form.company }}
+                            {% if form.company.errors %}
+                            <span class="error-text">⚠️ {{ form.company.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label>Location <span class="optional">(optional)</span></label>
+                            {{ form.location }}
+                            <span class="help-text">City, state, or "Remote"</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Salary Range <span class="optional">(optional)</span></label>
+                            {{ form.salary }}
+                            <span class="help-text">e.g., $50,000 - $70,000 per year</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Job Type <span class="required">*</span></label>
+                            {{ form.type }}
+                        </div>
+                        <div class="form-group">
+                            <label>Category <span class="optional">(optional)</span></label>
+                            {{ form.category }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Details -->
+                <div class="form-section" id="section2">
+                    <h3 class="section-title"><span class="section-icon details">📝</span> Job Details</h3>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Description <span class="required">*</span></label>
+                            {{ form.description }}
+                            <span class="char-count" id="descCount">0 characters</span>
+                            {% if form.description.errors %}
+                            <span class="error-text">⚠️ {{ form.description.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Requirements <span class="optional">(optional)</span></label>
+                            {{ form.requirements }}
+                            <span class="help-text">List the key requirements and qualifications</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Links & Settings -->
+                <div class="form-section" id="section3">
+                    <h3 class="section-title"><span class="section-icon links">🔗</span> Links & Settings</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Application URL <span class="optional">(optional)</span></label>
+                            {{ form.apply_url }}
+                            <span class="help-text">Direct link to apply for this job</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Company Website <span class="optional">(optional)</span></label>
+                            {{ form.company_website }}
+                        </div>
+                        <div class="form-group">
+                            <label>Expiry Date <span class="optional">(optional)</span></label>
+                            {{ form.expires_at }}
+                            <span class="help-text">Leave blank for no expiry</span>
+                        </div>
+                    </div>
+                    <div class="checkbox-group" style="margin-top:1.25rem;">
+                        {{ form.is_active }}
+                        <label><strong>Publish Immediately</strong> <span style="display:block;font-size:0.78rem;color:var(--gray-400);font-weight:400;">Make this job visible to all users</span></label>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <div>
+                        <button type="button" class="btn btn-save-draft" onclick="saveDraft()">💾 Save as Draft</button>
+                        <button type="button" class="btn btn-preview" onclick="togglePreview()">👁️ Preview</button>
+                    </div>
+                    <div style="display:flex;gap:0.75rem;">
+                        <a href="{% url 'admin_jobs' %}" class="btn btn-outline">❌ Cancel</a>
+                        <button type="reset" class="btn btn-outline">🔄 Reset</button>
+                        <button type="submit" class="btn btn-success">{% if action == 'Add' %}➕ Create Job{% else %}💾 Update Job{% endif %}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="preview-overlay" id="previewOverlay" onclick="if(event.target===this)togglePreview()">
+    <div class="preview-modal">
+        <button class="preview-close" onclick="togglePreview()">✕</button>
+        <h2>📋 Job Preview</h2>
+        <div id="previewContent"><p><em>Fill in the form to see a preview...</em></p></div>
+    </div>
+</div>
+
+<script>
+    // Character counters
+    const titleInput = document.querySelector('#{{ form.title.id_for_label }}');
+    const descInput = document.querySelector('#{{ form.description.id_for_label }}');
+    if (titleInput) {
+        titleInput.addEventListener('input', function() {
+            document.getElementById('titleCount').textContent = this.value.length + '/200';
+        });
+    }
+    if (descInput) {
+        descInput.addEventListener('input', function() {
+            document.getElementById('descCount').textContent = this.value.length + ' characters';
+        });
+    }
+
+    // Preview
+    function togglePreview() {
+        const overlay = document.getElementById('previewOverlay');
+        overlay.classList.toggle('active');
+        if (overlay.classList.contains('active')) generatePreview();
+    }
+
+    function generatePreview() {
+        const title = document.querySelector('#{{ form.title.id_for_label }}')?.value || 'No title';
+        const company = document.querySelector('#{{ form.company.id_for_label }}')?.value || 'No company';
+        const location = document.querySelector('#{{ form.location.id_for_label }}')?.value || 'Not specified';
+        const type = document.querySelector('#{{ form.type.id_for_label }}')?.selectedOptions[0]?.text || 'Not specified';
+        const salary = document.querySelector('#{{ form.salary.id_for_label }}')?.value || 'Not specified';
+        const description = document.querySelector('#{{ form.description.id_for_label }}')?.value || 'No description';
+
+        document.getElementById('previewContent').innerHTML = `
+            <div style="background:#f8fafc;padding:1.5rem;border-radius:12px;">
+                <h3 style="color:#1e293b;margin-bottom:0.5rem;">${escapeHtml(title)}</h3>
+                <p style="color:#64748b;margin-bottom:0.75rem;"><strong>${escapeHtml(company)}</strong></p>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;color:#64748b;">
+                    <span>📍 ${escapeHtml(location)}</span>
+                    <span>📌 ${escapeHtml(type)}</span>
+                    <span>💰 ${escapeHtml(salary)}</span>
+                </div>
+                <div style="color:#475569;line-height:1.8;">${escapeHtml(description).replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Save Draft
+    function saveDraft() {
+        const isActive = document.querySelector('#{{ form.is_active.id_for_label }}');
+        if (isActive) isActive.checked = false;
+        document.getElementById('jobForm').submit();
+    }
+
+    // Validate Form
+    function validateForm() {
+        const title = document.querySelector('#{{ form.title.id_for_label }}')?.value.trim();
+        const company = document.querySelector('#{{ form.company.id_for_label }}')?.value.trim();
+        const description = document.querySelector('#{{ form.description.id_for_label }}')?.value.trim();
+
+        let errors = [];
+        if (!title) errors.push('Job title is required');
+        if (!company) errors.push('Company name is required');
+        if (!description) errors.push('Job description is required');
+
+        if (errors.length > 0) {
+            showToast(errors.join('<br>'), 'error');
+            return false;
+        }
+        return true;
+    }
+
+    // Toast
+    function showToast(message, type = 'info') {
+        const colors = { success: '#10b981', error: '#ef4444', info: '#3b82f6', warning: '#f59e0b' };
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed; bottom: 30px; right: 30px;
+            background: ${colors[type] || colors.info};
+            color: white; padding: 1rem 1.5rem; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 9999;
+            animation: slideUp 0.3s ease-out; font-weight: 500; font-size: 0.9rem;
+            max-width: 400px; line-height: 1.5;
+        `;
+        toast.innerHTML = message;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'slideDown 0.3s ease-out forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // Toast styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(20px); opacity: 0; } }
+    `;
+    document.head.appendChild(style);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); document.getElementById('jobForm').submit(); }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'd') { e.preventDefault(); saveDraft(); }
+        if (e.key === 'Escape') { const overlay = document.getElementById('previewOverlay'); if (overlay.classList.contains('active')) togglePreview(); }
+    });
+
+    console.log('✅ Job Form Ready');
+    console.log('💡 Ctrl+S to save, Ctrl+D to save draft, Esc to close preview');
+</script>
+</body>
+</html>

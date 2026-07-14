@@ -1,0 +1,463 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics - {{ job.title }}{% endblock %}
+
+{% block content %}
+<style>
+    .analytics-container {
+        max-width: 1200px;
+        margin: 2rem auto 4rem;
+        padding: 0 5%;
+    }
+
+    .analytics-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .analytics-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .analytics-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s;
+    }
+
+    .analytics-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .analytics-card .number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2563eb;
+    }
+
+    .analytics-card .label {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+    }
+
+    .analytics-card .icon {
+        font-size: 1.5rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        border: 1px solid #f1f5f9;
+        margin-bottom: 2rem;
+    }
+
+    .chart-container h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+
+    .chart-wrapper {
+        height: 300px;
+        position: relative;
+    }
+
+    .chart-wrapper canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    .recent-activity {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .activity-section {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        border: 1px solid #f1f5f9;
+    }
+
+    .activity-section h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-item .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #2563eb;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .activity-item .info {
+        flex: 1;
+    }
+
+    .activity-item .info .name {
+        font-weight: 500;
+        color: #1e293b;
+        font-size: 0.9rem;
+    }
+
+    .activity-item .info .time {
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+
+    .activity-item .info .comment-text {
+        font-size: 0.85rem;
+        color: #475569;
+        margin-top: 0.15rem;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        margin-bottom: 1rem;
+    }
+
+    .back-btn:hover {
+        color: #2563eb;
+        gap: 0.75rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #94a3b8;
+    }
+
+    .empty-state .icon {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        border: none;
+        line-height: 1;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Dark Mode */
+    body.dark-mode .analytics-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .analytics-card .number {
+        color: #60a5fa;
+    }
+
+    body.dark-mode .chart-container {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .chart-container h3 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .activity-section {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .activity-section h3 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .activity-item {
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .activity-item .info .name {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .activity-item .info .comment-text {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .analytics-header h1 {
+        color: #e2e8f0;
+    }
+
+    @media (max-width: 768px) {
+        .recent-activity {
+            grid-template-columns: 1fr;
+        }
+
+        .analytics-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .analytics-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="analytics-container">
+    <a href="{% url 'my_posted_jobs' %}" class="back-btn">← Back to My Jobs</a>
+
+    <div class="analytics-header">
+        <div>
+            <h1>📊 Analytics: <span style="font-size: 1.5rem;">{{ job.title }}</span></h1>
+            <p style="color: #64748b;">🏢 {{ job.company }} · Posted {{ job.posted_at|date:"M d, Y" }}</p>
+        </div>
+        <a href="{% url 'job_detail' job.slug %}" class="btn btn-primary" target="_blank">
+            👁️ View Job
+        </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="analytics-grid">
+        <div class="analytics-card">
+            <span class="icon">👁️</span>
+            <div class="number">{{ total_views }}</div>
+            <div class="label">Total Views</div>
+        </div>
+        <div class="analytics-card">
+            <span class="icon">👤</span>
+            <div class="number">{{ unique_views }}</div>
+            <div class="label">Unique Visitors</div>
+        </div>
+        <div class="analytics-card">
+            <span class="icon">❤️</span>
+            <div class="number">{{ total_likes }}</div>
+            <div class="label">Likes</div>
+        </div>
+        <div class="analytics-card">
+            <span class="icon">💬</span>
+            <div class="number">{{ total_comments }}</div>
+            <div class="label">Comments</div>
+        </div>
+        <div class="analytics-card">
+            <span class="icon">🖱️</span>
+            <div class="number">{{ total_clicks }}</div>
+            <div class="label">Link Clicks</div>
+        </div>
+        <div class="analytics-card">
+            <span class="icon">📝</span>
+            <div class="number">{{ applications }}</div>
+            <div class="label">Applications</div>
+        </div>
+    </div>
+
+    <!-- Daily Views Chart -->
+    <div class="chart-container">
+        <h3>📈 Daily Views (Last 30 Days)</h3>
+        <div class="chart-wrapper">
+            <canvas id="dailyViewsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="recent-activity">
+        <!-- Recent Views -->
+        <div class="activity-section">
+            <h3>👁️ Recent Views</h3>
+            {% if recent_views %}
+            {% for view in recent_views %}
+            <div class="activity-item">
+                <div class="avatar">👤</div>
+                <div class="info">
+                    <div class="name">{% if view.user %}{{ view.user.username }}{% else %}Anonymous{% endif %}</div>
+                    <div class="time">{{ view.viewed_at|timesince }} ago</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <span class="icon">👁️</span>
+                <p>No views recorded yet</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Likes -->
+        <div class="activity-section">
+            <h3>❤️ Recent Likes</h3>
+            {% if recent_likes %}
+            {% for like in recent_likes %}
+            <div class="activity-item">
+                <div class="avatar">{{ like.user.username|slice:":1"|upper }}</div>
+                <div class="info">
+                    <div class="name">{{ like.user.username }}</div>
+                    <div class="time">{{ like.created_at|timesince }} ago</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <span class="icon">❤️</span>
+                <p>No likes yet</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Comments -->
+        <div class="activity-section">
+            <h3>💬 Recent Comments</h3>
+            {% if recent_comments %}
+            {% for comment in recent_comments %}
+            <div class="activity-item">
+                <div class="avatar">{{ comment.user.username|slice:":1"|upper }}</div>
+                <div class="info">
+                    <div class="name">{{ comment.user.username }}</div>
+                    <div class="comment-text">"{{ comment.comment|truncatechars:60 }}"</div>
+                    <div class="time">{{ comment.created_at|timesince }} ago</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <span class="icon">💬</span>
+                <p>No comments yet</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Recent Clicks -->
+        <div class="activity-section">
+            <h3>🖱️ Recent Link Clicks</h3>
+            {% if recent_clicks %}
+            {% for click in recent_clicks %}
+            <div class="activity-item">
+                <div class="avatar">🖱️</div>
+                <div class="info">
+                    <div class="name">{{ click.get_link_type_display }}</div>
+                    <div class="time">{{ click.clicked_at|timesince }} ago</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <span class="icon">🖱️</span>
+                <p>No clicks recorded yet</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('dailyViewsChart');
+        const dailyData = {{ daily_views|safe }};
+
+        if (ctx && Object.keys(dailyData).length > 0) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(dailyData).reverse(),
+                    datasets: [{
+                        label: 'Daily Views',
+                        data: Object.values(dailyData).reverse(),
+                        backgroundColor: 'rgba(37, 99, 235, 0.6)',
+                        borderColor: '#2563eb',
+                        borderWidth: 2,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    .auth-container {
+        max-width: 520px;
+        margin: 4rem auto;
+        padding: 0 5%;
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: var(--transition);
+        animation: slideUp 0.5s ease-out;
+    }
+
+    .auth-card:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--shadow-lg);
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-align: center;
+        color: var(--gray-900);
+        margin-bottom: 0.25rem;
+    }
+
+    .auth-subtitle {
+        color: var(--gray-500);
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.4rem;
+        color: var(--gray-700);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .form-group label .required {
+        color: var(--danger);
+        margin-left: 0.15rem;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--radius-sm);
+        font-size: 0.95rem;
+        font-family: inherit;
+        transition: all 0.3s;
+        background: rgba(255, 255, 255, 0.5);
+        color: var(--gray-800);
+    }
+
+    .form-group input:hover {
+        border-color: var(--gray-300);
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .form-options .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--gray-600);
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .form-options .remember-me input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+
+    .auth-btn {
+        width: 100%;
+        padding: 0.9rem;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+    }
+
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    .auth-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .auth-btn .spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+    }
+
+    .auth-btn.loading .spinner {
+        display: inline-block;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .auth-links {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .auth-links p {
+        color: var(--gray-500);
+        font-size: 0.95rem;
+    }
+
+    .auth-links a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition);
+    }
+
+    .auth-links a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    .alert {
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius-sm);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid;
+        animation: slideUp 0.3s ease-out;
+    }
+
+    .alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: #991b1b;
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #065f46;
+        border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .alert-info {
+        background: rgba(59, 130, 246, 0.1);
+        color: #1e40af;
+        border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .alert-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: #92400e;
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    /* Dark Mode */
+    body.dark-mode .auth-card {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .auth-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .auth-title {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .form-group label {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .form-group input {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .form-group input:hover {
+        background: rgba(30, 41, 59, 0.7);
+        border-color: #334155;
+    }
+
+    body.dark-mode .form-group input:focus {
+        background: #1e293b;
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .form-options .remember-me {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .auth-links {
+        border-top-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .auth-links p {
+        color: #94a3b8;
+    }
+
+    @media (max-width: 480px) {
+        .auth-container {
+            max-width: 100%;
+            padding: 0 4%;
+        }
+
+        .auth-card {
+            padding: 1.5rem;
+        }
+
+        .auth-title {
+            font-size: 1.4rem;
+        }
+
+        .form-options {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <h1 class="auth-title">Login</h1>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+        <form method="POST" id="loginForm">
+            {% csrf_token %}
+
+            {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter your username" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter your password" required>
+            </div>
+
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember" id="remember">
+                    Remember me
+                </label>
+                <a href="{% url 'password_reset' %}" style="color: var(--primary); font-size: 0.9rem; text-decoration: none; font-weight: 500;">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="auth-btn" id="loginBtn">
+                <span class="btn-content">
+                    <span class="spinner"></span>
+                    <span>Login</span>
+                    <span>→</span>
+                </span>
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <p>Don't have an account? <a href="{% url 'register' %}">Create Account</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('loginBtn');
+
+        form.addEventListener('submit', function() {
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+        });
+    });
+</script>
+{% endblock %}

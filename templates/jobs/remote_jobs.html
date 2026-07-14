@@ -1,0 +1,41 @@
+{% extends 'jobs/job_list.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block title %}Remote Jobs - Work From Anywhere{% endblock %}
+
+{% block hero_title %}Remote <span>Jobs</span>{% endblock %}
+{% block hero_description %}Work from anywhere in the world. Find remote job opportunities from global companies.{% endblock %}
+{% block hero_badge %}🏠 Work From Anywhere{% endblock %}
+{% block hero_icon %}🌐{% endblock %}
+{% block hero_breadcrumb %}<span>Remote Jobs</span>{% endblock %}
+
+{% block active_tab %}remote{% endblock %}
+
+{% block extra_badges %}
+<span class="jl-badge jl-badge-remote">🌐 Remote</span>
+{% endblock %}
+
+{% block filter_tabs %}
+<button class="jl-search-tab {% if not request.GET.type %}active{% endif %}" onclick="filterByType('')">
+    📌 All <span class="count">{{ total_jobs }}</span>
+</button>
+<button class="jl-search-tab {% if request.GET.type == 'full_time' %}active{% endif %}" onclick="filterByType('full_time')">
+    💼 Full-Time <span class="count">{{ full_time_count|default:0 }}</span>
+</button>
+<button class="jl-search-tab {% if request.GET.type == 'part_time' %}active{% endif %}" onclick="filterByType('part_time')">
+    ⏰ Part-Time <span class="count">{{ part_time_count|default:0 }}</span>
+</button>
+<button class="jl-search-tab {% if request.GET.type == 'contract' %}active{% endif %}" onclick="filterByType('contract')">
+    📄 Contract <span class="count">{{ contract_count|default:0 }}</span>
+</button>
+<button class="jl-search-tab {% if request.GET.type == 'daily' %}active{% endif %}" onclick="filterByType('daily')">
+    ⚡ Daily <span class="count">{{ daily_count|default:0 }}</span>
+</button>
+{% endblock %}
+
+{% block empty_state_emoji %}🌐{% endblock %}
+{% block empty_state_title %}No remote jobs available{% endblock %}
+{% block empty_state_text %}Check back later for new remote opportunities from companies around the world.{% endblock %}
+{% block empty_state_link %}{% url 'job_list' %}{% endblock %}
+{% block empty_state_link_text %}Browse All Jobs{% endblock %}

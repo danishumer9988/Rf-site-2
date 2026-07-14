@@ -1,0 +1,321 @@
+{% load static %}
+
+<style>
+    /* ========== STATS SECTION ========== */
+    .stats-search-section {
+        max-width: 1200px;
+        margin: 2rem auto 4rem;
+        padding: 0 5%;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* Stats Grid - 3 Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card-modern {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 12px;
+        padding: 1.75rem 2rem;
+        text-align: center;
+        border: 2px solid var(--gray-200);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        cursor: default;
+    }
+
+    /* Simple hover effect */
+    .stat-card-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .stat-card-modern:hover::before {
+        opacity: 1;
+    }
+
+    .stat-card-modern:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        background: rgba(255, 255, 255, 0.98);
+        border-color: var(--primary);
+    }
+
+    /* Individual card hover animations */
+    .stat-card-modern:nth-child(1):hover .stat-number {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transform: scale(1.05);
+    }
+
+    .stat-card-modern:nth-child(2):hover .stat-number {
+        background: linear-gradient(135deg, #06b6d4, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transform: scale(1.05);
+    }
+
+    .stat-card-modern:nth-child(3):hover .stat-number {
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transform: scale(1.05);
+    }
+
+    .stat-card-modern .stat-number {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        line-height: 1.2;
+        display: block;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-variant-numeric: tabular-nums;
+        margin-bottom: 0.15rem;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .stat-card-modern:hover .stat-number {
+        transform: scale(1.05) translateY(-2px);
+    }
+
+    .stat-card-modern .stat-label {
+        color: var(--gray-500);
+        font-size: 0.95rem;
+        display: block;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card-modern:hover .stat-label {
+        color: var(--gray-700);
+        letter-spacing: 0.8px;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes countUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .stat-card-modern .stat-number.animated {
+        animation: countUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .stat-card-modern:nth-child(1) .stat-number.animated {
+        animation-delay: 0.1s;
+    }
+    .stat-card-modern:nth-child(2) .stat-number.animated {
+        animation-delay: 0.2s;
+    }
+    .stat-card-modern:nth-child(3) .stat-number.animated {
+        animation-delay: 0.3s;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 1024px) {
+        .stats-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .stat-card-modern {
+            min-height: 100px;
+            padding: 1.25rem 1.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .stats-search-section {
+            margin-top: 1rem;
+        }
+
+        .stat-card-modern {
+            min-height: 90px;
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+        }
+
+        .stat-card-modern .stat-number {
+            font-size: 2.2rem;
+        }
+    }
+
+    /* ===== Dark Mode ===== */
+    body.dark-mode .stat-card-modern {
+        background: rgba(30, 41, 59, 0.85);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    body.dark-mode .stat-card-modern:hover {
+        background: rgba(30, 41, 59, 0.95);
+        border-color: #60a5fa;
+    }
+
+    body.dark-mode .stat-card-modern .stat-number {
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    body.dark-mode .stat-card-modern:hover .stat-label {
+        color: var(--gray-300);
+    }
+</style>
+
+<!-- ========== STATS SECTION ========== -->
+<section class="stats-search-section animate-on-scroll">
+    <!-- Stats Grid - 3 Cards -->
+    <div class="stats-grid">
+        <!-- Card 1: Last Week Jobs -->
+        <div class="stat-card-modern">
+            <span class="stat-number" id="jobsCount" data-target="{{ last_week_jobs }}">0</span>
+            <span class="stat-label"> Last Week Jobs Detected</span>
+        </div>
+
+        <!-- Card 2: Last Week Internships -->
+        <div class="stat-card-modern">
+            <span class="stat-number" id="internshipsCount" data-target="{{ last_week_internships }}">0</span>
+            <span class="stat-label"> Last Week Internships Detected</span>
+        </div>
+
+        <!-- Card 3: Industries Covered -->
+        <div class="stat-card-modern">
+            <span class="stat-number" id="categoriesCount" data-target="{{ total_categories }}">0</span>
+            <span class="stat-label"> Industries Covered</span>
+        </div>
+    </div>
+</section>
+
+<script>
+    // ========== NUMBER COUNTING ANIMATION ==========
+    function animateNumber(element, target, duration = 1500) {
+        if (!element) return;
+
+        const start = 0;
+        const startTime = performance.now();
+        const isFloat = target % 1 !== 0;
+
+        function updateCounter(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Easing function for smooth animation
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const current = start + (target - start) * easeOutQuart;
+
+            // Format the number
+            if (isFloat) {
+                element.textContent = current.toFixed(1);
+            } else {
+                element.textContent = Math.floor(current).toLocaleString();
+            }
+
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                // Final value
+                if (isFloat) {
+                    element.textContent = target.toFixed(1);
+                } else {
+                    element.textContent = target.toLocaleString();
+                }
+                element.classList.add('animated');
+            }
+        }
+
+        requestAnimationFrame(updateCounter);
+    }
+
+    // ========== INTERSECTION OBSERVER FOR STATS ==========
+    function setupStatsAnimation() {
+        const statNumbers = document.querySelectorAll('.stat-number');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const element = entry.target;
+                    const target = parseInt(element.dataset.target) || 0;
+
+                    // Only animate if not already animated
+                    if (!element.classList.contains('animated')) {
+                        animateNumber(element, target);
+                    }
+
+                    observer.unobserve(element);
+                }
+            });
+        }, {
+            threshold: 0.3,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        statNumbers.forEach(el => observer.observe(el));
+    }
+
+    // ========== INITIALIZE ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        // Setup stats animation with Intersection Observer
+        setupStatsAnimation();
+
+        // If stats are already visible (e.g., above the fold), trigger immediately
+        setTimeout(() => {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                if (isVisible && !el.classList.contains('animated')) {
+                    const target = parseInt(el.dataset.target) || 0;
+                    animateNumber(el, target);
+                    el.classList.add('animated');
+                }
+            });
+        }, 500);
+    });
+</script>

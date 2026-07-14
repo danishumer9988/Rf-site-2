@@ -1,0 +1,679 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Settings - Dashboard - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    /* ============================================================
+       SETTINGS - Glassmorphism Design
+       ============================================================ */
+    :root {
+        --dash-primary: #2563eb;
+        --dash-primary-dark: #1d4ed8;
+        --dash-primary-light: #dbeafe;
+        --dash-success: #10b981;
+        --dash-success-bg: #d1fae5;
+        --dash-warning: #f59e0b;
+        --dash-warning-bg: #fef3c7;
+        --dash-danger: #ef4444;
+        --dash-danger-bg: #fee2e2;
+        --dash-purple: #8b5cf6;
+        --dash-purple-bg: #ede9fe;
+        --dash-pink: #ec4899;
+        --dash-pink-bg: #fce7f3;
+        --dash-cyan: #06b6d4;
+        --dash-cyan-bg: #cffafe;
+        --dash-gray-50: #f8fafc;
+        --dash-gray-100: #f1f5f9;
+        --dash-gray-200: #e2e8f0;
+        --dash-gray-300: #cbd5e1;
+        --dash-gray-400: #94a3b8;
+        --dash-gray-500: #64748b;
+        --dash-gray-600: #475569;
+        --dash-gray-700: #334155;
+        --dash-gray-800: #1e293b;
+        --dash-gray-900: #0f172a;
+        --dash-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --dash-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+        --dash-shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+        --dash-shadow-xl: 0 20px 60px rgba(0,0,0,0.15);
+        --dash-radius-sm: 8px;
+        --dash-radius-md: 12px;
+        --dash-radius-lg: 16px;
+        --dash-radius-xl: 20px;
+        --dash-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+     * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+
+    .dashboard-wrapper {
+        display: flex;
+        min-height: calc(100vh - 68px);
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .dash-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--dash-radius-lg);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 1.5rem 1rem;
+        position: sticky;
+        top: 80px;
+        height: fit-content;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        transition: var(--dash-transition);
+    }
+
+    .dash-sidebar::-webkit-scrollbar { width: 4px; }
+    .dash-sidebar::-webkit-scrollbar-thumb { background: var(--dash-gray-300); border-radius: 4px; }
+
+    .sidebar-profile {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.5rem 0.75rem 1.25rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        margin-bottom: 1.25rem;
+    }
+
+    .sidebar-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--dash-primary), var(--dash-purple));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .sidebar-user-info { flex: 1; min-width: 0; }
+    .sidebar-user-info .user-name { font-weight: 600; color: var(--dash-gray-800); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user-info .user-email { font-size: 0.75rem; color: var(--dash-gray-400); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user-info .user-badge { display: inline-block; font-size: 0.55rem; font-weight: 700; text-transform: uppercase; padding: 0.05rem 0.5rem; border-radius: 10px; background: var(--dash-success-bg); color: #065f46; margin-top: 0.1rem; }
+
+    .sidebar-nav { display: flex; flex-direction: column; gap: 0.15rem; }
+    .sidebar-nav-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--dash-gray-400); font-weight: 700; padding: 0.75rem 0.75rem 0.35rem; }
+
+    .sidebar-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.65rem 0.75rem;
+        border-radius: var(--dash-radius-sm);
+        text-decoration: none;
+        color: var(--dash-gray-600);
+        font-weight: 500;
+        font-size: 0.88rem;
+        transition: var(--dash-transition);
+        position: relative;
+    }
+
+    .sidebar-nav-link .nav-icon { font-size: 1.1rem; width: 24px; text-align: center; flex-shrink: 0; }
+    .sidebar-nav-link .nav-text { flex: 1; }
+    .sidebar-nav-link .nav-badge { background: var(--dash-danger); color: white; font-size: 0.6rem; font-weight: 700; padding: 0.05rem 0.45rem; border-radius: 10px; min-width: 18px; text-align: center; }
+    .sidebar-nav-link .nav-badge.success { background: var(--dash-success); }
+    .sidebar-nav-link .nav-badge.warning { background: var(--dash-warning); }
+    .sidebar-nav-link .nav-arrow { font-size: 0.6rem; color: var(--dash-gray-300); transition: var(--dash-transition); }
+    .sidebar-nav-link:hover { background: rgba(0, 0, 0, 0.03); color: var(--dash-gray-800); }
+    .sidebar-nav-link:hover .nav-arrow { transform: translateX(3px); color: var(--dash-gray-500); }
+    .sidebar-nav-link.active { background: var(--dash-primary-light); color: var(--dash-primary); font-weight: 600; }
+    .sidebar-nav-link.active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 24px; background: var(--dash-primary); border-radius: 0 3px 3px 0; }
+
+    .sidebar-footer { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(0, 0, 0, 0.06); }
+    .sidebar-footer .sidebar-nav-link.logout { color: var(--dash-danger); }
+    .sidebar-footer .sidebar-nav-link.logout:hover { background: var(--dash-danger-bg); }
+
+    /* ===== MAIN CONTENT ===== */
+    .dash-main { flex: 1; min-width: 0; }
+
+    .dash-header {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        border-radius: var(--dash-radius-xl);
+        padding: 1.75rem 2rem;
+        color: white;
+        margin-bottom: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .dash-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(20px, -20px) scale(1.1); }
+    }
+
+    .dash-header-content { position: relative; z-index: 2; display: flex; align-items: center; gap: 1rem; }
+    .dash-header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.1rem; }
+    .dash-header .subtitle { opacity: 0.8; font-size: 0.9rem; }
+    .dash-header .header-actions { position: relative; z-index: 2; display: flex; gap: 0.5rem; }
+
+    .btn-white { background: white; color: var(--dash-gray-800); padding: 0.45rem 1rem; border-radius: var(--dash-radius-sm); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: var(--dash-transition); display: inline-flex; align-items: center; gap: 0.4rem; border: none; cursor: pointer; font-family: inherit; }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
+    .btn-ghost-white { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); padding: 0.45rem 1rem; border-radius: var(--dash-radius-sm); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: var(--dash-transition); display: inline-flex; align-items: center; gap: 0.4rem; border: none; cursor: pointer; font-family: inherit; }
+    .btn-ghost-white:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+    /* ===== FORM ===== */
+    .form-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 2rem;
+        border-radius: var(--dash-radius-lg);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+        transition: var(--dash-transition);
+    }
+
+    .form-card:hover {
+        box-shadow: var(--dash-shadow-md);
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .form-card h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dash-gray-800);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group.full-width { grid-column: 1 / -1; }
+
+    .form-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--dash-gray-700);
+        margin-bottom: 0.4rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.7rem 0.9rem;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--dash-radius-sm);
+        font-size: 0.9rem;
+        font-family: inherit;
+        transition: var(--dash-transition);
+        background: rgba(255, 255, 255, 0.5);
+        color: var(--dash-gray-800);
+    }
+
+    .form-group input:hover,
+    .form-group textarea:hover,
+    .form-group select:hover {
+        border-color: var(--dash-gray-300);
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: var(--dash-primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+        line-height: 1.6;
+    }
+
+    .form-group .help-text {
+        font-size: 0.75rem;
+        color: var(--dash-gray-400);
+        margin-top: 0.25rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .btn-primary {
+        background: var(--dash-primary);
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border: none;
+        border-radius: var(--dash-radius-sm);
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--dash-transition);
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+    }
+
+    .btn-primary:hover {
+        background: var(--dash-primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        color: var(--dash-gray-600);
+        padding: 0.6rem 1.5rem;
+        border-radius: var(--dash-radius-sm);
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--dash-transition);
+        font-family: inherit;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-outline:hover {
+        border-color: var(--dash-primary);
+        color: var(--dash-primary);
+        transform: translateY(-2px);
+    }
+
+    .sidebar-toggle-btn {
+        display: none;
+        background: var(--dash-primary);
+        color: white;
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        z-index: 50;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 40; }
+    .sidebar-overlay.active { display: block; }
+
+    /* Dark Mode */
+    body.dark-mode .dash-sidebar {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .form-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .form-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .form-card h2 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .form-group label {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .form-group input,
+    body.dark-mode .form-group textarea,
+    body.dark-mode .form-group select {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .form-group input:hover,
+    body.dark-mode .form-group textarea:hover,
+    body.dark-mode .form-group select:hover {
+        background: rgba(30, 41, 59, 0.7);
+        border-color: #334155;
+    }
+
+    body.dark-mode .form-group input:focus,
+    body.dark-mode .form-group textarea:focus,
+    body.dark-mode .form-group select:focus {
+        background: #1e293b;
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .sidebar-nav-link {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .sidebar-nav-link:hover {
+        background: rgba(255, 255, 255, 0.03);
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .sidebar-nav-link.active {
+        background: rgba(96, 165, 250, 0.1);
+        color: #60a5fa;
+    }
+
+    body.dark-mode .sidebar-profile {
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .sidebar-user-info .user-name {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .sidebar-footer {
+        border-top-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .btn-outline {
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .btn-outline:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-wrapper { flex-direction: column; padding: 0.75rem; }
+        .dash-sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; transform: translateX(-100%); z-index: 100; border-radius: 0; padding: 1.5rem 1rem; max-height: 100vh; box-shadow: var(--dash-shadow-xl); }
+        .dash-sidebar.open { transform: translateX(0); }
+        .sidebar-toggle-btn { display: flex; }
+        .dash-header { padding: 1.25rem; flex-direction: column; align-items: flex-start; }
+        .dash-header h1 { font-size: 1.25rem; }
+        .form-grid { grid-template-columns: 1fr; }
+        .form-actions { flex-direction: column; }
+        .form-actions .btn { justify-content: center; }
+        .dash-header-content { flex-direction: column; text-align: center; width: 100%; }
+    }
+
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: slideUp 0.4s ease-out forwards; }
+
+
+</style>
+
+<!-- ===== SIDEBAR OVERLAY ===== -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- ===== DASHBOARD WRAPPER ===== -->
+<div class="dashboard-wrapper">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="dash-sidebar" id="dashSidebar">
+        <div class="sidebar-profile">
+            <div class="sidebar-avatar">
+                {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+                {% else %}
+                {{ user.username|slice:":1"|upper }}
+                {% endif %}
+            </div>
+            <div class="sidebar-user-info">
+                <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                <div class="user-email">{{ user.email }}</div>
+                <span class="user-badge">{% if user.is_staff %}Staff{% else %}Member{% endif %}</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="sidebar-nav-label">Main</div>
+            <a href="{% url 'dashboard' %}" class="sidebar-nav-link">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Overview</span>
+            </a>
+            <a href="{% url 'dashboard_profile' %}" class="sidebar-nav-link">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">My Profile</span>
+            </a>
+            <a href="{% url 'my_job_posts' %}" class="sidebar-nav-link">
+                <span class="nav-icon">📝</span>
+                <span class="nav-text">My Jobs</span>
+            </a>
+            <a href="{% url 'user_analytics' %}" class="sidebar-nav-link">
+                <span class="nav-icon">📈</span>
+                <span class="nav-text">Analytics</span>
+            </a>
+
+            <div class="sidebar-nav-label">Saved</div>
+            <a href="{% url 'dashboard_saved_jobs' %}" class="sidebar-nav-link">
+                <span class="nav-icon">💼</span>
+                <span class="nav-text">Saved Jobs</span>
+                {% if saved_jobs_count %}
+                <span class="nav-badge">{{ saved_jobs_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{% url 'dashboard_saved_internships' %}" class="sidebar-nav-link">
+                <span class="nav-icon">🎓</span>
+                <span class="nav-text">Saved Internships</span>
+                {% if saved_internships_count %}
+                <span class="nav-badge">{{ saved_internships_count }}</span>
+                {% endif %}
+            </a>
+
+            <div class="sidebar-nav-label">Settings</div>
+            <a href="{% url 'dashboard_settings' %}" class="sidebar-nav-link active">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="{% url 'home' %}" class="sidebar-nav-link">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Homepage</span>
+                <span class="nav-arrow">→</span>
+            </a>
+            <a href="{% url 'logout' %}" class="sidebar-nav-link logout">
+                <span class="nav-icon">🚪</span>
+                <span class="nav-text">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="dash-main">
+
+        <!-- ===== HEADER ===== -->
+        <div class="dash-header animate-in">
+            <div class="dash-header-content">
+                <div>
+                    <h1>⚙️ Settings</h1>
+                    <div class="subtitle">Manage your account security and preferences</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'dashboard' %}" class="btn btn-ghost-white">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- ===== CHANGE PASSWORD ===== -->
+        <div class="settings-card animate-in delay-1">
+            <h2><i class="fas fa-lock" style="color:var(--dash-primary);"></i> Change Password</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Current Password</label>
+                    {{ form.old_password }}
+                    {% if form.old_password.errors %}
+                    <div class="error-text">{{ form.old_password.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label>New Password</label>
+                    {{ form.new_password1 }}
+                    <div class="help-text">Your password must be at least 8 characters and can't be entirely numeric.</div>
+                    {% if form.new_password1.errors %}
+                    <div class="error-text">{{ form.new_password1.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    {{ form.new_password2 }}
+                    {% if form.new_password2.errors %}
+                    <div class="error-text">{{ form.new_password2.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i> Update Password
+                </button>
+            </form>
+        </div>
+
+        <!-- ===== DANGER ZONE ===== -->
+        <div class="settings-card danger-zone animate-in delay-2">
+            <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
+            <p style="color:var(--dash-gray-500);margin-bottom:1rem;">
+                Once you delete your account, there is no going back. Please be certain.
+            </p>
+            <button class="btn-danger" onclick="confirmDelete()">
+                <i class="fas fa-trash"></i> Delete Account
+            </button>
+        </div>
+
+    </main>
+</div>
+
+<!-- ===== SIDEBAR TOGGLE ===== -->
+<button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('dashSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const btn = document.getElementById('sidebarToggleBtn');
+
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+
+        if (sidebar.classList.contains('open')) {
+            btn.innerHTML = '<i class="fas fa-times"></i>';
+        } else {
+            btn.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const sidebar = document.getElementById('dashSidebar');
+            if (sidebar.classList.contains('open')) {
+                toggleSidebar();
+            }
+        }
+    });
+
+    function confirmDelete() {
+        if (confirm('Are you absolutely sure you want to delete your account? This action cannot be undone!')) {
+            if (confirm('Please confirm again: Delete your account permanently?')) {
+                showToast('Account deletion functionality coming soon.', 'info');
+            }
+        }
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        const colors = { success: '#10b981', error: '#ef4444', info: '#3b82f6', warning: '#f59e0b' };
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: ${colors[type] || colors.success};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 9999;
+            animation: slideInToast 0.3s ease-out;
+            font-weight: 500;
+            font-size: 0.9rem;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        `;
+        toast.innerHTML = `<span>${message}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'slideOutToast 0.3s ease-out forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    const toastStyle = document.createElement('style');
+    toastStyle.textContent = `
+        @keyframes slideInToast { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0%); opacity: 1; } }
+        @keyframes slideOutToast { from { transform: translateX(0%); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    `;
+    document.head.appendChild(toastStyle);
+</script>
+{% endblock %}

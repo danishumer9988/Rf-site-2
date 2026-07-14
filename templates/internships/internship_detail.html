@@ -1,0 +1,945 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ internship.title }} at {{ internship.company }} - Internship Detail{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --jd-primary: #2563eb;
+        --jd-primary-dark: #1d4ed8;
+        --jd-cyan: #06b6d4;
+        --jd-cyan-dark: #0891b2;
+        --jd-gray-50: #f8fafc;
+        --jd-gray-100: #f1f5f9;
+        --jd-gray-200: #e2e8f0;
+        --jd-gray-300: #cbd5e1;
+        --jd-gray-400: #94a3b8;
+        --jd-gray-500: #64748b;
+        --jd-gray-600: #475569;
+        --jd-gray-700: #334155;
+        --jd-gray-800: #1e293b;
+        --jd-gray-900: #0f172a;
+        --jd-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --jd-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+        --jd-shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+        --jd-radius-sm: 8px;
+        --jd-radius-md: 12px;
+        --jd-radius-lg: 16px;
+        --jd-radius-xl: 20px;
+        --jd-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .jd-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e293b 100%);
+        padding: 3.5rem 5% 2.5rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2.5rem;
+        border-bottom: 4px solid var(--jd-cyan);
+    }
+
+    .jd-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: heroGlow 8s ease-in-out infinite;
+    }
+
+    .jd-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: heroGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes heroGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(20px, -20px) scale(1.1); }
+    }
+
+    .jd-hero .container {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .jd-hero .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #94a3b8;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: var(--jd-transition);
+        margin-bottom: 1.5rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: var(--jd-radius-sm);
+        background: rgba(255,255,255,0.05);
+    }
+
+    .jd-hero .back-link:hover {
+        color: white;
+        background: rgba(255,255,255,0.12);
+        gap: 0.75rem;
+    }
+
+    .jd-hero h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+    }
+
+    .jd-hero .company-name {
+        font-size: 1.15rem;
+        color: #94a3b8;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .jd-hero .company-name .company-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background: var(--jd-cyan);
+        border-radius: 50%;
+        animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.6); }
+    }
+
+    .jd-hero .meta-badges {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .jd-hero .badge {
+        padding: 0.3rem 1rem;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .jd-hero .badge-remote {
+        background: rgba(6, 182, 212, 0.2);
+        color: #22d3ee;
+        border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    .jd-hero .badge-physical {
+        background: rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .jd-hero .badge-fulltime {
+        background: rgba(37, 99, 235, 0.2);
+        color: #60a5fa;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    .jd-hero .badge-parttime {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fcd34d;
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .jd-hero .badge-internship {
+        background: rgba(139, 92, 246, 0.2);
+        color: #c4b5fd;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .jd-hero .badge-stipend {
+        background: rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .jd-hero .badge-category {
+        background: rgba(139, 92, 246, 0.2);
+        color: #c4b5fd;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .jd-hero-bottom {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.5rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .jd-hero-bottom .jd-badge-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        color: #cbd5e1;
+    }
+
+    .jd-hero-bottom .jd-badge-item i {
+        color: #94a3b8;
+        width: 18px;
+        text-align: center;
+        font-size: 0.85rem;
+    }
+
+    .jd-hero-bottom .jd-badge-item .jd-badge-label {
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    .jd-hero-bottom .jd-badge-item .jd-badge-value {
+        font-weight: 600;
+        color: white;
+    }
+
+    .jd-hero .hero-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+    }
+
+    .jd-hero .btn {
+        padding: 0.65rem 1.5rem;
+        border-radius: var(--jd-radius-sm);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--jd-transition);
+        border: none;
+        cursor: pointer;
+    }
+
+    .jd-hero .btn-primary {
+        background: var(--jd-cyan);
+        color: white;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+    }
+
+    .jd-hero .btn-primary:hover {
+        background: var(--jd-cyan-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+    }
+
+    .jd-hero .btn-outline {
+        background: transparent;
+        border: 2px solid rgba(255,255,255,0.2);
+        color: white;
+    }
+
+    .jd-hero .btn-outline:hover {
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-2px);
+    }
+
+    .jd-hero .btn-save {
+        background: transparent;
+        border: 2px solid #ef4444;
+        color: #ef4444;
+    }
+
+    .jd-hero .btn-save:hover {
+        background: #ef4444;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .jd-hero .btn-save.saved {
+        background: #ef4444;
+        color: white;
+        border-color: #ef4444;
+    }
+
+    .jd-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 5% 3rem;
+    }
+
+    .jd-section {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--jd-radius-lg);
+        padding: 2rem;
+        box-shadow: var(--jd-shadow-sm);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-bottom: 1.5rem;
+        transition: var(--jd-transition);
+    }
+
+    .jd-section:hover {
+        box-shadow: var(--jd-shadow-md);
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .jd-section h2 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--jd-gray-900);
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .jd-section h2 .section-icon {
+        font-size: 1.2rem;
+    }
+
+    .jd-section p {
+        color: var(--jd-gray-700);
+        line-height: 1.8;
+        font-size: 0.95rem;
+    }
+
+    .jd-section .description-text {
+        white-space: pre-wrap;
+    }
+
+    .jd-sidebar {
+        position: sticky;
+        top: 90px;
+        align-self: start;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .jd-sidebar-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--jd-radius-lg);
+        padding: 1.5rem;
+        box-shadow: var(--jd-shadow-sm);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: var(--jd-transition);
+    }
+
+    .jd-sidebar-card:hover {
+        box-shadow: var(--jd-shadow-md);
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .jd-sidebar-card h3 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--jd-gray-900);
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .jd-sidebar-card h3 i {
+        color: var(--jd-cyan);
+        width: 20px;
+        text-align: center;
+    }
+
+    .jd-info-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .jd-info-list li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        font-size: 0.88rem;
+    }
+
+    .jd-info-list li:last-child {
+        border-bottom: none;
+    }
+
+    .jd-info-list .label {
+        color: var(--jd-gray-500);
+    }
+
+    .jd-info-list .value {
+        font-weight: 600;
+        color: var(--jd-gray-800);
+        text-align: right;
+    }
+
+    .jd-apply-card {
+        background: linear-gradient(135deg, #0891b2 0%, #06b6d4 50%, #0e7490 100%);
+        color: white;
+        border-radius: var(--jd-radius-lg);
+        padding: 2rem 1.5rem;
+        text-align: center;
+        box-shadow: var(--jd-shadow-md);
+        transition: var(--jd-transition);
+    }
+
+    .jd-apply-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--jd-shadow-lg);
+    }
+
+    .jd-apply-card h3 {
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .jd-apply-card p {
+        opacity: 0.85;
+        margin-bottom: 1.25rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .jd-apply-card .jd-btn-apply {
+        display: inline-block;
+        padding: 0.7rem 2.5rem;
+        background: white;
+        color: #0891b2;
+        border-radius: var(--jd-radius-sm);
+        font-weight: 700;
+        text-decoration: none;
+        transition: var(--jd-transition);
+        font-size: 0.95rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border: none;
+        cursor: pointer;
+    }
+
+    .jd-apply-card .jd-btn-apply:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+
+    .jd-share-section {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        margin-top: 0.25rem;
+    }
+
+    .jd-share-btn {
+        padding: 0.4rem 0.8rem;
+        border-radius: var(--jd-radius-sm);
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        background: transparent;
+        cursor: pointer;
+        transition: var(--jd-transition);
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--jd-gray-600);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .jd-share-btn:hover {
+        border-color: var(--jd-cyan);
+        color: var(--jd-cyan);
+        background: var(--jd-cyan-light);
+        transform: translateY(-2px);
+    }
+
+    .jd-company-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--jd-radius-sm);
+        color: var(--jd-gray-700);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.85rem;
+        transition: var(--jd-transition);
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    .jd-company-link:hover {
+        border-color: var(--jd-cyan);
+        color: var(--jd-cyan);
+        transform: translateY(-2px);
+        box-shadow: var(--jd-shadow-sm);
+    }
+
+    /* Dark Mode */
+    body.dark-mode .jd-section {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jd-section:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .jd-section h2 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .jd-section p {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jd-sidebar-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jd-sidebar-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .jd-sidebar-card h3 {
+        color: #e2e8f0;
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jd-info-list .value {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .jd-info-list li {
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jd-company-link {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jd-company-link:hover {
+        border-color: #22d3ee;
+        color: #22d3ee;
+    }
+
+    body.dark-mode .jd-share-btn {
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jd-share-btn:hover {
+        border-color: #22d3ee;
+        color: #22d3ee;
+        background: rgba(34, 211, 238, 0.1);
+    }
+
+    @media (max-width: 1024px) {
+        .jd-hero h1 {
+            font-size: 2.2rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .jd-grid {
+            grid-template-columns: 1fr;
+            padding: 0 4% 2rem;
+        }
+        .jd-hero {
+            padding: 2rem 4% 1.5rem;
+        }
+        .jd-hero h1 {
+            font-size: 1.8rem;
+        }
+        .jd-section {
+            padding: 1.5rem;
+        }
+        .jd-sidebar {
+            position: static;
+        }
+        .jd-hero .hero-actions {
+            flex-direction: column;
+        }
+        .jd-hero .hero-actions .btn {
+            justify-content: center;
+        }
+        .jd-hero-bottom {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .jd-hero h1 {
+            font-size: 1.5rem;
+        }
+        .jd-section {
+            padding: 1.2rem;
+        }
+        .jd-sidebar-card {
+            padding: 1.2rem;
+        }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .jd-animate {
+        animation: slideUp 0.4s ease-out forwards;
+    }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="jd-hero">
+    <div class="container">
+        <a href="{% url 'internship_list' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Internships
+        </a>
+
+        <h1>{{ internship.title }}</h1>
+        <div class="company-name">
+            🏢 {{ internship.company }}
+            <span class="company-dot"></span>
+            <span style="font-size:0.85rem;color:#64748b;">Posted {{ internship.posted_at|date:"M d, Y" }}</span>
+        </div>
+
+        <div class="meta-badges">
+            <span class="badge {% if internship.type == 'remote' %}badge-remote{% else %}badge-physical{% endif %}">
+                {% if internship.type == 'remote' %}🌐 Remote{% else %}🏢 On-Site{% endif %}
+            </span>
+            <span class="badge {% if internship.internship_type == 'full_time' %}badge-fulltime{% else %}badge-parttime{% endif %}">
+                {% if internship.internship_type == 'full_time' %}💼 Full-Time{% else %}⏰ Part-Time{% endif %}
+            </span>
+            <span class="badge badge-internship">🎓 Internship</span>
+            {% if internship.category %}
+            <span class="badge badge-category">📂 {{ internship.category.name }}</span>
+            {% endif %}
+            {% if internship.stipend %}
+            <span class="badge badge-stipend">💰 {{ internship.stipend }}</span>
+            {% endif %}
+        </div>
+
+        <div class="jd-hero-bottom">
+            <div class="jd-badge-item">
+                <i class="fas fa-briefcase"></i>
+                <span class="jd-badge-label">Type:</span>
+                <span class="jd-badge-value">{{ internship.get_internship_type_display }}</span>
+            </div>
+            <div class="jd-badge-item">
+                <i class="fas fa-map-pin"></i>
+                <span class="jd-badge-label">Location:</span>
+                <span class="jd-badge-value">{{ internship.get_type_display }}</span>
+            </div>
+            {% if internship.category %}
+            <div class="jd-badge-item">
+                <i class="fas fa-tag"></i>
+                <span class="jd-badge-label">Category:</span>
+                <span class="jd-badge-value">{{ internship.category.name }}</span>
+            </div>
+            {% endif %}
+            {% if internship.stipend %}
+            <div class="jd-badge-item">
+                <i class="fas fa-money-bill-wave"></i>
+                <span class="jd-badge-label">Stipend:</span>
+                <span class="jd-badge-value">{{ internship.stipend }}</span>
+            </div>
+            {% endif %}
+            {% if internship.duration %}
+            <div class="jd-badge-item">
+                <i class="fas fa-clock"></i>
+                <span class="jd-badge-label">Duration:</span>
+                <span class="jd-badge-value">{{ internship.duration }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="hero-actions">
+            {% if user.is_authenticated %}
+            <button class="btn btn-save {% if is_saved %}saved{% endif %}" onclick="toggleSave('{{ internship.slug }}', this)">
+                {% if is_saved %}❤️ Saved{% else %}🤍 Save{% endif %}
+            </button>
+            {% endif %}
+
+            {% if internship.apply_url %}
+            <a href="{{ internship.apply_url }}" target="_blank" class="btn btn-primary">
+                Apply Now <i class="fas fa-arrow-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="jd-grid">
+
+    <div class="jd-left">
+        <div class="jd-section jd-animate">
+            <h2>
+                <span class="section-icon">📋</span>
+                About This Internship
+            </h2>
+            <p class="description-text">{{ internship.description|linebreaks }}</p>
+        </div>
+
+        {% if internship.requirements %}
+        <div class="jd-section jd-animate delay-1">
+            <h2>
+                <span class="section-icon">✅</span>
+                Requirements
+            </h2>
+            <p class="description-text">{{ internship.requirements|linebreaks }}</p>
+        </div>
+        {% endif %}
+
+        {% if related_internships %}
+        <div class="jd-section jd-animate delay-2">
+            <h2>
+                <span class="section-icon">🔗</span>
+                Similar Internships
+            </h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                {% for related in related_internships %}
+                <a href="{% url 'internship_detail' related.slug %}" style="padding:0.5rem 0.75rem;background:rgba(0,0,0,0.03);border-radius:var(--jd-radius-sm);text-decoration:none;color:var(--jd-gray-700);font-size:0.85rem;transition:var(--jd-transition);display:flex;align-items:center;gap:0.3rem;">
+                    <span>🎓</span>
+                    <span>{{ related.title|truncatechars:30 }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if internship.company_website %}
+        <div class="jd-section jd-animate delay-3">
+            <h2>
+                <span class="section-icon">🌐</span>
+                Company Website
+            </h2>
+            <a href="{{ internship.company_website }}" target="_blank" class="jd-company-link" style="width:fit-content;">
+                <i class="fas fa-globe"></i> Visit {{ internship.company }}'s Website
+                <i class="fas fa-external-link-alt" style="font-size:0.65rem;opacity:0.5;"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="jd-sidebar">
+        <div class="jd-sidebar-card jd-animate">
+            <h3><i class="fas fa-circle-info"></i> Quick Info</h3>
+            <ul class="jd-info-list">
+                <li><span class="label">🏢 Company</span><span class="value">{{ internship.company }}</span></li>
+                <li><span class="label">📍 Location</span><span class="value">{{ internship.location }}</span></li>
+                <li><span class="label">🏷️ Type</span><span class="value">{{ internship.get_internship_type_display }}</span></li>
+                <li><span class="label">🌐 Work Mode</span><span class="value">{{ internship.get_type_display }}</span></li>
+                {% if internship.stipend %}
+                <li><span class="label">💰 Stipend</span><span class="value">{{ internship.stipend }}</span></li>
+                {% endif %}
+                {% if internship.duration %}
+                <li><span class="label">⏱️ Duration</span><span class="value">{{ internship.duration }}</span></li>
+                {% endif %}
+                <li><span class="label">📅 Posted</span><span class="value">{{ internship.posted_at|date:"M d, Y" }}</span></li>
+                {% if internship.expires_at %}
+                <li><span class="label">⏰ Expires</span><span class="value">{{ internship.expires_at|date:"M d, Y" }}</span></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        {% if internship.apply_url %}
+        <div class="jd-apply-card jd-animate delay-1">
+            <h3>🚀 Ready to Apply?</h3>
+            <p>Don't miss this opportunity. Apply now and start your career journey!</p>
+            <a href="{{ internship.apply_url }}" target="_blank" class="jd-btn-apply">
+                Apply Now <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="jd-sidebar-card jd-animate delay-2">
+            <h3><i class="fas fa-share-alt"></i> Share</h3>
+            <div class="jd-share-section">
+                <button class="jd-share-btn" onclick="shareOn('facebook')">
+                    <span class="share-icon">📘</span> Facebook
+                </button>
+                <button class="jd-share-btn" onclick="shareOn('twitter')">
+                    <span class="share-icon">🐦</span> Twitter
+                </button>
+                <button class="jd-share-btn" onclick="shareOn('linkedin')">
+                    <span class="share-icon">💼</span> LinkedIn
+                </button>
+                <button class="jd-share-btn" onclick="copyLink()">
+                    <span class="share-icon">🔗</span> Copy Link
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleSave(slug, button) {
+        {% if not user.is_authenticated %}
+            window.location.href = '/login/';
+            return;
+        {% endif %}
+
+        fetch(`/internships/${slug}/save/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (data.saved) {
+                    button.innerHTML = '❤️ Saved';
+                    button.classList.add('saved');
+                    showToast('Internship saved successfully! ✅', 'success');
+                } else {
+                    button.innerHTML = '🤍 Save';
+                    button.classList.remove('saved');
+                    showToast('Internship removed from saved.', 'info');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Something went wrong. Please try again.', 'error');
+        });
+    }
+
+    function shareOn(platform) {
+        const url = window.location.href;
+        const text = `Check out this internship: {{ internship.title }} at {{ internship.company }}`;
+        let shareUrl = '';
+
+        switch(platform) {
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                break;
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                break;
+            case 'linkedin':
+                shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+                break;
+        }
+
+        if (shareUrl) {
+            window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+    }
+
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showToast('Link copied to clipboard! 📋', 'success');
+        }).catch(() => {
+            const input = document.createElement('input');
+            input.value = window.location.href;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            showToast('Link copied to clipboard! 📋', 'success');
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function showToast(message, type = 'success') {
+        const colors = {
+            success: '#10b981',
+            error: '#ef4444',
+            info: '#3b82f6',
+            warning: '#f59e0b'
+        };
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: ${colors[type] || colors.success};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 9999;
+            animation: slideInToast 0.3s ease-out;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            max-width: 400px;
+        `;
+        toast.innerHTML = `<span>${message}</span>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideOutToast 0.3s ease-out forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    const toastStyle = document.createElement('style');
+    toastStyle.textContent = `
+        @keyframes slideInToast {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutToast {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(toastStyle);
+</script>
+{% endblock %}

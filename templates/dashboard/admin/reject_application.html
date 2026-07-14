@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Reject Application - Admin - Job Reference Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* ===== BASE STYLES ===== */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --warning: #f59e0b;
+            --warning-bg: #fef3c7;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --danger-bg: #fee2e2;
+            --info: #3b82f6;
+            --info-bg: #dbeafe;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-family);
+            background: #f1f5f9;
+            color: var(--gray-800);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .admin-wrapper { display: flex; min-height: 100vh; }
+
+        /* ===== SIDEBAR STYLES ===== */
+        .admin-sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .admin-sidebar::-webkit-scrollbar { width: 4px; }
+        .admin-sidebar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+        .sidebar-header h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sidebar-header .admin-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 0.15rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .home-btn {
+            padding: 0.35rem 0.75rem;
+            background: rgba(255,255,255,0.08);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .home-btn:hover { background: rgba(255,255,255,0.18); }
+
+        .sidebar-nav { padding: 1rem 0.75rem; flex: 1; }
+        .sidebar-section { margin-bottom: 1.5rem; }
+        .sidebar-section-title {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            padding: 0.3rem 1rem;
+            font-weight: 700;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 0.1rem;
+            position: relative;
+        }
+        .sidebar-link:hover { background: rgba(255,255,255,0.06); color: white; }
+        .sidebar-link.active {
+            background: rgba(37,99,235,0.25);
+            color: white;
+        }
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 0 3px 3px 0;
+        }
+        .sidebar-link .icon { font-size: 1.05rem; width: 22px; text-align: center; flex-shrink: 0; }
+        .sidebar-link .badge-count {
+            margin-left: auto;
+            background: #ef4444;
+            color: white;
+            padding: 0.05rem 0.45rem;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            min-width: 18px;
+            text-align: center;
+        }
+        .sidebar-link .badge-count.zero { background: #475569; }
+        .sidebar-footer { padding: 1rem 0.75rem; border-top: 1px solid rgba(255,255,255,0.08); }
+
+        .admin-main { flex: 1; margin-left: 260px; padding: 2rem; min-height: 100vh; }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+        .top-bar-left { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .top-bar-left h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-back {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: 0.4rem 1rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid var(--gray-200);
+        }
+        .btn-back:hover { background: var(--gray-200); transform: translateX(-3px); }
+
+        .btn {
+            padding: 0.5rem 1.2rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition);
+            font-family: var(--font-family);
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        .btn-danger:hover {
+            background: var(--danger-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239,68,68,0.3);
+        }
+        .btn-outline {
+            background: white;
+            border: 2px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--info-bg);
+        }
+
+        /* ===== REJECT FORM ===== */
+        .reject-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .reject-card {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+        .reject-card h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+        .reject-card .subtitle {
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+        }
+
+        .app-details {
+            background: var(--gray-50);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+        .app-details p {
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+        }
+        .app-details strong {
+            color: var(--gray-700);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+        .form-group label .required {
+            color: var(--danger);
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: var(--transition);
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+        }
+        .form-group .help-text {
+            color: var(--gray-400);
+            font-size: 0.78rem;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        /* ===== SIDEBAR TOGGLE ===== */
+        .sidebar-toggle {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 200;
+            box-shadow: 0 4px 16px rgba(37,99,235,0.4);
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+        .sidebar-overlay.active { display: block; }
+
+        @media (max-width: 968px) {
+            .admin-sidebar { transform: translateX(-100%); z-index: 150; }
+            .admin-sidebar.open { transform: translateX(0); }
+            .admin-main { margin-left: 0; padding: 1rem; }
+            .sidebar-toggle { display: flex; }
+        }
+        @media (max-width: 640px) {
+            .top-bar { flex-direction: column; align-items: flex-start; }
+            .reject-card { padding: 1.5rem; }
+            .btn-group { flex-direction: column; }
+            .btn-group .btn { justify-content: center; }
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+    </style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+{% include 'dashboard/admin/nav_sidebar.html' %}
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="admin-main">
+    <div class="top-bar animate-in">
+        <div class="top-bar-left">
+            <a href="{% url 'admin_job_applications' %}" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Applications</a>
+            <h1>❌ Reject Application</h1>
+        </div>
+        <div>
+            <a href="/" class="btn btn-outline btn-sm"><i class="fas fa-home"></i> Home</a>
+        </div>
+    </div>
+
+    <div class="reject-container animate-in">
+        <div class="reject-card">
+            <p class="subtitle">You are about to reject the following job application:</p>
+
+            <div class="app-details">
+                <p><strong>📋 Title:</strong> {{ application.title }}</p>
+                <p><strong>🏢 Company:</strong> {{ application.company }}</p>
+                <p><strong>👤 Submitted by:</strong> {{ application.user.username }}</p>
+                <p><strong>📧 Email:</strong> {{ application.contact_email }}</p>
+                <p><strong>📍 Location:</strong> {{ application.location }}</p>
+                <p><strong>📅 Submitted:</strong> {{ application.submitted_at|date:"M d, Y H:i" }}</p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="admin_notes">Reason for Rejection <span class="required">*</span></label>
+                    <textarea name="admin_notes" id="admin_notes" rows="5" placeholder="Please provide a clear reason for rejection..." required></textarea>
+                    <span class="help-text"><i class="fas fa-info-circle"></i> This will be sent to the applicant via email.</span>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-times-circle"></i> Reject Application</button>
+                    <a href="{% url 'admin_job_applications' %}" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<!-- ===== SIDEBAR TOGGLE ===== -->
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+<script>
+    // Sidebar toggle function (also in nav_sidebar.html)
+    function toggleSidebar() {
+        const s = document.getElementById('adminSidebar');
+        const b = document.getElementById('sidebarToggle');
+        const o = document.getElementById('sidebarOverlay');
+        s.classList.toggle('open');
+        b.innerHTML = s.classList.contains('open') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        o.classList.toggle('active');
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+            e.preventDefault();
+            toggleSidebar();
+        }
+        if (e.key === 'Escape') {
+            const s = document.getElementById('adminSidebar');
+            if (s.classList.contains('open')) toggleSidebar();
+        }
+    });
+
+    // Auto-focus the textarea
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.getElementById('admin_notes');
+        if (textarea) {
+            setTimeout(function() {
+                textarea.focus();
+            }, 500);
+        }
+    });
+
+    console.log('✅ Reject Application Loaded');
+</script>
+</body>
+</html>

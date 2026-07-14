@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Job Reference Hub Newsletter</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f1f5f9;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+        .email-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .email-header::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+        .email-header .badge {
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #93c5fd;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .email-body {
+            padding: 2rem 2rem 1.5rem;
+        }
+        .email-body h2 {
+            color: #0f172a;
+            margin-top: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .email-body p {
+            color: #475569;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        .feature-list {
+            background: #f0fdf4;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #10b981;
+        }
+        .feature-list h3 {
+            color: #065f46;
+            margin-top: 0;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .feature-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .feature-list li {
+            padding: 0.35rem 0;
+            color: #047857;
+            font-size: 14px;
+        }
+        .feature-list li::before {
+            content: '✓ ';
+            font-weight: bold;
+            color: #10b981;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 0.8rem 2.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+            transition: all 0.3s;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+        }
+        .email-footer {
+            background: #f8fafc;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+        .email-footer p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+        }
+        .email-footer a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .email-footer a:hover {
+            text-decoration: underline;
+        }
+        .divider {
+            border: none;
+            border-top: 1px solid #e2e8f0;
+            margin: 1.5rem 0;
+        }
+        @media (max-width: 480px) {
+            .email-body {
+                padding: 1.5rem;
+            }
+            .email-header {
+                padding: 1.5rem;
+            }
+            .email-header h1 {
+                font-size: 1.5rem;
+            }
+            .feature-list {
+                padding: 1rem 1.25rem;
+            }
+            .cta-button {
+                display: block;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <h1>🎉 Welcome to Job Reference Hub!</h1>
+        <div class="badge">✨ Your Career Journey Starts Here</div>
+    </div>
+
+    <div class="email-body">
+        <h2>You're all set, {{ first_name|default:"there" }}! 👋</h2>
+        <p>
+            Thank you for subscribing to <strong>Job Reference Hub</strong>'s newsletter.
+            You'll now receive the latest job and internship opportunities
+            directly in your inbox.
+        </p>
+
+        <div class="feature-list">
+            <h3>📬 What you'll receive:</h3>
+            <ul>
+                <li>Weekly curated job listings</li>
+                <li>New internship opportunities</li>
+                <li>Remote work positions</li>
+                <li>Career tips and resources</li>
+                <li>Salary insights and trends</li>
+            </ul>
+        </div>
+
+        <p>
+            Ready to start exploring? Browse our latest opportunities now.
+        </p>
+
+        <div style="text-align: center;">
+            <a href="https://jobreferencehub.com/jobs/" class="cta-button">
+                Browse Jobs →
+            </a>
+        </div>
+
+        <p style="margin-top: 2rem; font-size: 14px; color: #64748b;">
+            If you have any questions, feel free to
+            <a href="https://jobreferencehub.com/contact/" style="color: #2563eb; text-decoration: none;">contact us</a>.
+        </p>
+    </div>
+
+    <div class="email-footer">
+        <p><strong>Job Reference Hub</strong> — Your Career Starts Here</p>
+        <p>
+            <a href="https://jobreferencehub.com/unsubscribe/{{ email }}/">Unsubscribe</a>
+            ·
+            <a href="https://jobreferencehub.com/privacy/">Privacy Policy</a>
+            ·
+            <a href="https://jobreferencehub.com/terms/">Terms of Service</a>
+        </p>
+        <p>© {% now "Y" %} Job Reference Hub. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>

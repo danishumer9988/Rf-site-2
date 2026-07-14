@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Unsubscribed - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    .unsubscribe-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        padding: 3rem 2rem;
+        text-align: center;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .unsubscribe-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .unsubscribe-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1rem;
+    }
+
+    .unsubscribe-message {
+        color: #64748b;
+        margin-bottom: 2rem;
+        line-height: 1.8;
+    }
+
+    .resubscribe-note {
+        background: #fef3c7;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        color: #92400e;
+    }
+</style>
+
+<div class="unsubscribe-container">
+    <div class="unsubscribe-icon">📧</div>
+    <h1 class="unsubscribe-title">Successfully Unsubscribed</h1>
+    <p class="unsubscribe-message">
+        You've been unsubscribed from Job Reference Hub alerts.
+        You will no longer receive job notifications from us.
+    </p>
+
+    <div class="resubscribe-note">
+        <p>Changed your mind? You can always resubscribe by entering your email in the newsletter form on our homepage.</p>
+    </div>
+
+    <a href="/" class="btn btn-primary" style="display: inline-block;">Go to Homepage</a>
+</div>
+{% endblock %}

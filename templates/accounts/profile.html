@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ profile_user.username }}'s Profile - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    .profile-page {
+        max-width: 800px;
+        margin: 3rem auto;
+        padding: 0 5%;
+    }
+
+    .profile-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .profile-cover {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        height: 150px;
+        position: relative;
+    }
+
+    .profile-cover .cover-badge {
+        position: absolute;
+        bottom: -20px;
+        right: 30px;
+        padding: 0.4rem 1.2rem;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-content {
+        padding: 2rem;
+        margin-top: -60px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .avatar-section {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .avatar-display {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        margin: 0 auto;
+        background: var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        overflow: hidden;
+    }
+
+    .avatar-display img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-name {
+        text-align: center;
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-name h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    .profile-email {
+        text-align: center;
+        color: var(--gray-500);
+        margin-bottom: 2rem;
+        font-size: 1rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-item {
+        padding: 1rem 1.25rem;
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        transition: var(--transition);
+    }
+
+    .info-item:hover {
+        background: rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        color: var(--gray-400);
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: var(--gray-800);
+        font-size: 1rem;
+    }
+
+    .profile-bio {
+        background: rgba(0, 0, 0, 0.03);
+        padding: 1.25rem 1.5rem;
+        border-radius: var(--radius-sm);
+        margin-bottom: 2rem;
+        color: var(--gray-600);
+        line-height: 1.8;
+        border-left: 3px solid var(--primary);
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.7rem 1.8rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        line-height: 1;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        color: var(--gray-700);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    /* Dark Mode */
+    body.dark-mode .profile-card {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .profile-name h1 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .profile-email {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .info-item {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .info-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    body.dark-mode .info-value {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .profile-bio {
+        background: rgba(255, 255, 255, 0.03);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .btn-outline {
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .btn-outline:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+    }
+
+    @media (max-width: 768px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-content {
+            padding: 1.5rem;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+
+        .profile-actions .btn {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .profile-content {
+            padding: 1.25rem;
+        }
+
+        .profile-name h1 {
+            font-size: 1.5rem;
+        }
+
+        .profile-cover {
+            height: 100px;
+        }
+
+        .avatar-display {
+            width: 90px;
+            height: 90px;
+            font-size: 3rem;
+        }
+    }
+</style>
+
+<div class="profile-page">
+    <div class="profile-card">
+        <div class="profile-cover">
+            <span class="cover-badge">⭐ Member</span>
+        </div>
+        <div class="profile-content">
+            <div class="avatar-section">
+                <div class="avatar-display">
+                    {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+                    {% else %}
+                    👤
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="profile-name">
+                <h1>{{ user.get_full_name|default:user.username }}</h1>
+            </div>
+            <div class="profile-email">
+                {{ user.email }}
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">📍 Location</div>
+                    <div class="info-value">{{ user.profile.location|default:"Not set" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">📅 Joined</div>
+                    <div class="info-value">{{ user.date_joined|date:"F Y" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">💼 Jobs Saved</div>
+                    <div class="info-value">{{ user.saved_jobs.count }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">🎓 Internships Saved</div>
+                    <div class="info-value">{{ user.saved_internships.count }}</div>
+                </div>
+            </div>
+
+            {% if user.profile.bio %}
+            <div class="profile-bio">
+                {{ user.profile.bio }}
+            </div>
+            {% endif %}
+
+            <div class="profile-actions">
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary">
+                    ✏️ Edit Profile
+                </a>
+                <a href="{% url 'change_password' %}" class="btn btn-outline">
+                    🔒 Change Password
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

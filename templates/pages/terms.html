@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Terms of Service - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    /* ============================================================
+       TERMS OF SERVICE - Glassmorphism Design
+       ============================================================ */
+    :root {
+        --legal-primary: #2563eb;
+        --legal-primary-dark: #1d4ed8;
+        --legal-primary-light: #eff6ff;
+        --legal-gray-50: #f8fafc;
+        --legal-gray-100: #f1f5f9;
+        --legal-gray-200: #e2e8f0;
+        --legal-gray-300: #cbd5e1;
+        --legal-gray-400: #94a3b8;
+        --legal-gray-500: #64748b;
+        --legal-gray-600: #475569;
+        --legal-gray-700: #334155;
+        --legal-gray-800: #1e293b;
+        --legal-gray-900: #0f172a;
+        --legal-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --legal-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+        --legal-shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+        --legal-radius-sm: 8px;
+        --legal-radius-md: 12px;
+        --legal-radius-lg: 16px;
+        --legal-radius-xl: 20px;
+        --legal-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ===== HERO SECTION ===== */
+    .legal-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 4rem 5% 3rem;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid var(--legal-primary);
+        text-align: center;
+    }
+
+    .legal-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .legal-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .legal-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .legal-hero-content .legal-icon-large {
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 1rem;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .legal-hero-content h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .legal-hero-content h1 span {
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .legal-hero-content p {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    /* ===== CONTENT ===== */
+    .legal-content {
+        max-width: 900px;
+        margin: -1.5rem auto 4rem;
+        padding: 0 5%;
+        position: relative;
+        z-index: 5;
+    }
+
+    .legal-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--legal-radius-xl);
+        padding: 2.5rem;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: var(--legal-transition);
+    }
+
+    .legal-card:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--legal-shadow-lg);
+    }
+
+    .legal-card h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--legal-gray-800);
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .legal-card h2:first-of-type {
+        margin-top: 0;
+    }
+
+    .legal-card h2 .section-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--legal-primary-light);
+        color: var(--legal-primary);
+        font-size: 0.8rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .legal-card p {
+        color: var(--legal-gray-600);
+        line-height: 1.8;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    .legal-card ul {
+        margin-left: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .legal-card ul li {
+        color: var(--legal-gray-600);
+        line-height: 1.7;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .legal-card ul li strong {
+        color: var(--legal-gray-700);
+    }
+
+    .legal-card .last-updated {
+        font-size: 0.9rem;
+        color: var(--legal-gray-400);
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        font-style: italic;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .legal-card a {
+        color: var(--legal-primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--legal-transition);
+    }
+
+    .legal-card a:hover {
+        color: var(--legal-primary-dark);
+        text-decoration: underline;
+    }
+
+    .legal-card .contact-email {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(37, 99, 235, 0.05);
+        border-radius: var(--legal-radius-sm);
+        border: 1px solid rgba(37, 99, 235, 0.1);
+        font-family: monospace;
+        font-size: 0.95rem;
+        color: var(--legal-primary);
+        margin-top: 0.5rem;
+    }
+
+    /* ===== DARK MODE ===== */
+    body.dark-mode .legal-card {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .legal-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .legal-card h2 {
+        color: #e2e8f0;
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .legal-card h2 .section-number {
+        background: rgba(96, 165, 250, 0.15);
+        color: #60a5fa;
+    }
+
+    body.dark-mode .legal-card p {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .legal-card ul li {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .legal-card ul li strong {
+        color: #cbd5e1;
+    }
+
+    body.dark-mode .legal-card .last-updated {
+        border-top-color: rgba(255, 255, 255, 0.05);
+        color: #64748b;
+    }
+
+    body.dark-mode .legal-card .contact-email {
+        background: rgba(96, 165, 250, 0.1);
+        border-color: rgba(96, 165, 250, 0.15);
+        color: #60a5fa;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .legal-hero-content h1 {
+            font-size: 2rem;
+        }
+
+        .legal-hero {
+            padding: 2.5rem 4% 2rem;
+        }
+
+        .legal-card {
+            padding: 1.5rem;
+        }
+
+        .legal-card h2 {
+            font-size: 1.2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .legal-hero-content h1 {
+            font-size: 1.6rem;
+        }
+
+        .legal-hero-content .legal-icon-large {
+            font-size: 3rem;
+        }
+
+        .legal-card {
+            padding: 1.25rem;
+        }
+
+        .legal-card h2 {
+            font-size: 1.1rem;
+        }
+
+        .legal-card p,
+        .legal-card ul li {
+            font-size: 0.9rem;
+        }
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+        animation: slideUp 0.4s ease-out forwards;
+    }
+
+    .animate-in.delay-1 { animation-delay: 0.05s; opacity: 0; }
+    .animate-in.delay-2 { animation-delay: 0.1s; opacity: 0; }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="legal-hero">
+    <div class="legal-hero-content">
+        <span class="legal-icon-large">📜</span>
+        <h1>Terms of <span>Service</span></h1>
+        <p>Please read these terms carefully before using our platform. They govern your access to and use of Job Reference Hub.</p>
+    </div>
+</div>
+
+<!-- ===== CONTENT ===== -->
+<div class="legal-content">
+    <div class="legal-card animate-in">
+        <h2>
+            <span class="section-number">01</span>
+            Acceptance of Terms
+        </h2>
+        <p>By creating an account, browsing, or using any feature of Job Reference Hub, you agree to be bound by these Terms of Service. If you do not agree, you must not use our services.</p>
+
+        <h2>
+            <span class="section-number">02</span>
+            User Accounts
+        </h2>
+        <ul>
+            <li><strong>Account Security:</strong> You are responsible for maintaining the confidentiality of your account credentials.</li>
+            <li><strong>Accurate Information:</strong> You must provide accurate and complete information when registering.</li>
+            <li><strong>Account Activity:</strong> You are solely responsible for all activity that occurs under your account.</li>
+            <li><strong>Termination:</strong> We reserve the right to suspend or terminate accounts that violate these terms.</li>
+        </ul>
+
+        <h2>
+            <span class="section-number">03</span>
+            Job Posting and Applications
+        </h2>
+        <ul>
+            <li><strong>Employers:</strong> Employers and recruiters may post job and internship listings. You agree to provide truthful and non‑misleading information.</li>
+            <li><strong>Job Seekers:</strong> Job seekers may apply to positions via our platform. We are not responsible for the hiring decisions of employers.</li>
+            <li><strong>No Guarantee:</strong> We do not guarantee that you will secure a job or internship through our service.</li>
+        </ul>
+
+        <h2>
+            <span class="section-number">04</span>
+            User Content
+        </h2>
+        <p>You retain ownership of any content you submit (e.g., resume, profile, job descriptions). By posting content, you grant us a worldwide, non‑exclusive, royalty‑free license to use, display, and distribute it solely for the purpose of providing our services.</p>
+
+        <h2>
+            <span class="section-number">05</span>
+            Prohibited Conduct
+        </h2>
+        <p>You may not:</p>
+        <ul>
+            <li>Post offensive, discriminatory, or illegal content.</li>
+            <li>Impersonate another person or entity.</li>
+            <li>Use our platform for spam, phishing, or other malicious activities.</li>
+            <li>Attempt to gain unauthorized access to our systems.</li>
+        </ul>
+
+        <h2>
+            <span class="section-number">06</span>
+            Intellectual Property
+        </h2>
+        <p>All content on Job Reference Hub (including logos, design, and code) is our property or that of our licensors. You may not reproduce, distribute, or create derivative works without our prior written consent.</p>
+
+        <h2>
+            <span class="section-number">07</span>
+            Disclaimers and Limitation of Liability
+        </h2>
+        <p>Our services are provided "as is" and "as available." We do not warrant that the platform will be error‑free or uninterrupted. To the fullest extent permitted by law, we are not liable for any indirect, incidental, or consequential damages arising from your use of our services.</p>
+
+        <h2>
+            <span class="section-number">08</span>
+            Termination
+        </h2>
+        <p>We may terminate or suspend your account at any time, with or without notice, for any reason, including violation of these terms.</p>
+
+        <h2>
+            <span class="section-number">09</span>
+            Governing Law
+        </h2>
+        <p>These terms are governed by the laws of the United States, without regard to conflict of law principles.</p>
+
+        <h2>
+            <span class="section-number">10</span>
+            Changes to Terms
+        </h2>
+        <p>We may revise these terms from time to time. The latest version will always be posted on this page. Continued use of our services constitutes acceptance of the updated terms.</p>
+
+        <div class="last-updated">
+            📅 Last updated: April 2025
+        </div>
+    </div>
+</div>
+{% endblock %}

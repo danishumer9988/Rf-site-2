@@ -1,0 +1,570 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Job Posts - Dashboard - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    .mj-container {
+        max-width: 1200px;
+        margin: 0 auto 4rem;
+        padding: 0 5%;
+    }
+
+    .mj-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 3.5rem 5% 2.5rem;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid #2563eb;
+        margin-bottom: 2.5rem;
+    }
+
+    .mj-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .mj-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .mj-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+    }
+
+    .mj-hero-icon {
+        font-size: 4rem;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .mj-hero-text {
+        flex: 1;
+    }
+
+    .mj-hero-text .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+    }
+
+    .mj-hero-text .breadcrumb a {
+        color: #94a3b8;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .mj-hero-text .breadcrumb a:hover {
+        color: #60a5fa;
+    }
+
+    .mj-hero-text .breadcrumb .separator {
+        color: #475569;
+    }
+
+    .mj-hero-text h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.5px;
+    }
+
+    .mj-hero-text h1 span {
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .mj-hero-text p {
+        color: #94a3b8;
+        font-size: 1.05rem;
+        max-width: 500px;
+        line-height: 1.6;
+    }
+
+    .mj-hero-actions {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .mj-btn {
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .mj-btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .mj-btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .mj-btn-outline {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #e2e8f0;
+    }
+
+    .mj-btn-outline:hover {
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateY(-2px);
+    }
+
+    .mj-job-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s;
+    }
+
+    .mj-job-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        border-color: #2563eb;
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .mj-job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .mj-job-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #0f172a;
+    }
+
+    .mj-job-company {
+        color: #64748b;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .mj-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        border: 1px solid transparent;
+    }
+
+    .mj-badge-pending {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .mj-badge-approved {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .mj-badge-rejected {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .mj-badge-published {
+        background: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
+        border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .mj-badge-not-published {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .mj-job-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.85rem;
+        color: #94a3b8;
+    }
+
+    .mj-job-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .mj-admin-notes {
+        background: rgba(0, 0, 0, 0.03);
+        padding: 0.6rem 0.8rem;
+        border-radius: 8px;
+        border-left: 3px solid #2563eb;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: #475569;
+    }
+
+    .mj-job-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        margin-top: 0.5rem;
+    }
+
+    .mj-submitted-date {
+        color: #94a3b8;
+        font-size: 0.8rem;
+    }
+
+    .mj-action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .mj-btn-sm {
+        padding: 0.35rem 1rem;
+        font-size: 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .mj-btn-success-sm {
+        background: #10b981;
+        color: white;
+    }
+
+    .mj-btn-success-sm:hover {
+        background: #059669;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .mj-btn-primary-sm {
+        background: #2563eb;
+        color: white;
+    }
+
+    .mj-btn-primary-sm:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .mj-btn-outline-sm {
+        background: transparent;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: #475569;
+    }
+
+    .mj-btn-outline-sm:hover {
+        border-color: #2563eb;
+        color: #2563eb;
+        transform: translateY(-2px);
+    }
+
+    .mj-empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        border: 2px dashed rgba(0, 0, 0, 0.08);
+    }
+
+    .mj-empty-state .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .mj-empty-state h3 {
+        color: #0f172a;
+        margin-bottom: 0.5rem;
+    }
+
+    .mj-empty-state p {
+        color: #64748b;
+        max-width: 400px;
+        margin: 0 auto 1.5rem;
+    }
+
+    /* Dark Mode */
+    body.dark-mode .mj-job-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .mj-job-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: #60a5fa;
+    }
+
+    body.dark-mode .mj-job-title {
+        color: #ffffff;
+    }
+
+    body.dark-mode .mj-admin-notes {
+        background: rgba(255, 255, 255, 0.03);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .mj-empty-state {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .mj-empty-state h3 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .mj-btn-outline-sm {
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .mj-btn-outline-sm:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+    }
+
+    body.dark-mode .mj-job-meta {
+        color: #64748b;
+    }
+
+    @media (max-width: 768px) {
+        .mj-hero-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        .mj-hero-text h1 {
+            font-size: 1.8rem;
+        }
+
+        .mj-hero-text p {
+            margin: 0 auto;
+        }
+
+        .mj-hero-actions {
+            justify-content: center;
+        }
+
+        .mj-hero-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 3rem;
+        }
+
+        .mj-job-header {
+            flex-direction: column;
+        }
+
+        .mj-job-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .mj-action-buttons {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .mj-hero {
+            padding: 2rem 4% 1.5rem;
+        }
+
+        .mj-hero-text h1 {
+            font-size: 1.5rem;
+        }
+
+        .mj-job-card {
+            padding: 1.25rem;
+        }
+    }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="mj-hero">
+    <div class="mj-hero-content">
+        <div class="mj-hero-icon">📝</div>
+        <div class="mj-hero-text">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">›</span>
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <span class="separator">›</span>
+                <span>My Job Posts</span>
+            </div>
+            <h1>My <span>Job Posts</span></h1>
+            <p>Track the status of your submitted job posts.</p>
+            <div class="mj-hero-actions">
+                <a href="{% url 'post_job' %}" class="mj-btn mj-btn-primary">
+                    <i class="fas fa-plus-circle"></i> Post a Job
+                </a>
+                <a href="{% url 'dashboard' %}" class="mj-btn mj-btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== CONTENT ===== -->
+<div class="mj-container">
+    {% if applications %}
+    {% for application in applications %}
+    <div class="mj-job-card mj-animate delay-{{ forloop.counter|add:1|slice:':1' }}">
+        <div class="mj-job-header">
+            <div>
+                <div class="mj-job-title">{{ application.title }}</div>
+                <div class="mj-job-company">
+                    <i class="fas fa-building"></i> {{ application.company }}
+                </div>
+            </div>
+            <div>
+                <span class="mj-badge mj-badge-{% if application.status == 'pending' %}pending{% elif application.status == 'approved' %}approved{% else %}rejected{% endif %}">
+                    {% if application.status == 'pending' %}⏳ Pending{% elif application.status == 'approved' %}✅ Approved{% else %}❌ Rejected{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <div class="mj-job-meta">
+            <span><i class="fas fa-map-pin"></i> {{ application.location }}</span>
+            <span><i class="fas fa-briefcase"></i> {{ application.get_employment_type_display }}</span>
+            {% if application.category %}
+            <span><i class="fas fa-tag"></i> {{ application.category.name }}</span>
+            {% endif %}
+            {% if application.salary %}
+            <span><i class="fas fa-money-bill-wave"></i> {{ application.salary }}</span>
+            {% endif %}
+        </div>
+
+        {% if application.admin_notes and application.status == 'rejected' %}
+        <div class="mj-admin-notes">
+            <strong>📝 Admin Notes:</strong> {{ application.admin_notes }}
+        </div>
+        {% endif %}
+
+        <div class="mj-job-footer">
+            <span class="mj-submitted-date">📅 Submitted: {{ application.submitted_at|date:"M d, Y" }}</span>
+            <div class="mj-action-buttons">
+                {% if application.status == 'approved' %}
+                {% if application.created_job %}
+                <a href="{% url 'job_detail' application.created_job.slug %}" class="mj-btn-success-sm mj-btn-sm" target="_blank">
+                    👁️ View Job
+                </a>
+                <span class="mj-badge mj-badge-published">✅ Published</span>
+                {% else %}
+                <span class="mj-badge mj-badge-not-published">⏳ Processing</span>
+                {% endif %}
+                {% endif %}
+
+                <a href="{% url 'post_job' %}" class="mj-btn-primary-sm mj-btn-sm">
+                    📝 Post Another
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="mj-empty-state mj-animate">
+        <div class="empty-icon">📝</div>
+        <h3>No job posts yet</h3>
+        <p>You haven't submitted any job posts yet. Post your first job and start receiving applications!</p>
+        <a href="{% url 'post_job' %}" class="mj-btn mj-btn-primary">
+            <i class="fas fa-plus-circle"></i> Post a Job
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'jobs/job_list.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block title %}Full-Time Jobs - Find Your Next Career{% endblock %}
+
+{% block hero_title %}Full-Time <span>Jobs</span>{% endblock %}
+{% block hero_description %}Find permanent full-time career opportunities from top companies.{% endblock %}
+{% block hero_badge %}💼 Full-Time Career Opportunities{% endblock %}
+{% block hero_icon %}💼{% endblock %}
+{% block hero_breadcrumb %}<span>Full-Time Jobs</span>{% endblock %}
+
+{% block active_tab %}full_time{% endblock %}
+
+{% block extra_badges %}
+<span class="jl-badge jl-badge-fulltime">💼 Full-Time</span>
+{% endblock %}
+
+{% block filter_tabs %}
+<button class="jl-search-tab {% if not request.GET.type %}active{% endif %}" onclick="filterByType('')">
+    📌 All <span class="count">{{ total_jobs }}</span>
+</button>
+<button class="jl-search-tab {% if request.GET.type == 'remote' %}active{% endif %}" onclick="filterByType('remote')">
+    🌐 Remote <span class="count">{{ remote_count }}</span>
+</button>
+<button class="jl-search-tab {% if request.GET.type == 'physical' %}active{% endif %}" onclick="filterByType('physical')">
+    🏢 On-Site <span class="count">{{ physical_count }}</span>
+</button>
+{% endblock %}
+
+{% block empty_state_emoji %}💼{% endblock %}
+{% block empty_state_title %}No full-time jobs available{% endblock %}
+{% block empty_state_text %}Check back later for new full-time career opportunities.{% endblock %}
+{% block empty_state_link %}{% url 'job_list' %}{% endblock %}
+{% block empty_state_link_text %}Browse All Jobs{% endblock %}

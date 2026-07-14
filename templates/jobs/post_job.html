@@ -1,0 +1,616 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Post a Job - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    .pj-container {
+        max-width: 800px;
+        margin: 2rem auto 4rem;
+        padding: 0 5%;
+    }
+
+    .pj-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 3rem 5% 2.5rem;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid #2563eb;
+        margin-bottom: 2.5rem;
+    }
+
+    .pj-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .pj-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .pj-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+    }
+
+    .pj-hero-icon {
+        font-size: 4rem;
+        width: 100px;
+        height: 100px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .pj-hero-text {
+        flex: 1;
+    }
+
+    .pj-hero-text .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+    }
+
+    .pj-hero-text .breadcrumb a {
+        color: #94a3b8;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .pj-hero-text .breadcrumb a:hover {
+        color: #60a5fa;
+    }
+
+    .pj-hero-text .breadcrumb .separator {
+        color: #475569;
+    }
+
+    .pj-hero-text h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.5px;
+    }
+
+    .pj-hero-text h1 span {
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .pj-hero-text p {
+        color: #94a3b8;
+        font-size: 1.05rem;
+        max-width: 500px;
+        line-height: 1.6;
+    }
+
+    .pj-form-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.3s;
+    }
+
+    .pj-form-card:hover {
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+        background: rgba(255, 255, 255, 0.85);
+    }
+
+    .pj-form-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 0.25rem;
+    }
+
+    .pj-form-subtitle {
+        color: #64748b;
+        margin-bottom: 2rem;
+    }
+
+    .pj-info-box {
+        background: #eff6ff;
+        border: 1px solid rgba(37, 99, 235, 0.1);
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .pj-info-box .info-icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .pj-info-box .info-content {
+        color: #334155;
+        font-size: 0.95rem;
+    }
+
+    .pj-info-box .info-content strong {
+        color: #0f172a;
+    }
+
+    .pj-form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .pj-form-group label {
+        display: block;
+        margin-bottom: 0.4rem;
+        color: #334155;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .pj-form-group label .required {
+        color: #ef4444;
+        margin-left: 0.15rem;
+    }
+
+    .pj-form-group .help-text {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-top: 0.25rem;
+    }
+
+    .pj-form-group input,
+    .pj-form-group select,
+    .pj-form-group textarea {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        transition: all 0.3s;
+        background: rgba(255, 255, 255, 0.5);
+        color: #1e293b;
+    }
+
+    .pj-form-group input:hover,
+    .pj-form-group select:hover,
+    .pj-form-group textarea:hover {
+        border-color: #94a3b8;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .pj-form-group input:focus,
+    .pj-form-group select:focus,
+    .pj-form-group textarea:focus {
+        outline: none;
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .pj-form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .pj-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .pj-form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 2px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .pj-btn {
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        line-height: 1;
+        font-family: inherit;
+    }
+
+    .pj-btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .pj-btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .pj-btn-outline {
+        background: transparent;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        color: #334155;
+    }
+
+    .pj-btn-outline:hover {
+        border-color: #2563eb;
+        color: #2563eb;
+        transform: translateY(-2px);
+    }
+
+    .pj-error-message {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    /* Dark Mode */
+    body.dark-mode .pj-form-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .pj-form-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .pj-form-title {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .pj-form-group label {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .pj-form-group input,
+    body.dark-mode .pj-form-group select,
+    body.dark-mode .pj-form-group textarea {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .pj-form-group input:hover,
+    body.dark-mode .pj-form-group select:hover,
+    body.dark-mode .pj-form-group textarea:hover {
+        background: rgba(30, 41, 59, 0.7);
+        border-color: #334155;
+    }
+
+    body.dark-mode .pj-form-group input:focus,
+    body.dark-mode .pj-form-group select:focus,
+    body.dark-mode .pj-form-group textarea:focus {
+        background: #1e293b;
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .pj-info-box {
+        background: rgba(96, 165, 250, 0.1);
+        border-color: rgba(96, 165, 250, 0.15);
+    }
+
+    body.dark-mode .pj-info-box .info-content {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .pj-info-box .info-content strong {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .pj-btn-outline {
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .pj-btn-outline:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+    }
+
+    @media (max-width: 768px) {
+        .pj-hero-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        .pj-hero-text h1 {
+            font-size: 1.8rem;
+        }
+
+        .pj-hero-text p {
+            margin: 0 auto;
+        }
+
+        .pj-hero-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 3rem;
+        }
+
+        .pj-form-card {
+            padding: 1.5rem;
+        }
+
+        .pj-form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .pj-form-actions {
+            flex-direction: column;
+        }
+
+        .pj-form-actions .pj-btn {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .pj-hero {
+            padding: 2rem 4% 1.5rem;
+        }
+
+        .pj-hero-text h1 {
+            font-size: 1.5rem;
+        }
+
+        .pj-form-card {
+            padding: 1.25rem;
+        }
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pj-animate {
+        animation: fadeUp 0.4s ease-out forwards;
+    }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="pj-hero">
+    <div class="pj-hero-content">
+        <div class="pj-hero-icon">📝</div>
+        <div class="pj-hero-text">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">›</span>
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <span class="separator">›</span>
+                <span>Post a Job</span>
+            </div>
+            <h1>Post a <span>Job</span></h1>
+            <p>Share your job opportunity with thousands of talented professionals.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FORM ===== -->
+<div class="pj-container">
+    <div class="pj-form-card pj-animate">
+        <h2 class="pj-form-title">Job Details</h2>
+        <p class="pj-form-subtitle">Fill out the form below to submit your job for approval</p>
+
+        <div class="pj-info-box">
+            <span class="info-icon">ℹ️</span>
+            <div class="info-content">
+                <strong>What happens next?</strong> Your job post will be reviewed by our team within 24-48 hours.
+                You will receive an email notification once it's approved and published.
+            </div>
+        </div>
+
+        <form method="POST" id="postJobForm">
+            {% csrf_token %}
+
+            <!-- Job Title -->
+            <div class="pj-form-group">
+                <label for="{{ form.title.id_for_label }}">Job Title <span class="required">*</span></label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                <div class="pj-error-message">❌ {{ form.title.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Company & Location -->
+            <div class="pj-form-row">
+                <div class="pj-form-group">
+                    <label for="{{ form.company.id_for_label }}">Company Name <span class="required">*</span></label>
+                    {{ form.company }}
+                    {% if form.company.errors %}
+                    <div class="pj-error-message">❌ {{ form.company.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="pj-form-group">
+                    <label for="{{ form.location.id_for_label }}">Location <span class="required">*</span></label>
+                    {{ form.location }}
+                    {% if form.location.errors %}
+                    <div class="pj-error-message">❌ {{ form.location.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Job Type & Category -->
+            <div class="pj-form-row">
+                <div class="pj-form-group">
+                    <label for="{{ form.job_type.id_for_label }}">Job Type <span class="required">*</span></label>
+                    {{ form.job_type }}
+                    {% if form.job_type.errors %}
+                    <div class="pj-error-message">❌ {{ form.job_type.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="pj-form-group">
+                    <label for="{{ form.category.id_for_label }}">Category <span class="required">*</span></label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                    <div class="pj-error-message">❌ {{ form.category.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="pj-form-group">
+                <label for="{{ form.description.id_for_label }}">Job Description <span class="required">*</span></label>
+                {{ form.description }}
+                <div class="help-text">Describe the role, responsibilities, and what makes this opportunity great</div>
+                {% if form.description.errors %}
+                <div class="pj-error-message">❌ {{ form.description.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Requirements -->
+            <div class="pj-form-group">
+                <label for="{{ form.requirements.id_for_label }}">Requirements & Qualifications</label>
+                {{ form.requirements }}
+                <div class="help-text">List the skills, experience, and qualifications required</div>
+                {% if form.requirements.errors %}
+                <div class="pj-error-message">❌ {{ form.requirements.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Salary -->
+            <div class="pj-form-group">
+                <label for="{{ form.salary.id_for_label }}">Salary / Compensation</label>
+                {{ form.salary }}
+                <div class="help-text">e.g., $70,000 - $90,000 per year or $30 - $40 per hour</div>
+                {% if form.salary.errors %}
+                <div class="pj-error-message">❌ {{ form.salary.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- URLs -->
+            <div class="pj-form-row">
+                <div class="pj-form-group">
+                    <label for="{{ form.apply_url.id_for_label }}">Application URL</label>
+                    {{ form.apply_url }}
+                    <div class="help-text">Where applicants should apply</div>
+                    {% if form.apply_url.errors %}
+                    <div class="pj-error-message">❌ {{ form.apply_url.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="pj-form-group">
+                    <label for="{{ form.company_website.id_for_label }}">Company Website</label>
+                    {{ form.company_website }}
+                    <div class="help-text">Your company's website</div>
+                    {% if form.company_website.errors %}
+                    <div class="pj-error-message">❌ {{ form.company_website.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="pj-form-row">
+                <div class="pj-form-group">
+                    <label for="{{ form.contact_email.id_for_label }}">Contact Email <span class="required">*</span></label>
+                    {{ form.contact_email }}
+                    <div class="help-text">We'll send notifications to this email</div>
+                    {% if form.contact_email.errors %}
+                    <div class="pj-error-message">❌ {{ form.contact_email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="pj-form-group">
+                    <label for="{{ form.contact_phone.id_for_label }}">Contact Phone</label>
+                    {{ form.contact_phone }}
+                    <div class="help-text">Optional - for urgent communications</div>
+                    {% if form.contact_phone.errors %}
+                    <div class="pj-error-message">❌ {{ form.contact_phone.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="pj-form-actions">
+                <button type="submit" class="pj-btn pj-btn-primary">
+                    <span>📤</span> Submit for Approval
+                </button>
+                <a href="{% url 'dashboard' %}" class="pj-btn pj-btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('postJobForm');
+
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>⏳</span> Submitting...';
+
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>📤</span> Submit for Approval';
+            }, 5000);
+        });
+
+        // Auto-resize textareas
+        const textareas = document.querySelectorAll('textarea');
+        textareas.forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        });
+    });
+</script>
+{% endblock %}

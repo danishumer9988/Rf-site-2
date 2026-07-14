@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block title %}Contract Jobs - Freelance & Contract Opportunities{% endblock %}
+
+{% block content %}
+<!-- Contract Jobs Styles -->
+<style>
+    :root {
+        --cj-primary: #8b5cf6;
+        --cj-primary-dark: #7c3aed;
+        --cj-primary-light: #ede9fe;
+    }
+
+    .cj-hero {
+        background: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #2e1065 100%);
+        padding: 4rem 5% 3rem;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid var(--cj-primary);
+    }
+
+    .cj-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .cj-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(167, 139, 250, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .cj-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 3rem;
+    }
+
+    .cj-hero-icon {
+        font-size: 5rem;
+        width: 120px;
+        height: 120px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: var(--radius-xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .cj-hero-text h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.5px;
+    }
+
+    .cj-hero-text h1 span {
+        background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .cj-hero-text p {
+        color: #c4b5fd;
+        font-size: 1.1rem;
+        max-width: 600px;
+        line-height: 1.7;
+    }
+
+    .cj-badge-contract {
+        background: rgba(139, 92, 246, 0.1);
+        color: var(--cj-primary);
+        border-color: rgba(139, 92, 246, 0.2);
+    }
+
+    .cj-badge-urgent {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border-color: rgba(239, 68, 68, 0.2);
+        animation: urgentPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes urgentPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="cj-hero">
+    <div class="cj-hero-content">
+        <div class="cj-hero-icon">📄</div>
+        <div class="cj-hero-text">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">›</span>
+                <span>Contract Jobs</span>
+            </div>
+            <h1>Contract <span>Jobs</span></h1>
+            <p>Find freelance, contract, and project-based opportunities from companies worldwide.</p>
+            <span class="badge" style="background:rgba(139,92,246,0.2);color:#a78bfa;padding:0.4rem 1.5rem;border-radius:20px;font-weight:600;font-size:0.85rem;border:1px solid rgba(139,92,246,0.2);margin-top:0.5rem;display:inline-block;">
+                📋 Freelance & Contract Work
+            </span>
+            <div class="stats" style="display:flex;gap:2rem;margin-top:1.5rem;flex-wrap:wrap;color:#c4b5fd;">
+                <div><span style="color:white;font-weight:700;font-size:1.2rem;">{{ jobs|length }}</span> Contract Jobs</div>
+                <div><span style="color:white;font-weight:700;font-size:1.2rem;">{{ categories|length|default:"0" }}</span> Categories</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FILTER BAR ===== -->
+<div class="filter-bar" style="background:rgba(255,255,255,0.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,0.06);padding:1rem 5%;position:sticky;top:72px;z-index:100;">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <div style="display:flex;gap:0.25rem;background:rgba(255,255,255,0.3);padding:0.25rem;border-radius:8px;flex-wrap:wrap;">
+            <button class="filter-tab active" onclick="filterJobs('all')" style="padding:0.5rem 1.2rem;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;font-weight:500;color:#64748b;font-family:inherit;">
+                All <span class="count" style="background:rgba(0,0,0,0.06);padding:0.05rem 0.5rem;border-radius:12px;font-size:0.7rem;font-weight:600;margin-left:0.25rem;">{{ jobs|length }}</span>
+            </button>
+            <button class="filter-tab" onclick="filterJobs('urgent')" style="padding:0.5rem 1.2rem;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;font-weight:500;color:#64748b;font-family:inherit;">
+                ⚡ Urgent <span class="count" style="background:rgba(0,0,0,0.06);padding:0.05rem 0.5rem;border-radius:12px;font-size:0.7rem;font-weight:600;margin-left:0.25rem;">{{ urgent_count|default:0 }}</span>
+            </button>
+            <button class="filter-tab" onclick="filterJobs('expert')" style="padding:0.5rem 1.2rem;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:0.85rem;font-weight:500;color:#64748b;font-family:inherit;">
+                🎯 Expert <span class="count" style="background:rgba(0,0,0,0.06);padding:0.05rem 0.5rem;border-radius:12px;font-size:0.7rem;font-weight:600;margin-left:0.25rem;">{{ expert_count|default:0 }}</span>
+            </button>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="searchInput" placeholder="Search contract jobs..." onkeyup="filterJobs('all')" style="padding:0.5rem 1rem;border:2px solid #e2e8f0;border-radius:8px;font-size:0.85rem;background:rgba(255,255,255,0.6);min-width:200px;">
+        </div>
+    </div>
+</div>
+
+<!-- ===== RESULTS ===== -->
+<div style="max-width:1200px;margin:1.5rem auto;padding:0 5%;color:#64748b;font-size:0.95rem;">
+    Found <strong id="resultCount">{{ jobs|length }}</strong> contract job{% if jobs|length != 1 %}s{% endif %}
+</div>
+
+<!-- ===== JOB CARDS ===== -->
+<div class="cards-grid" id="jobGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:1200px;margin:0 auto 1.5rem;padding:0 5%;">
+    {% if jobs %}
+    {% for job in jobs %}
+    <div class="job-card" style="background:rgba(255,255,255,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:16px;padding:1.75rem;border:1px solid rgba(255,255,255,0.3);box-shadow:0 4px 20px rgba(0,0,0,0.04);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;position:relative;overflow:hidden;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
+            <div style="width:50px;height:50px;border-radius:8px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1.2rem;flex-shrink:0;">
+                {{ job.company|slice:":1" }}
+            </div>
+            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                <span class="cj-badge-contract" style="padding:0.25rem 0.75rem;border-radius:20px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;border:1px solid transparent;">📄 Contract</span>
+                {% if job.is_urgent %}
+                <span class="cj-badge-urgent" style="padding:0.25rem 0.75rem;border-radius:20px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;border:1px solid transparent;">⚡ Urgent</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="{% url 'job_detail' job.slug %}" style="font-size:1.1rem;font-weight:600;color:#0f172a;text-decoration:none;display:block;line-height:1.4;transition:color 0.3s;">
+            {{ job.title }}
+        </a>
+
+        <div style="color:#64748b;font-size:0.9rem;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.3rem;">
+            🏢 {{ job.company }}
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 0.75rem;margin-bottom:1rem;flex:1;">
+            <div style="display:flex;align-items:center;gap:0.4rem;color:#64748b;font-size:0.85rem;">
+                <span>📍</span> {{ job.location }}
+            </div>
+            <div style="display:flex;align-items:center;gap:0.4rem;color:#64748b;font-size:0.85rem;">
+                <span>💰</span>
+                <span style="background:rgba(16,185,129,0.1);color:#10b981;padding:0.1rem 0.6rem;border-radius:12px;font-size:0.7rem;font-weight:500;display:inline-block;">
+                    {% if job.budget_min and job.budget_max %}
+                        ${{ job.budget_min }} - ${{ job.budget_max }}
+                    {% elif job.budget_max %}
+                        Up to ${{ job.budget_max }}
+                    {% else %}
+                        Negotiable
+                    {% endif %}
+                </span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.4rem;color:#64748b;font-size:0.85rem;">
+                <span>📋</span> {{ job.get_contract_type_display }}
+            </div>
+            <div style="display:flex;align-items:center;gap:0.4rem;color:#64748b;font-size:0.85rem;">
+                <span>⏱️</span>
+                <span style="padding:0.1rem 0.6rem;border-radius:12px;font-size:0.65rem;font-weight:600;display:inline-block;background:rgba(139,92,246,0.1);color:#7c3aed;">
+                    {{ job.get_experience_level_display }}
+                </span>
+            </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:1rem;border-top:1px solid rgba(0,0,0,0.06);margin-top:auto;">
+            <span style="color:#94a3b8;font-size:0.8rem;">📅 {{ job.posted_at|date:"M d, Y" }}</span>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+                {% if user.is_authenticated %}
+                <button class="save-btn" onclick="toggleSave('{{ job.slug }}', this)" title="Save job" style="background:transparent;border:2px solid #e2e8f0;border-radius:50%;width:36px;height:36px;cursor:pointer;transition:all 0.3s;font-size:1rem;display:flex;align-items:center;justify-content:center;padding:0;">
+                    🤍
+                </button>
+                {% endif %}
+                <a href="{% url 'job_detail' job.slug %}" style="padding:0.35rem 0.9rem;border-radius:8px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;border:none;background:#8b5cf6;color:white;">
+                    View Details →
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div style="grid-column:1/-1;text-align:center;padding:4rem 2rem;background:rgba(255,255,255,0.5);border-radius:16px;border:1px solid rgba(255,255,255,0.3);">
+        <span style="font-size:4rem;display:block;margin-bottom:1rem;">📄</span>
+        <h3 style="font-size:1.5rem;color:#0f172a;margin-bottom:0.5rem;">No contract jobs available</h3>
+        <p style="color:#64748b;margin-bottom:1.5rem;">Check back later for new freelance and contract opportunities.</p>
+        <a href="{% url 'post_job' %}" style="padding:0.45rem 1.2rem;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;border:none;background:#8b5cf6;color:white;">Post a Contract Job</a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- ===== PAGINATION ===== -->
+{% if is_paginated %}
+<div style="max-width:1200px;margin:0 auto 3.5rem;padding:0 5%;">
+    <ul style="display:flex;justify-content:center;gap:0.3rem;list-style:none;padding:0;flex-wrap:wrap;">
+        {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}" style="padding:0.7rem 1.2rem;border:2px solid #e2e8f0;border-radius:8px;text-decoration:none;color:#334155;transition:all 0.3s;font-weight:500;font-size:0.9rem;min-width:44px;text-align:center;display:inline-flex;align-items:center;justify-content:center;">← Previous</a></li>
+        {% else %}
+        <li class="disabled" style="opacity:0.4;pointer-events:none;"><span style="padding:0.7rem 1.2rem;border:2px solid #e2e8f0;border-radius:8px;text-decoration:none;color:#334155;font-weight:500;font-size:0.9rem;">← Previous</span></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li><span style="padding:0.7rem 1.2rem;border:2px solid #8b5cf6;border-radius:8px;background:#8b5cf6;color:white;font-weight:500;font-size:0.9rem;min-width:44px;text-align:center;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(139,92,246,0.25);">{{ num }}</span></li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li><a href="?page={{ num }}" style="padding:0.7rem 1.2rem;border:2px solid #e2e8f0;border-radius:8px;text-decoration:none;color:#334155;transition:all 0.3s;font-weight:500;font-size:0.9rem;min-width:44px;text-align:center;display:inline-flex;align-items:center;justify-content:center;">{{ num }}</a></li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}" style="padding:0.7rem 1.2rem;border:2px solid #e2e8f0;border-radius:8px;text-decoration:none;color:#334155;transition:all 0.3s;font-weight:500;font-size:0.9rem;min-width:44px;text-align:center;display:inline-flex;align-items:center;justify-content:center;">Next →</a></li>
+        {% else %}
+        <li class="disabled" style="opacity:0.4;pointer-events:none;"><span style="padding:0.7rem 1.2rem;border:2px solid #e2e8f0;border-radius:8px;text-decoration:none;color:#334155;font-weight:500;font-size:0.9rem;">Next →</span></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+
+<script>
+    function filterJobs(filter) {
+        const tabs = document.querySelectorAll('.filter-tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        const activeTab = Array.from(tabs).find(tab => tab.textContent.includes(filter === 'all' ? 'All' : filter === 'urgent' ? 'Urgent' : 'Expert'));
+        if (activeTab) {
+            activeTab.style.background = 'white';
+            activeTab.style.color = '#8b5cf6';
+            activeTab.style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)';
+            activeTab.classList.add('active');
+        }
+
+        const cards = document.querySelectorAll('.job-card');
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+        cards.forEach(card => {
+            const title = card.querySelector('a')?.textContent?.toLowerCase() || '';
+            const company = card.querySelector('div[style*="color:#64748b"]')?.textContent?.toLowerCase() || '';
+            let show = true;
+
+            if (filter === 'urgent') {
+                const isUrgent = card.querySelector('.cj-badge-urgent') !== null;
+                if (!isUrgent) show = false;
+            }
+            if (filter === 'expert') {
+                const isExpert = card.querySelector('span[style*="background:rgba(139,92,246,0.1)"]') !== null;
+                if (!isExpert) show = false;
+            }
+
+            if (searchTerm && !title.includes(searchTerm) && !company.includes(searchTerm)) {
+                show = false;
+            }
+
+            card.style.display = show ? 'block' : 'none';
+        });
+
+        const visibleCount = document.querySelectorAll('.job-card[style*="display: block"]').length;
+        document.getElementById('resultCount').textContent = visibleCount;
+    }
+
+    function toggleSave(slug, button) {
+        {% if not user.is_authenticated %}
+            window.location.href = '/login/';
+            return;
+        {% endif %}
+
+        fetch(`/jobs/${slug}/save/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (data.saved) {
+                    button.innerHTML = '❤️';
+                    button.style.borderColor = '#ef4444';
+                    button.style.background = '#fef2f2';
+                } else {
+                    button.innerHTML = '🤍';
+                    button.style.borderColor = '#e2e8f0';
+                    button.style.background = 'transparent';
+                }
+            }
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Keyboard shortcut
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.select();
+            }
+        }
+        if (e.key === 'Escape') {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.blur();
+                filterJobs('all');
+            }
+        }
+    });
+</script>
+{% endblock %}

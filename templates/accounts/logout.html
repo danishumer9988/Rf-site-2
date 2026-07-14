@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Logout - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    .logout-container {
+        max-width: 520px;
+        margin: 4rem auto;
+        padding: 0 5%;
+    }
+
+    .logout-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--radius-lg);
+        padding: 3rem 2.5rem;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: var(--transition);
+        animation: slideUp 0.5s ease-out;
+        text-align: center;
+    }
+
+    .logout-card:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--shadow-lg);
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logout-icon {
+        font-size: 4rem;
+        display: block;
+        margin-bottom: 1.5rem;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .logout-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+    }
+
+    .logout-subtitle {
+        color: var(--gray-500);
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .user-info {
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: var(--radius-sm);
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .user-info .user-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .user-info .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .user-info .user-name {
+        font-weight: 600;
+        color: var(--gray-800);
+        font-size: 1.05rem;
+    }
+
+    .user-info .user-email {
+        color: var(--gray-400);
+        font-size: 0.85rem;
+    }
+
+    .logout-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.8rem 2rem;
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        line-height: 1;
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        color: var(--gray-700);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    .btn .spinner {
+        display: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+    }
+
+    .btn.loading .spinner {
+        display: inline-block;
+    }
+
+    .btn.loading .btn-text {
+        opacity: 0.7;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Dark Mode */
+    body.dark-mode .logout-card {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .logout-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .logout-title {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .user-info {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .user-info .user-name {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .btn-outline {
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .btn-outline:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+    }
+
+    @media (max-width: 640px) {
+        .logout-container {
+            max-width: 100%;
+            padding: 0 4%;
+        }
+
+        .logout-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .logout-title {
+            font-size: 1.6rem;
+        }
+
+        .logout-actions {
+            flex-direction: column;
+        }
+
+        .logout-actions .btn {
+            justify-content: center;
+        }
+
+        .user-info {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="logout-container">
+    <div class="logout-card">
+        <h1 class="logout-title">Logout Confirmation</h1>
+
+        <div class="user-info">
+            <div class="user-avatar">
+                {% if user.profile.avatar %}
+                <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+                {% else %}
+                {{ user.username|slice:":1"|upper }}
+                {% endif %}
+            </div>
+            <div>
+                <div class="user-name">👤 {{ user.get_full_name|default:user.username }}</div>
+                <div class="user-email">{{ user.email }}</div>
+            </div>
+        </div>
+
+        <div class="logout-actions">
+            <form method="POST" action="{% url 'logout' %}" id="logoutForm" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" id="logoutBtn">
+                    <span class="btn-content">
+                        <span class="spinner"></span>
+                        <span class="btn-text"><i class="fas fa-sign-out-alt"></i> Yes, Logout</span>
+                    </span>
+                </button>
+            </form>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Cancel
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('logoutForm');
+        const submitBtn = document.getElementById('logoutBtn');
+
+        if (form) {
+            form.addEventListener('submit', function() {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+            });
+        }
+    });
+</script>
+{% endblock %}

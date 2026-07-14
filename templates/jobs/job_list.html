@@ -1,0 +1,1554 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block title %}All Jobs - Job Reference Hub{% endblock %}
+
+{% block content %}
+<style>
+    /* ============================================================
+       UNIFIED JOB LIST - All Employment Types
+       ============================================================ */
+    :root {
+        --jl-primary: #2563eb;
+        --jl-primary-dark: #1d4ed8;
+        --jl-primary-light: #eff6ff;
+        --jl-success: #10b981;
+        --jl-warning: #f59e0b;
+        --jl-danger: #ef4444;
+        --jl-purple: #8b5cf6;
+        --jl-gray-50: #f8fafc;
+        --jl-gray-100: #f1f5f9;
+        --jl-gray-200: #e2e8f0;
+        --jl-gray-300: #cbd5e1;
+        --jl-gray-400: #94a3b8;
+        --jl-gray-500: #64748b;
+        --jl-gray-600: #475569;
+        --jl-gray-700: #334155;
+        --jl-gray-800: #1e293b;
+        --jl-gray-900: #0f172a;
+        --jl-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --jl-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+        --jl-shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+        --jl-radius-sm: 8px;
+        --jl-radius-md: 12px;
+        --jl-radius-lg: 16px;
+        --jl-radius-xl: 20px;
+        --jl-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .jl-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 4rem 5% 3rem;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid var(--jl-primary);
+    }
+
+    .jl-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .jl-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(30px, -30px) scale(1.1); }
+    }
+
+    .jl-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 3rem;
+    }
+
+    .jl-hero-icon {
+        font-size: 5rem;
+        width: 120px;
+        height: 120px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: var(--jl-radius-xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .jl-hero-text {
+        flex: 1;
+    }
+
+    .jl-hero-text .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 1rem;
+    }
+
+    .jl-hero-text .breadcrumb a {
+        color: #94a3b8;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .jl-hero-text .breadcrumb a:hover {
+        color: #60a5fa;
+    }
+
+    .jl-hero-text .breadcrumb .separator {
+        color: #475569;
+    }
+
+    .jl-hero-text h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.5px;
+    }
+
+    .jl-hero-text h1 span {
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .jl-hero-text p {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        max-width: 600px;
+        line-height: 1.7;
+    }
+
+    .jl-hero-stats {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .jl-hero-stat {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #94a3b8;
+        font-size: 0.95rem;
+    }
+
+    .jl-hero-stat .stat-number {
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .jl-hero-stat .stat-label {
+        color: #94a3b8;
+    }
+
+    /* ===== SEARCH SECTION ===== */
+    .jl-search-section {
+        margin-top: -1.5rem;
+        margin-bottom: 2.5rem;
+        position: relative;
+        z-index: 5;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 5%;
+    }
+
+    .jl-search-container {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--jl-radius-xl);
+        padding: 1.75rem 2rem;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: var(--jl-transition);
+    }
+
+    .jl-search-container:hover {
+        background: rgba(255, 255, 255, 0.85);
+        box-shadow: var(--jl-shadow-lg);
+    }
+
+    .jl-search-form {
+        display: grid;
+        grid-template-columns: 2fr 1.5fr 1fr auto;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .jl-search-field {
+        position: relative;
+    }
+
+    .jl-search-field .field-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--jl-gray-400);
+        font-size: 1rem;
+        pointer-events: none;
+        z-index: 2;
+        transition: color 0.3s;
+    }
+
+    .jl-search-field:focus-within .field-icon {
+        color: var(--jl-primary);
+    }
+
+    .jl-search-field input,
+    .jl-search-field select {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 2.65rem;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--jl-radius-sm);
+        font-size: 0.92rem;
+        transition: all 0.3s;
+        background: rgba(255, 255, 255, 0.5);
+        color: var(--jl-gray-800);
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .jl-search-field input:focus,
+    .jl-search-field select:focus {
+        outline: none;
+        border-color: var(--jl-primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .jl-search-field input::placeholder {
+        color: var(--jl-gray-400);
+        font-size: 0.9rem;
+    }
+
+    .jl-search-field select {
+        cursor: pointer;
+        padding-right: 2.5rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+    }
+
+    /* ===== SIMPLE LOCATION DROPDOWN - No hover, No background image ===== */
+    .jl-filter-right select {
+        padding: 0.4rem 1rem;
+        border: 2px solid var(--jl-gray-200);
+        border-radius: var(--jl-radius-sm);
+        font-size: 0.85rem;
+        background: rgba(255, 255, 255, 0.5);
+        color: var(--jl-gray-700);
+        cursor: pointer;
+        transition: none;
+        font-family: inherit;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: none;
+        min-width: 140px;
+    }
+
+    .jl-filter-right select:focus {
+        outline: none;
+        border-color: var(--jl-primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    body.dark-mode .jl-filter-right select {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        background-image: none;
+    }
+
+    body.dark-mode .jl-filter-right select:focus {
+        border-color: #60a5fa;
+        background: #1e293b;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .jl-filter-right select option {
+        background: #1e293b;
+        color: #e2e8f0;
+    }
+
+    .jl-search-btn {
+        padding: 0.8rem 2rem;
+        background: linear-gradient(135deg, var(--jl-primary) 0%, var(--jl-primary-dark) 100%);
+        color: white;
+        border: none;
+        border-radius: var(--jl-radius-sm);
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        height: fit-content;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+    }
+
+    .jl-search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
+    }
+
+    .jl-search-btn .btn-arrow {
+        transition: transform 0.3s;
+    }
+
+    .jl-search-btn:hover .btn-arrow {
+        transform: translateX(4px);
+    }
+
+    /* ===== FILTER TABS ===== */
+    .jl-filter-tabs-wrapper {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .jl-filter-tabs {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+    }
+
+    .jl-filter-tab {
+        padding: 0.4rem 1.2rem;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        background: rgba(255, 255, 255, 0.3);
+        border: 2px solid transparent;
+        color: var(--jl-gray-600);
+        white-space: nowrap;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .jl-filter-tab:hover {
+        color: var(--jl-primary);
+        background: rgba(255, 255, 255, 0.6);
+        transform: translateY(-1px);
+    }
+
+    .jl-filter-tab.active {
+        background: var(--jl-primary);
+        color: white;
+        border-color: var(--jl-primary);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .jl-filter-tab .count {
+        background: rgba(0, 0, 0, 0.06);
+        padding: 0.05rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        margin-left: 0.25rem;
+    }
+
+    .jl-filter-tab.active .count {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .jl-filter-tab .badge-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 4px;
+    }
+
+    .badge-dot-fulltime { background: #2563eb; }
+    .badge-dot-parttime { background: #f59e0b; }
+    .badge-dot-contract { background: #8b5cf6; }
+    .badge-dot-daily { background: #10b981; }
+
+    .jl-clear-btn {
+        padding: 0.4rem 1rem;
+        background: rgba(255, 255, 255, 0.5);
+        color: var(--jl-gray-600);
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: var(--jl-radius-sm);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--jl-transition);
+        font-size: 0.8rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .jl-clear-btn:hover {
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--jl-gray-800);
+    }
+
+    .jl-filter-right {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    /* ===== RESULTS COUNT ===== */
+    .jl-results-count {
+        color: var(--jl-gray-500);
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+        max-width: 1440px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 5%;
+    }
+
+    .jl-results-count strong {
+        color: var(--jl-gray-800);
+    }
+
+    /* ===== JOB CARDS - Max Width 1440px ===== */
+    .jl-cards-wrapper {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 5%;
+    }
+
+    .jl-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin: 0 auto 1.5rem;
+    }
+
+    .jl-job-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--jl-radius-lg);
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        border: 2px solid var(--jl-gray-200);
+        transition: var(--jl-transition);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .jl-job-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--jl-shadow-lg);
+        border-color: var(--jl-primary);
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .jl-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+
+    .jl-company-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--jl-radius-sm);
+        background: linear-gradient(135deg, var(--jl-primary), var(--jl-primary-dark));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        transition: var(--jl-transition);
+    }
+
+    .jl-job-card:hover .jl-company-logo {
+        transform: rotate(5deg) scale(1.05);
+    }
+
+    .jl-card-badges {
+        display: flex;
+        gap: 0.3rem;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .jl-badge {
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.6rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+        border: 1px solid transparent;
+    }
+
+    .jl-badge-type {
+        font-size: 0.55rem;
+        padding: 0.15rem 0.5rem;
+    }
+
+    .jl-badge-fulltime {
+        background: rgba(37, 99, 235, 0.1);
+        color: #2563eb;
+        border-color: rgba(37, 99, 235, 0.2);
+    }
+
+    .jl-badge-parttime {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .jl-badge-contract {
+        background: rgba(139, 92, 246, 0.1);
+        color: #7c3aed;
+        border-color: rgba(139, 92, 246, 0.2);
+    }
+
+    .jl-badge-daily {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .jl-badge-remote {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--jl-primary);
+        border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .jl-badge-onsite {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .jl-badge-new {
+        background: rgba(139, 92, 246, 0.1);
+        color: #7c3aed;
+        border-color: rgba(139, 92, 246, 0.2);
+        animation: newPulse 2s ease-in-out infinite;
+    }
+
+    .jl-badge-urgent {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border-color: rgba(239, 68, 68, 0.2);
+        animation: urgentPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes newPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    @keyframes urgentPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .jl-card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--jl-gray-900);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.3rem;
+        line-height: 1.3;
+        transition: var(--jl-transition);
+    }
+
+    .jl-card-title:hover {
+        color: var(--jl-primary);
+    }
+
+    .jl-card-company {
+        color: var(--jl-gray-500);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .jl-card-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.75rem;
+        margin-bottom: 0.75rem;
+        flex: 1;
+    }
+
+    .jl-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: var(--jl-gray-500);
+        font-size: 0.8rem;
+    }
+
+    .jl-detail-item i {
+        font-size: 0.75rem;
+        color: var(--jl-gray-400);
+        width: 14px;
+        text-align: center;
+    }
+
+    .jl-salary-badge {
+        background: rgba(245, 158, 11, 0.1);
+        color: #92400e;
+        padding: 0.1rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .jl-budget-badge {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        padding: 0.1rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .jl-payment-badge {
+        background: rgba(59, 130, 246, 0.1);
+        color: #2563eb;
+        padding: 0.1rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .jl-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        margin-top: auto;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .jl-posted-date {
+        color: var(--jl-gray-400);
+        font-size: 0.75rem;
+    }
+
+    .jl-card-actions {
+        display: flex;
+        gap: 0.4rem;
+        align-items: center;
+    }
+
+    .jl-btn {
+        padding: 0.4rem 1rem;
+        border-radius: var(--jl-radius-sm);
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--jl-transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        border: none;
+        line-height: 1;
+    }
+
+    .jl-btn-primary {
+        background: var(--jl-primary);
+        color: white;
+    }
+
+    .jl-btn-primary:hover {
+        background: var(--jl-primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .jl-btn-sm {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.7rem;
+    }
+
+    .jl-save-btn {
+        background: transparent;
+        border: 2px solid var(--jl-gray-200);
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        cursor: pointer;
+        transition: var(--jl-transition);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    .jl-save-btn:hover {
+        border-color: #ef4444;
+        background: #fef2f2;
+    }
+
+    .jl-save-btn.saved {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #ef4444;
+        animation: heartPop 0.3s ease;
+    }
+
+    @keyframes heartPop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.3); }
+        100% { transform: scale(1); }
+    }
+
+    .jl-empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 4rem 2rem;
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: var(--jl-radius-lg);
+        border: 2px dashed var(--jl-gray-200);
+    }
+
+    .jl-empty-state .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .jl-empty-state h3 {
+        color: var(--jl-gray-800);
+        margin-bottom: 0.5rem;
+    }
+
+    .jl-empty-state p {
+        color: var(--jl-gray-500);
+        max-width: 400px;
+        margin: 0 auto 1.5rem;
+    }
+
+    /* ===== PAGINATION ===== */
+    .jl-pagination-wrapper {
+        max-width: 1440px;
+        margin: 0 auto 3.5rem;
+        padding: 0 5%;
+    }
+
+    .jl-pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.3rem;
+        list-style: none;
+        padding: 0;
+        flex-wrap: wrap;
+    }
+
+    .jl-pagination li {
+        display: inline-block;
+    }
+
+    .jl-pagination a,
+    .jl-pagination .current {
+        padding: 0.7rem 1.2rem;
+        border: 2px solid var(--jl-gray-200);
+        border-radius: var(--jl-radius-sm);
+        text-decoration: none;
+        color: var(--jl-gray-700);
+        transition: var(--jl-transition);
+        font-weight: 500;
+        font-size: 0.9rem;
+        min-width: 44px;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .jl-pagination a:hover {
+        border-color: var(--jl-primary);
+        color: var(--jl-primary);
+        background: var(--jl-primary-light);
+        transform: translateY(-2px);
+    }
+
+    .jl-pagination .current {
+        background: var(--jl-primary);
+        color: white;
+        border-color: var(--jl-primary);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .jl-pagination .disabled {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    /* Dark Mode */
+    body.dark-mode .jl-search-container {
+        background: rgba(30, 41, 59, 0.6);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jl-search-container:hover {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    body.dark-mode .jl-search-field input,
+    body.dark-mode .jl-search-field select {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .jl-search-field input:focus,
+    body.dark-mode .jl-search-field select:focus {
+        border-color: #60a5fa;
+        background: #1e293b;
+        box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .jl-filter-tab {
+        color: #94a3b8;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jl-filter-tab:hover {
+        color: #60a5fa;
+        background: rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .jl-filter-tab.active {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+
+    body.dark-mode .jl-job-card {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    body.dark-mode .jl-job-card:hover {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: #60a5fa;
+    }
+
+    body.dark-mode .jl-card-title {
+        color: #ffffff;
+    }
+
+    body.dark-mode .jl-card-title:hover {
+        color: #60a5fa;
+    }
+
+    body.dark-mode .jl-detail-item {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jl-card-company {
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jl-empty-state {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
+    body.dark-mode .jl-empty-state h3 {
+        color: #e2e8f0;
+    }
+
+    body.dark-mode .jl-pagination a,
+    body.dark-mode .jl-pagination .current {
+        border-color: #334155;
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jl-pagination a:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+        background: rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .jl-pagination .current {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+
+    body.dark-mode .jl-save-btn {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: #334155;
+    }
+
+    body.dark-mode .jl-save-btn:hover {
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    body.dark-mode .jl-clear-btn {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: #334155;
+        color: #94a3b8;
+    }
+
+    body.dark-mode .jl-clear-btn:hover {
+        background: rgba(30, 41, 59, 0.8);
+        color: #e2e8f0;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .jl-cards-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 968px) {
+        .jl-search-form {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .jl-search-btn {
+            grid-column: 1 / -1;
+            justify-content: center;
+        }
+
+        .jl-filter-tabs-wrapper {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .jl-filter-tabs {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .jl-hero-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        .jl-hero-text h1 {
+            font-size: 2rem;
+        }
+
+        .jl-hero-text p {
+            margin: 0 auto;
+        }
+
+        .jl-hero-stats {
+            justify-content: center;
+        }
+
+        .jl-hero-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 3rem;
+        }
+
+        .jl-search-container {
+            padding: 1.25rem;
+        }
+
+        .jl-search-form {
+            grid-template-columns: 1fr;
+        }
+
+        .jl-cards-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .jl-job-card {
+            padding: 1.2rem;
+        }
+
+        .jl-card-top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .jl-card-badges {
+            justify-content: flex-start;
+        }
+
+        .jl-pagination-wrapper {
+            padding: 0 4% 3rem;
+        }
+
+        .jl-pagination a,
+        .jl-pagination .current {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.8rem;
+            min-width: 36px;
+        }
+
+        .jl-filter-tabs {
+            gap: 0.25rem;
+        }
+
+        .jl-filter-tab {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .jl-hero {
+            padding: 2rem 4% 2rem;
+        }
+
+        .jl-hero-text h1 {
+            font-size: 1.6rem;
+        }
+
+        .jl-pagination-wrapper {
+            padding: 0 4% 2.5rem;
+        }
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .jl-animate {
+        animation: fadeUp 0.4s ease-out forwards;
+    }
+
+    .jl-animate.delay-1 { animation-delay: 0.05s; opacity: 0; }
+    .jl-animate.delay-2 { animation-delay: 0.1s; opacity: 0; }
+    .jl-animate.delay-3 { animation-delay: 0.15s; opacity: 0; }
+    .jl-animate.delay-4 { animation-delay: 0.2s; opacity: 0; }
+</style>
+
+<!-- ===== HERO SECTION ===== -->
+<div class="jl-hero">
+    <div class="jl-hero-content">
+        <div class="jl-hero-icon">💼</div>
+        <div class="jl-hero-text">
+            <div class="breadcrumb">
+                <a href="/">Home</a>
+                <span class="separator">›</span>
+                <span>Jobs</span>
+            </div>
+            <h1>Find Your <span>Dream Job</span></h1>
+            <p>Discover thousands of job opportunities from top companies around the world. Full-Time, Part-Time, Contract, and Daily jobs available.</p>
+            <div class="jl-hero-stats">
+                <div class="jl-hero-stat">
+                    <span class="stat-number">{{ total_jobs }}</span>
+                    <span class="stat-label">Total Jobs</span>
+                </div>
+                <div class="jl-hero-stat">
+                    <span class="stat-number">{{ full_time_count|default:0 }}</span>
+                    <span class="stat-label">Full-Time</span>
+                </div>
+                <div class="jl-hero-stat">
+                    <span class="stat-number">{{ part_time_count|default:0 }}</span>
+                    <span class="stat-label">Part-Time</span>
+                </div>
+                <div class="jl-hero-stat">
+                    <span class="stat-number">{{ contract_count|default:0 }}</span>
+                    <span class="stat-label">Contract</span>
+                </div>
+                <div class="jl-hero-stat">
+                    <span class="stat-number">{{ daily_count|default:0 }}</span>
+                    <span class="stat-label">Daily</span>
+                </div>
+                <div class="jl-hero-stat">
+                    <span class="stat-number">{{ remote_count }}</span>
+                    <span class="stat-label">Remote</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SEARCH SECTION ===== -->
+<div class="jl-search-section">
+    <div class="jl-search-container jl-animate">
+        <!-- Filter Tabs -->
+        <div class="jl-filter-tabs-wrapper">
+            <div class="jl-filter-tabs">
+                <a href="?{% if request.GET.query %}query={{ request.GET.query }}&{% endif %}{% if request.GET.location %}location={{ request.GET.location }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}{% endif %}"
+                   class="jl-filter-tab {% if not request.GET.employment_type and not request.GET.work_type %}active{% endif %}">
+                    📌 All <span class="count">{{ total_jobs }}</span>
+                </a>
+                <a href="?employment_type=full_time{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+                   class="jl-filter-tab {% if request.GET.employment_type == 'full_time' %}active{% endif %}">
+                    <span class="badge-dot badge-dot-fulltime"></span> Full-Time <span class="count">{{ full_time_count|default:0 }}</span>
+                </a>
+                <a href="?employment_type=part_time{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+                   class="jl-filter-tab {% if request.GET.employment_type == 'part_time' %}active{% endif %}">
+                    <span class="badge-dot badge-dot-parttime"></span> Part-Time <span class="count">{{ part_time_count|default:0 }}</span>
+                </a>
+                <a href="?employment_type=contract{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+                   class="jl-filter-tab {% if request.GET.employment_type == 'contract' %}active{% endif %}">
+                    <span class="badge-dot badge-dot-contract"></span> Contract <span class="count">{{ contract_count|default:0 }}</span>
+                </a>
+                <a href="?employment_type=daily{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+                   class="jl-filter-tab {% if request.GET.employment_type == 'daily' %}active{% endif %}">
+                    <span class="badge-dot badge-dot-daily"></span> Daily <span class="count">{{ daily_count|default:0 }}</span>
+                </a>
+            </div>
+            <div class="jl-filter-right">
+                <select id="workTypeFilter" onchange="filterByWorkType()">
+                    <option value="">All Locations</option>
+                    <option value="remote" {% if request.GET.work_type == 'remote' %}selected{% endif %}>Remote</option>
+                    <option value="physical" {% if request.GET.work_type == 'physical' %}selected{% endif %}>On-Site</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Search Form -->
+        <form class="jl-search-form" id="mainSearchForm" action="{% url 'job_list' %}" method="GET">
+            <div class="jl-search-field">
+                <span class="field-icon">🔍</span>
+                <input type="text" name="query" id="searchQueryInput" placeholder="Job title, skills, or keywords" value="{{ request.GET.query|default:'' }}">
+            </div>
+
+            <div class="jl-search-field">
+                <span class="field-icon">📍</span>
+                <input type="text" name="location" id="searchLocationInput" placeholder="City, state, or remote" value="{{ request.GET.location|default:'' }}">
+            </div>
+
+            <div class="jl-search-field">
+                <span class="field-icon">📂</span>
+                <select name="category" id="categorySelect">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if request.GET.category|add:"0" == cat.id %}selected{% endif %}>
+                    {{ cat.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Hidden inputs -->
+            <input type="hidden" name="employment_type" id="employmentTypeHidden" value="{{ request.GET.employment_type|default:'' }}">
+            <input type="hidden" name="work_type" id="workTypeHidden" value="{{ request.GET.work_type|default:'' }}">
+
+            <button type="submit" class="jl-search-btn">
+                <span>Search</span>
+                <span class="btn-arrow">→</span>
+            </button>
+        </form>
+
+        <div class="jl-filter-actions">
+            {% if request.GET.employment_type or request.GET.work_type or request.GET.query or request.GET.location or request.GET.category %}
+            <a href="{% url 'job_list' %}" class="jl-clear-btn">✕ Clear All Filters</a>
+            <span style="font-size:0.8rem;color:var(--jl-gray-500);">Showing filtered results</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- ===== RESULTS COUNT ===== -->
+<div class="jl-results-count jl-animate delay-1">
+    Found <strong id="resultCount">{{ jobs|length }}</strong> job{% if jobs|length != 1 %}s{% endif %}
+    {% if request.GET.query %} matching "<strong>{{ request.GET.query }}</strong>"{% endif %}
+    {% if request.GET.location %} in "<strong>{{ request.GET.location }}</strong>"{% endif %}
+    {% if request.GET.employment_type %}
+    {% if request.GET.employment_type == 'full_time' %} <strong>(Full-Time)</strong>
+    {% elif request.GET.employment_type == 'part_time' %} <strong>(Part-Time)</strong>
+    {% elif request.GET.employment_type == 'contract' %} <strong>(Contract)</strong>
+    {% elif request.GET.employment_type == 'daily' %} <strong>(Daily)</strong>
+    {% endif %}
+    {% endif %}
+    {% if request.GET.work_type == 'remote' %} <strong>(Remote)</strong>{% endif %}
+    {% if request.GET.work_type == 'physical' %} <strong>(On-Site)</strong>{% endif %}
+</div>
+
+<!-- ===== JOB CARDS ===== -->
+<div class="jl-cards-wrapper">
+    <div class="jl-cards-grid" id="jobGrid">
+        {% if jobs %}
+        {% for job in jobs %}
+        <div class="jl-job-card jl-animate delay-{{ forloop.counter|add:1|slice:':1' }}"
+             data-type="{{ job.employment_type }}"
+             data-title="{{ job.title }}"
+             data-company="{{ job.company }}">
+            <div class="jl-card-top">
+                <div class="jl-company-logo">
+                    {{ job.company|slice:":1" }}
+                </div>
+                <div class="jl-card-badges">
+                    <!-- Employment Type Badge -->
+                    <span class="jl-badge jl-badge-type jl-badge-{{ job.employment_type }}">
+                        {% if job.employment_type == 'full_time' %}💼 Full-Time
+                        {% elif job.employment_type == 'part_time' %}⏰ Part-Time
+                        {% elif job.employment_type == 'contract' %}📄 Contract
+                        {% elif job.employment_type == 'daily' %}⚡ Daily
+                        {% endif %}
+                    </span>
+                    <!-- Work Location Badge -->
+                    <span class="jl-badge {% if job.work_type == 'remote' %}jl-badge-remote{% else %}jl-badge-onsite{% endif %}">
+                        {% if job.work_type == 'remote' %}🌐 Remote{% else %}🏢 On-Site{% endif %}
+                    </span>
+                    <!-- New Badge -->
+                    {% if job.posted_at|date:"Y-m-d" == today|date:"Y-m-d" %}
+                    <span class="jl-badge jl-badge-new">✨ New</span>
+                    {% endif %}
+                    <!-- Urgent Badge (Contract) -->
+                    {% if job.is_urgent %}
+                    <span class="jl-badge jl-badge-urgent">⚡ Urgent</span>
+                    {% endif %}
+                    <!-- Immediate Badge (Daily) -->
+                    {% if job.is_immediate %}
+                    <span class="jl-badge jl-badge-urgent">⚡ Immediate</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <a href="{% url 'job_detail' job.slug %}" class="jl-card-title">
+                {{ job.title }}
+            </a>
+
+            <div class="jl-card-company">
+                <i class="fas fa-building"></i> {{ job.company }}
+            </div>
+
+            <div class="jl-card-details">
+                <div class="jl-detail-item">
+                    <i class="fas fa-map-pin"></i> {{ job.location }}
+                </div>
+                <!-- Salary (Full-Time/Part-Time) -->
+                {% if job.salary_range %}
+                <div class="jl-detail-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span class="jl-salary-badge">{{ job.salary_range }}</span>
+                </div>
+                {% endif %}
+                <!-- Budget (Contract) -->
+                {% if job.budget_min or job.budget_max %}
+                <div class="jl-detail-item">
+                    <i class="fas fa-coins"></i>
+                    <span class="jl-budget-badge">
+                        {% if job.budget_min and job.budget_max %}
+                            ${{ job.budget_min }} - ${{ job.budget_max }}
+                        {% elif job.budget_max %}
+                            Up to ${{ job.budget_max }}
+                        {% else %}
+                            Negotiable
+                        {% endif %}
+                    </span>
+                </div>
+                {% endif %}
+                <!-- Payment (Daily) -->
+                {% if job.payment_amount %}
+                <div class="jl-detail-item">
+                    <i class="fas fa-coins"></i>
+                    <span class="jl-payment-badge">
+                        ${{ job.payment_amount }}/{{ job.get_payment_method_display|default:'day' }}
+                    </span>
+                </div>
+                {% endif %}
+                <!-- Category -->
+                {% if job.category %}
+                <div class="jl-detail-item">
+                    <i class="fas fa-tag"></i> {{ job.category.name }}
+                </div>
+                {% endif %}
+                <!-- Experience Level (Contract) -->
+                {% if job.experience_level %}
+                <div class="jl-detail-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    {{ job.get_experience_level_display }}
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="jl-card-footer">
+                <span class="jl-posted-date">📅 {{ job.posted_at|date:"M d, Y" }}</span>
+                <div class="jl-card-actions">
+                    {% if user.is_authenticated %}
+                    <button class="jl-save-btn {% if job.id in saved_ids %}saved{% endif %}"
+                            onclick="toggleSave('{{ job.slug }}', this)"
+                            title="Save job">
+                        {% if job.id in saved_ids %}❤️{% else %}🤍{% endif %}
+                    </button>
+                    {% endif %}
+                    <a href="{% url 'job_detail' job.slug %}" class="jl-btn jl-btn-primary jl-btn-sm">
+                        View Details →
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="jl-empty-state">
+            <span class="empty-icon">🔍</span>
+            <h3>No jobs found</h3>
+            <p>Try adjusting your search or filters to find more opportunities.</p>
+            <a href="{% url 'job_list' %}" class="jl-btn jl-btn-primary">View All Jobs</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ===== PAGINATION ===== -->
+{% if is_paginated %}
+<div class="jl-pagination-wrapper">
+    <ul class="jl-pagination">
+        {% if page_obj.has_previous %}
+        <li>
+            <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                ← Previous
+            </a>
+        </li>
+        {% else %}
+        <li class="disabled"><span>← Previous</span></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li><span class="current">{{ num }}</span></li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li>
+            <a href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                {{ num }}
+            </a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li>
+            <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                Next →
+            </a>
+        </li>
+        {% else %}
+        <li class="disabled"><span>Next →</span></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // ========== FILTER BY WORK TYPE ==========
+    function filterByWorkType() {
+        const hiddenInput = document.getElementById('workTypeHidden');
+        const select = document.getElementById('workTypeFilter');
+        const form = document.getElementById('mainSearchForm');
+
+        hiddenInput.value = select.value;
+        form.submit();
+    }
+
+    // ========== AUTO-SELECT FILTERS FROM URL ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const employmentType = urlParams.get('employment_type');
+        const workType = urlParams.get('work_type');
+
+        // Auto-select employment type tab
+        if (employmentType) {
+            const tabs = document.querySelectorAll('.jl-filter-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            const tabMap = {
+                'full_time': 1,
+                'part_time': 2,
+                'contract': 3,
+                'daily': 4
+            };
+
+            const index = tabMap[employmentType] || 0;
+            if (tabs[index]) {
+                tabs[index].classList.add('active');
+            }
+
+            // Update hidden input
+            document.getElementById('employmentTypeHidden').value = employmentType;
+        }
+
+        // Auto-select work type dropdown
+        if (workType) {
+            const select = document.getElementById('workTypeFilter');
+            if (select) {
+                select.value = workType;
+            }
+            document.getElementById('workTypeHidden').value = workType;
+        }
+    });
+
+    // ========== SAVE TOGGLE ==========
+    function toggleSave(slug, button) {
+        {% if not user.is_authenticated %}
+            window.location.href = '/login/';
+            return;
+        {% endif %}
+
+        fetch(`/jobs/${slug}/save/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                if (data.saved) {
+                    button.innerHTML = '❤️';
+                    button.classList.add('saved');
+                    showToast('Job saved successfully! ✅');
+                } else {
+                    button.innerHTML = '🤍';
+                    button.classList.remove('saved');
+                    showToast('Job removed from saved.');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Something went wrong. Please try again.', 'error');
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        const colors = {
+            success: '#10b981',
+            error: '#ef4444',
+            info: '#3b82f6',
+            warning: '#f59e0b'
+        };
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: ${colors[type] || colors.success};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 9999;
+            animation: slideInToast 0.3s ease-out;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            max-width: 400px;
+        `;
+        toast.innerHTML = `<span>${message}</span>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideOutToast 0.3s ease-out forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    const toastStyle = document.createElement('style');
+    toastStyle.textContent = `
+        @keyframes slideInToast {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutToast {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(toastStyle);
+
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const searchInput = document.getElementById('searchQueryInput');
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.select();
+            }
+        }
+    });
+
+    console.log('🚀 Unified Job List Loaded');
+    console.log('💡 Tip: Press Ctrl+K to focus search');
+</script>
+{% endblock %}
