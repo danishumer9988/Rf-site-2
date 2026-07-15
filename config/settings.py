@@ -77,10 +77,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
+# DATABASES = {
+#     'default': dj_database_url.parse(
+#         env("NILEDB_URL")
+#     )
+# }
+
 DATABASES = {
-    'default': dj_database_url.parse(
-        env("NILEDB_URL")
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST", default="127.0.0.1"),
+        "PORT": env("DB_PORT", default="5432"),
+    }
 }
 
 DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
