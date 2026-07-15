@@ -34,6 +34,8 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
+        display: flex;
+        flex-direction: column;
     }
 
     .testimonial-card-modern::before {
@@ -55,13 +57,6 @@
         border-color: var(--primary);
     }
 
-    .testimonial-stars {
-        color: #f59e0b;
-        font-size: 0.9rem;
-        letter-spacing: 2px;
-        margin-bottom: 1rem;
-    }
-
     .testimonial-quote {
         color: var(--gray-700);
         font-size: 0.95rem;
@@ -70,12 +65,14 @@
         font-style: italic;
         position: relative;
         z-index: 1;
+        flex: 1;
     }
 
     .testimonial-author-modern {
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        margin-bottom: 0.5rem;
     }
 
     .testimonial-avatar {
@@ -101,6 +98,13 @@
     .testimonial-author-role {
         color: var(--gray-500);
         font-size: 0.8rem;
+    }
+
+    .testimonial-stars {
+        color: #f59e0b;
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        margin-top: 0.25rem;
     }
 
     body.dark-mode .testimonials-section-modern {
@@ -156,40 +160,43 @@
     </div>
 
     <div class="testimonials-grid-modern">
+        <!-- Testimonial 1 -->
         <div class="testimonial-card-modern animate-on-scroll delay-1">
-            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
             <p class="testimonial-quote">"I found my dream job within a week of signing up! The platform is incredibly easy to use and the recommendations are spot on."</p>
             <div class="testimonial-author-modern">
-                <div class="testimonial-avatar">JD</div>
+                <div class="testimonial-avatar">MA</div>
                 <div>
-                    <div class="testimonial-author-name">John Doe</div>
+                    <div class="testimonial-author-name">Muhammad Ahmed</div>
                     <div class="testimonial-author-role">Software Engineer at TechCorp</div>
                 </div>
             </div>
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
         </div>
 
+        <!-- Testimonial 2 -->
         <div class="testimonial-card-modern animate-on-scroll delay-2">
-            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
             <p class="testimonial-quote">"The internship search was so smooth! I got multiple offers and the internship I accepted turned into a full-time position."</p>
             <div class="testimonial-author-modern">
-                <div class="testimonial-avatar">SM</div>
+                <div class="testimonial-avatar">AK</div>
                 <div>
-                    <div class="testimonial-author-name">Sarah Mitchell</div>
-                    <div class="testimonial-author-role">Marketing Intern → Full-Time</div>
+                    <div class="testimonial-author-name">Aisha Khan</div>
+                    <div class="testimonial-author-role">Marketing Manager at BrightFuture</div>
                 </div>
             </div>
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
         </div>
 
+        <!-- Testimonial 3 -->
         <div class="testimonial-card-modern animate-on-scroll delay-3">
-            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
             <p class="testimonial-quote">"As a hiring manager, I've found exceptional talent through this platform. The quality of candidates is unmatched."</p>
             <div class="testimonial-author-modern">
-                <div class="testimonial-avatar">RK</div>
+                <div class="testimonial-avatar">DC</div>
                 <div>
-                    <div class="testimonial-author-name">Robert Kim</div>
+                    <div class="testimonial-author-name">David Chen</div>
                     <div class="testimonial-author-role">HR Director at GlobalTech</div>
                 </div>
             </div>
+            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
         </div>
     </div>
 </section>

@@ -48,7 +48,7 @@ class JobAdmin(admin.ModelAdmin):
             'fields': ('apply_url', 'company_website', 'contact_email', 'contact_phone')
         }),
         ('Status & Expiry', {
-            'fields': ('is_active', 'is_featured', 'is_urgent', 'expires_at', 'posted_at', 'updated_at')
+            'fields': ('is_active', 'is_featured', 'is_urgent', 'expires_at', 'posted_at')
         }),
         ('Full Time / Part Time Details', {
             'fields': ('employment_type', 'experience_level', 'salary_min', 'salary_max',
@@ -69,10 +69,6 @@ class JobAdmin(admin.ModelAdmin):
                        'is_contract_urgent'),
             'classes': ('collapse',)
         }),
-        ('Internship Details', {
-            'fields': ('stipend', 'duration', 'internship_type'),
-            'classes': ('collapse',)
-        }),
         ('Analytics', {
             'fields': ('views', 'likes', 'clicks', 'applications_count'),
             'classes': ('collapse',)
@@ -80,7 +76,7 @@ class JobAdmin(admin.ModelAdmin):
     )
 
     def job_type_display(self, obj):
-        """Display the job type based on which fields are populated"""
+        """Determine job type from populated fields"""
         if obj.employment_type == 'full_time':
             return '💼 Full Time'
         elif obj.employment_type == 'part_time':
@@ -89,9 +85,8 @@ class JobAdmin(admin.ModelAdmin):
             return '⚡ Daily Wage'
         elif obj.contract_type:
             return '📄 Contract'
-        elif obj.stipend:
-            return '🎓 Internship'
-        return '📌 Other'
+        else:
+            return '📌 Other'
     job_type_display.short_description = 'Job Type'
 
     def experience_level_display(self, obj):
@@ -115,8 +110,6 @@ class JobAdmin(admin.ModelAdmin):
             return f"{obj.currency} ${obj.payment_amount} ({obj.get_payment_method_display()})"
         elif obj.budget_min and obj.budget_max:
             return f"{obj.contract_currency} ${obj.budget_min:,} - ${obj.budget_max:,}"
-        elif obj.stipend:
-            return f"💰 {obj.stipend}"
         return "Not specified"
     salary_range_display.short_description = 'Compensation'
 
@@ -319,9 +312,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
                        'contract_start_date', 'contract_end_date', 'is_contract_remote',
                        'is_contract_urgent')
         }),
-        ('Internship Details', {
-            'fields': ('stipend', 'duration', 'internship_type')
-        }),
         ('Links & Contact', {
             'fields': ('apply_url', 'company_website', 'contact_email', 'contact_phone')
         }),
@@ -339,8 +329,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
             return '⚡ Daily Wage'
         elif obj.contract_type:
             return '📄 Contract'
-        elif obj.stipend:
-            return '🎓 Internship'
         return '📌 Other'
     job_type_display.short_description = 'Job Type'
 
@@ -363,7 +351,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
                     slug = f"{base_slug}-{counter}"
                     counter += 1
 
-                # Determine job type and set appropriate fields
                 job_data = {
                     'title': obj.title,
                     'slug': slug,
@@ -425,12 +412,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
                     job_data['is_contract_remote'] = obj.is_contract_remote
                     job_data['is_contract_urgent'] = obj.is_contract_urgent
 
-                # Internship fields
-                if obj.stipend:
-                    job_data['stipend'] = obj.stipend
-                    job_data['duration'] = obj.duration
-                    job_data['internship_type'] = obj.internship_type
-
                 job = Job.objects.create(**job_data)
                 obj.created_job = job
 
@@ -456,7 +437,7 @@ The Job Reference Hub Team
                         recipient_list=[obj.contact_email, obj.user.email],
                         fail_silently=True,
                     )
-                except:
+                except Exception:
                     pass
 
             except Exception as e:

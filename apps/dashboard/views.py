@@ -22,10 +22,14 @@ from django.utils import timezone
 from datetime import timedelta
 from apps.jobs.models import Job, JobView, JobLike, JobComment, JobClick, JobApplication
 
+
 @login_required
 def dashboard_home(request):
     saved_jobs_count = SavedJob.objects.filter(user=request.user).count()
     saved_internships_count = SavedInternship.objects.filter(user=request.user).count()
+    total_job_posts = Job.objects.filter(posted_by=request.user).count()
+    total_saved_items = saved_jobs_count + saved_internships_count
+    pending_applications_count = JobApplication.objects.filter(user=request.user, status='pending').count()
 
     recent_saved_jobs = SavedJob.objects.filter(user=request.user)[:5]
     recent_saved_internships = SavedInternship.objects.filter(user=request.user)[:5]
@@ -33,6 +37,9 @@ def dashboard_home(request):
     context = {
         'saved_jobs_count': saved_jobs_count,
         'saved_internships_count': saved_internships_count,
+        'total_job_posts': total_job_posts,
+        'total_saved_items': total_saved_items,
+        'pending_applications_count': pending_applications_count,
         'recent_saved_jobs': recent_saved_jobs,
         'recent_saved_internships': recent_saved_internships,
     }

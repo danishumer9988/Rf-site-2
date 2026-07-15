@@ -5,12 +5,14 @@
 
 {% block content %}
 <style>
+    /* ===== GENERAL ===== */
     .pj-container {
         max-width: 800px;
         margin: 2rem auto 4rem;
         padding: 0 5%;
     }
 
+    /* ===== HERO ===== */
     .pj-hero {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         padding: 3rem 5% 2.5rem;
@@ -128,6 +130,7 @@
         line-height: 1.6;
     }
 
+    /* ===== FORM CARD ===== */
     .pj-form-card {
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(20px);
@@ -136,7 +139,7 @@
         padding: 2.5rem;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.3);
-        transition: all 0.3s;
+        transition: box-shadow 0.3s, background 0.3s;
     }
 
     .pj-form-card:hover {
@@ -154,6 +157,59 @@
     .pj-form-subtitle {
         color: #64748b;
         margin-bottom: 2rem;
+    }
+
+    /* ===== JOB TYPE SELECTOR - NO ICONS ===== */
+    .pj-type-selector {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+        justify-content: center;
+    }
+
+    .pj-type-btn {
+        padding: 0.7rem 1.8rem;
+        border: 2px solid rgba(0, 0, 0, 0.08);
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.5);
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
+        color: #475569;
+        font-family: inherit;
+        flex: 1 1 auto;
+        min-width: 120px;
+        text-align: center;
+        /* no transform on hover to prevent blinking */
+    }
+
+    .pj-type-btn:hover {
+        border-color: #94a3b8;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .pj-type-btn.active {
+        background: #2563eb;
+        color: white;
+        border-color: #2563eb;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    /* ===== FORM SECTIONS ===== */
+    .pj-form-section {
+        display: none;
+        animation: fadeSection 0.3s ease-out;
+    }
+
+    .pj-form-section.active {
+        display: block;
+    }
+
+    @keyframes fadeSection {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .pj-info-box {
@@ -213,7 +269,7 @@
         border-radius: 8px;
         font-size: 0.95rem;
         font-family: inherit;
-        transition: all 0.3s;
+        transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
         background: rgba(255, 255, 255, 0.5);
         color: #1e293b;
     }
@@ -245,6 +301,60 @@
         gap: 1rem;
     }
 
+    /* ===== CUSTOM CHECKBOX ===== */
+    .pj-checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+        padding: 0.4rem 0;
+    }
+
+    .pj-checkbox-group input[type="checkbox"] {
+        display: none;
+    }
+
+    .pj-checkbox-custom {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #94a3b8;
+        border-radius: 4px;
+        background: white;
+        display: inline-block;
+        position: relative;
+        flex-shrink: 0;
+        transition: border-color 0.3s, background 0.3s;
+    }
+
+    .pj-checkbox-group input[type="checkbox"]:checked + .pj-checkbox-custom {
+        background: #2563eb;
+        border-color: #2563eb;
+    }
+
+    .pj-checkbox-group input[type="checkbox"]:checked + .pj-checkbox-custom::after {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 2px;
+        width: 6px;
+        height: 11px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .pj-checkbox-group:hover .pj-checkbox-custom {
+        border-color: #2563eb;
+    }
+
+    .pj-checkbox-label {
+        font-weight: 500;
+        color: #334155;
+        font-size: 0.95rem;
+        user-select: none;
+    }
+
+    /* ===== FORM ACTIONS ===== */
     .pj-form-actions {
         display: flex;
         gap: 1rem;
@@ -259,7 +369,7 @@
         font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
@@ -301,7 +411,7 @@
         gap: 0.3rem;
     }
 
-    /* Dark Mode */
+    /* ===== DARK MODE ===== */
     body.dark-mode .pj-form-card {
         background: rgba(30, 41, 59, 0.5);
         border-color: rgba(255, 255, 255, 0.05);
@@ -313,6 +423,23 @@
 
     body.dark-mode .pj-form-title {
         color: #e2e8f0;
+    }
+
+    body.dark-mode .pj-type-btn {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: #94a3b8;
+    }
+
+    body.dark-mode .pj-type-btn:hover {
+        background: rgba(30, 41, 59, 0.8);
+        border-color: #334155;
+    }
+
+    body.dark-mode .pj-type-btn.active {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
     }
 
     body.dark-mode .pj-form-group label {
@@ -365,6 +492,21 @@
         color: #60a5fa;
     }
 
+    body.dark-mode .pj-checkbox-custom {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: #475569;
+    }
+
+    body.dark-mode .pj-checkbox-group input[type="checkbox"]:checked + .pj-checkbox-custom {
+        background: #3b82f6;
+        border-color: #3b82f6;
+    }
+
+    body.dark-mode .pj-checkbox-label {
+        color: #94a3b8;
+    }
+
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
         .pj-hero-content {
             flex-direction: column;
@@ -401,6 +543,15 @@
         .pj-form-actions .pj-btn {
             justify-content: center;
         }
+
+        .pj-type-selector {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .pj-type-btn {
+            flex: 1;
+        }
     }
 
     @media (max-width: 480px) {
@@ -417,6 +568,7 @@
         }
     }
 
+    /* ===== ANIMATION ON PAGE LOAD ===== */
     @keyframes fadeUp {
         from { opacity: 0; transform: translateY(15px); }
         to { opacity: 1; transform: translateY(0); }
@@ -449,7 +601,15 @@
 <div class="pj-container">
     <div class="pj-form-card pj-animate">
         <h2 class="pj-form-title">Job Details</h2>
-        <p class="pj-form-subtitle">Fill out the form below to submit your job for approval</p>
+        <p class="pj-form-subtitle">Select a job type, then fill in the relevant details.</p>
+
+        <!-- ===== JOB TYPE SELECTOR (no icons) ===== -->
+        <div class="pj-type-selector">
+            <button type="button" class="pj-type-btn active" data-type="full_time">Full-Time</button>
+            <button type="button" class="pj-type-btn" data-type="part_time">Part-Time</button>
+            <button type="button" class="pj-type-btn" data-type="contract">Contract</button>
+            <button type="button" class="pj-type-btn" data-type="daily">Daily</button>
+        </div>
 
         <div class="pj-info-box">
             <span class="info-icon">ℹ️</span>
@@ -462,125 +622,316 @@
         <form method="POST" id="postJobForm">
             {% csrf_token %}
 
-            <!-- Job Title -->
-            <div class="pj-form-group">
-                <label for="{{ form.title.id_for_label }}">Job Title <span class="required">*</span></label>
-                {{ form.title }}
-                {% if form.title.errors %}
-                <div class="pj-error-message">❌ {{ form.title.errors.0 }}</div>
-                {% endif %}
-            </div>
+            <!-- ===== HIDDEN JOB TYPE INPUT ===== -->
+            <input type="hidden" name="employment_type" id="id_employment_type" value="full_time">
 
-            <!-- Company & Location -->
-            <div class="pj-form-row">
+            <!-- ===== COMMON FIELDS ===== -->
+            <div class="pj-form-section active" id="section-common">
                 <div class="pj-form-group">
-                    <label for="{{ form.company.id_for_label }}">Company Name <span class="required">*</span></label>
-                    {{ form.company }}
-                    {% if form.company.errors %}
-                    <div class="pj-error-message">❌ {{ form.company.errors.0 }}</div>
+                    <label for="{{ form.title.id_for_label }}">Job Title <span class="required">*</span></label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                    <div class="pj-error-message">❌ {{ form.title.errors.0 }}</div>
                     {% endif %}
                 </div>
+
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.company.id_for_label }}">Company Name <span class="required">*</span></label>
+                        {{ form.company }}
+                        {% if form.company.errors %}
+                        <div class="pj-error-message">❌ {{ form.company.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.location.id_for_label }}">Location <span class="required">*</span></label>
+                        {{ form.location }}
+                        {% if form.location.errors %}
+                        <div class="pj-error-message">❌ {{ form.location.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.work_type.id_for_label }}">Work Type <span class="required">*</span></label>
+                        {{ form.work_type }}
+                        {% if form.work_type.errors %}
+                        <div class="pj-error-message">❌ {{ form.work_type.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.category.id_for_label }}">Category <span class="required">*</span></label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                        <div class="pj-error-message">❌ {{ form.category.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
                 <div class="pj-form-group">
-                    <label for="{{ form.location.id_for_label }}">Location <span class="required">*</span></label>
-                    {{ form.location }}
-                    {% if form.location.errors %}
-                    <div class="pj-error-message">❌ {{ form.location.errors.0 }}</div>
+                    <label for="{{ form.description.id_for_label }}">Job Description <span class="required">*</span></label>
+                    {{ form.description }}
+                    <div class="help-text">Describe the role, responsibilities, and what makes this opportunity great</div>
+                    {% if form.description.errors %}
+                    <div class="pj-error-message">❌ {{ form.description.errors.0 }}</div>
                     {% endif %}
                 </div>
-            </div>
 
-            <!-- Job Type & Category -->
-            <div class="pj-form-row">
                 <div class="pj-form-group">
-                    <label for="{{ form.job_type.id_for_label }}">Job Type <span class="required">*</span></label>
-                    {{ form.job_type }}
-                    {% if form.job_type.errors %}
-                    <div class="pj-error-message">❌ {{ form.job_type.errors.0 }}</div>
+                    <label for="{{ form.requirements.id_for_label }}">Requirements & Qualifications</label>
+                    {{ form.requirements }}
+                    <div class="help-text">List the skills, experience, and qualifications required</div>
+                    {% if form.requirements.errors %}
+                    <div class="pj-error-message">❌ {{ form.requirements.errors.0 }}</div>
                     {% endif %}
                 </div>
-                <div class="pj-form-group">
-                    <label for="{{ form.category.id_for_label }}">Category <span class="required">*</span></label>
-                    {{ form.category }}
-                    {% if form.category.errors %}
-                    <div class="pj-error-message">❌ {{ form.category.errors.0 }}</div>
-                    {% endif %}
+
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.apply_url.id_for_label }}">Application URL</label>
+                        {{ form.apply_url }}
+                        <div class="help-text">Where applicants should apply</div>
+                        {% if form.apply_url.errors %}
+                        <div class="pj-error-message">❌ {{ form.apply_url.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.company_website.id_for_label }}">Company Website</label>
+                        {{ form.company_website }}
+                        <div class="help-text">Your company's website</div>
+                        {% if form.company_website.errors %}
+                        <div class="pj-error-message">❌ {{ form.company_website.errors.0 }}</div>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
 
-            <!-- Description -->
-            <div class="pj-form-group">
-                <label for="{{ form.description.id_for_label }}">Job Description <span class="required">*</span></label>
-                {{ form.description }}
-                <div class="help-text">Describe the role, responsibilities, and what makes this opportunity great</div>
-                {% if form.description.errors %}
-                <div class="pj-error-message">❌ {{ form.description.errors.0 }}</div>
-                {% endif %}
-            </div>
-
-            <!-- Requirements -->
-            <div class="pj-form-group">
-                <label for="{{ form.requirements.id_for_label }}">Requirements & Qualifications</label>
-                {{ form.requirements }}
-                <div class="help-text">List the skills, experience, and qualifications required</div>
-                {% if form.requirements.errors %}
-                <div class="pj-error-message">❌ {{ form.requirements.errors.0 }}</div>
-                {% endif %}
-            </div>
-
-            <!-- Salary -->
-            <div class="pj-form-group">
-                <label for="{{ form.salary.id_for_label }}">Salary / Compensation</label>
-                {{ form.salary }}
-                <div class="help-text">e.g., $70,000 - $90,000 per year or $30 - $40 per hour</div>
-                {% if form.salary.errors %}
-                <div class="pj-error-message">❌ {{ form.salary.errors.0 }}</div>
-                {% endif %}
-            </div>
-
-            <!-- URLs -->
-            <div class="pj-form-row">
-                <div class="pj-form-group">
-                    <label for="{{ form.apply_url.id_for_label }}">Application URL</label>
-                    {{ form.apply_url }}
-                    <div class="help-text">Where applicants should apply</div>
-                    {% if form.apply_url.errors %}
-                    <div class="pj-error-message">❌ {{ form.apply_url.errors.0 }}</div>
-                    {% endif %}
-                </div>
-                <div class="pj-form-group">
-                    <label for="{{ form.company_website.id_for_label }}">Company Website</label>
-                    {{ form.company_website }}
-                    <div class="help-text">Your company's website</div>
-                    {% if form.company_website.errors %}
-                    <div class="pj-error-message">❌ {{ form.company_website.errors.0 }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Contact Information -->
-            <div class="pj-form-row">
-                <div class="pj-form-group">
-                    <label for="{{ form.contact_email.id_for_label }}">Contact Email <span class="required">*</span></label>
-                    {{ form.contact_email }}
-                    <div class="help-text">We'll send notifications to this email</div>
-                    {% if form.contact_email.errors %}
-                    <div class="pj-error-message">❌ {{ form.contact_email.errors.0 }}</div>
-                    {% endif %}
-                </div>
-                <div class="pj-form-group">
-                    <label for="{{ form.contact_phone.id_for_label }}">Contact Phone</label>
-                    {{ form.contact_phone }}
-                    <div class="help-text">Optional - for urgent communications</div>
-                    {% if form.contact_phone.errors %}
-                    <div class="pj-error-message">❌ {{ form.contact_phone.errors.0 }}</div>
-                    {% endif %}
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.contact_email.id_for_label }}">Contact Email <span class="required">*</span></label>
+                        {{ form.contact_email }}
+                        <div class="help-text">We'll send notifications to this email</div>
+                        {% if form.contact_email.errors %}
+                        <div class="pj-error-message">❌ {{ form.contact_email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.contact_phone.id_for_label }}">Contact Phone</label>
+                        {{ form.contact_phone }}
+                        <div class="help-text">Optional - for urgent communications</div>
+                        {% if form.contact_phone.errors %}
+                        <div class="pj-error-message">❌ {{ form.contact_phone.errors.0 }}</div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
 
-            <!-- Actions -->
+            <!-- ===== FULL-TIME FIELDS ===== -->
+            <div class="pj-form-section" id="section-full_time">
+                <div class="pj-form-group">
+                    <label for="{{ form.experience_level.id_for_label }}">Experience Level <span class="required">*</span></label>
+                    {{ form.experience_level }}
+                    {% if form.experience_level.errors %}
+                    <div class="pj-error-message">❌ {{ form.experience_level.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.salary_min.id_for_label }}">Salary Min</label>
+                        {{ form.salary_min }}
+                        <div class="help-text">Minimum salary (e.g., 50000)</div>
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.salary_max.id_for_label }}">Salary Max</label>
+                        {{ form.salary_max }}
+                        <div class="help-text">Maximum salary (e.g., 70000)</div>
+                    </div>
+                </div>
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.salary_currency.id_for_label }}">Currency</label>
+                        {{ form.salary_currency }}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.salary_period.id_for_label }}">Salary Period</label>
+                        {{ form.salary_period }}
+                    </div>
+                </div>
+                <div class="pj-form-group">
+                    <label for="{{ form.benefits.id_for_label }}">Benefits</label>
+                    {{ form.benefits }}
+                    <div class="help-text">e.g., Health insurance, 401k, etc.</div>
+                </div>
+            </div>
+
+            <!-- ===== PART-TIME FIELDS ===== -->
+            <div class="pj-form-section" id="section-part_time">
+                <div class="pj-form-group">
+                    <label for="{{ form.shift_type.id_for_label }}">Shift Type</label>
+                    {{ form.shift_type }}
+                </div>
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.hours_per_week.id_for_label }}">Hours per Week</label>
+                        {{ form.hours_per_week }}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.hourly_rate.id_for_label }}">Hourly Rate</label>
+                        {{ form.hourly_rate }}
+                        <div class="help-text">e.g., 15.00</div>
+                    </div>
+                </div>
+                <div class="pj-form-group">
+                    <label for="{{ form.salary_range.id_for_label }}">Salary Range (optional)</label>
+                    {{ form.salary_range }}
+                    <div class="help-text">e.g., $15-20/hour</div>
+                </div>
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.currency.id_for_label }}">Currency</label>
+                        {{ form.currency }}
+                    </div>
+                </div>
+                <!-- Checkboxes with custom styling -->
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label class="pj-checkbox-group">
+                            {{ form.is_flexible_schedule }}
+                            <span class="pj-checkbox-custom"></span>
+                            <span class="pj-checkbox-label">Flexible Schedule</span>
+                        </label>
+                    </div>
+                    <div class="pj-form-group">
+                        <label class="pj-checkbox-group">
+                            {{ form.is_weekend_available }}
+                            <span class="pj-checkbox-custom"></span>
+                            <span class="pj-checkbox-label">Weekend Available</span>
+                        </label>
+                    </div>
+                    <div class="pj-form-group">
+                        <label class="pj-checkbox-group">
+                            {{ form.is_immediate }}
+                            <span class="pj-checkbox-custom"></span>
+                            <span class="pj-checkbox-label">Immediate Start</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== CONTRACT FIELDS ===== -->
+            <div class="pj-form-section" id="section-contract">
+                <div class="pj-form-group">
+                    <label for="{{ form.contract_type.id_for_label }}">Contract Type <span class="required">*</span></label>
+                    {{ form.contract_type }}
+                    {% if form.contract_type.errors %}
+                    <div class="pj-error-message">❌ {{ form.contract_type.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.budget_min.id_for_label }}">Budget Min</label>
+                        {{ form.budget_min }}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.budget_max.id_for_label }}">Budget Max</label>
+                        {{ form.budget_max }}
+                    </div>
+                </div>
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.contract_currency.id_for_label }}">Currency</label>
+                        {{ form.contract_currency }}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.contract_experience_level.id_for_label }}">Experience Level</label>
+                        {{ form.contract_experience_level }}
+                    </div>
+                </div>
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.duration_type.id_for_label }}">Duration Type</label>
+                        {{ form.duration_type }}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.estimated_duration.id_for_label }}">Estimated Duration</label>
+                        {{ form.estimated_duration }}
+                        <div class="help-text">e.g., 3 months, 6 months</div>
+                    </div>
+                </div>
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.contract_start_date.id_for_label }}">Start Date</label>
+                        {{ form.contract_start_date }}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.contract_end_date.id_for_label }}">End Date</label>
+                        {{ form.contract_end_date }}
+                    </div>
+                </div>
+                <!-- Checkboxes -->
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label class="pj-checkbox-group">
+                            {{ form.is_contract_remote }}
+                            <span class="pj-checkbox-custom"></span>
+                            <span class="pj-checkbox-label">Remote</span>
+                        </label>
+                    </div>
+                    <div class="pj-form-group">
+                        <label class="pj-checkbox-group">
+                            {{ form.is_contract_urgent }}
+                            <span class="pj-checkbox-custom"></span>
+                            <span class="pj-checkbox-label">Urgent</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== DAILY WAGE FIELDS ===== -->
+            <div class="pj-form-section" id="section-daily">
+                <div class="pj-form-group">
+                    <label for="{{ form.payment_method.id_for_label }}">Payment Method <span class="required">*</span></label>
+                    {{ form.payment_method }}
+                    {% if form.payment_method.errors %}
+                    <div class="pj-error-message">❌ {{ form.payment_method.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="pj-form-group">
+                    <label for="{{ form.payment_amount.id_for_label }}">Payment Amount <span class="required">*</span></label>
+                    {{ form.payment_amount }}
+                    <div class="help-text">Amount per hour/day/week</div>
+                    {% if form.payment_amount.errors %}
+                    <div class="pj-error-message">❌ {{ form.payment_amount.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="pj-form-row">
+                    <div class="pj-form-group">
+                        <label for="{{ form.start_date.id_for_label }}">Start Date</label>
+                        {{ form.start_date }}
+                    </div>
+                    <div class="pj-form-group">
+                        <label for="{{ form.end_date.id_for_label }}">End Date</label>
+                        {{ form.end_date }}
+                    </div>
+                </div>
+                <div class="pj-form-group">
+                    <label for="{{ form.working_hours.id_for_label }}">Working Hours</label>
+                    {{ form.working_hours }}
+                    <div class="help-text">e.g., 9 AM - 5 PM</div>
+                </div>
+                <div class="pj-form-group">
+                    <label class="pj-checkbox-group">
+                        {{ form.is_immediate_joining }}
+                        <span class="pj-checkbox-custom"></span>
+                        <span class="pj-checkbox-label">Immediate Joining</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ===== ACTIONS ===== -->
             <div class="pj-form-actions">
                 <button type="submit" class="pj-btn pj-btn-primary">
-                    <span>📤</span> Submit for Approval
+                    Submit for Approval
                 </button>
                 <a href="{% url 'dashboard' %}" class="pj-btn pj-btn-outline">Cancel</a>
             </div>
@@ -590,22 +941,61 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('postJobForm');
+        // ===== JOB TYPE SELECTOR =====
+        const typeButtons = document.querySelectorAll('.pj-type-btn');
+        const sections = {
+            full_time: document.getElementById('section-full_time'),
+            part_time: document.getElementById('section-part_time'),
+            contract: document.getElementById('section-contract'),
+            daily: document.getElementById('section-daily')
+        };
+        const commonSection = document.getElementById('section-common');
+        const hiddenEmploymentType = document.getElementById('id_employment_type');
 
+        // Initially show only common + full-time (default)
+        commonSection.classList.add('active');
+        sections.full_time.classList.add('active');
+
+        typeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                typeButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const selectedType = this.dataset.type;
+                hiddenEmploymentType.value = selectedType;
+
+                // Hide all type-specific sections
+                Object.values(sections).forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // Show the selected section
+                if (sections[selectedType]) {
+                    sections[selectedType].classList.add('active');
+                }
+
+                // Common section always stays visible
+                commonSection.classList.add('active');
+            });
+        });
+
+        // ===== FORM SUBMISSION =====
+        const form = document.getElementById('postJobForm');
         form.addEventListener('submit', function(e) {
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span>⏳</span> Submitting...';
+            submitBtn.textContent = 'Submitting...';
 
+            // Re-enable after 5s (will be redirected anyway)
             setTimeout(() => {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>📤</span> Submit for Approval';
+                submitBtn.textContent = 'Submit for Approval';
             }, 5000);
         });
 
-        // Auto-resize textareas
-        const textareas = document.querySelectorAll('textarea');
-        textareas.forEach(textarea => {
+        // ===== AUTO-RESIZE TEXTAREAS =====
+        document.querySelectorAll('textarea').forEach(textarea => {
             textarea.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = this.scrollHeight + 'px';
