@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>{% if action == 'Add' %}Add New{% else %}Edit{% endif %} Job - Admin - Job Reference Hub</title>
+    <title>{% if action == 'Add' %}Add New{% else %}Edit{% endif %} Job - Admin - JobLidar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         /* ===== SAME FORM STYLES ===== */
@@ -207,14 +207,16 @@
                             {{ form.location }}
                             <span class="help-text">City, state, or "Remote"</span>
                         </div>
+                        <!-- FIXED: use salary_range instead of salary -->
                         <div class="form-group">
                             <label>Salary Range <span class="optional">(optional)</span></label>
-                            {{ form.salary }}
+                            {{ form.salary_range }}
                             <span class="help-text">e.g., $50,000 - $70,000 per year</span>
                         </div>
+                        <!-- FIXED: use work_type instead of type -->
                         <div class="form-group">
-                            <label>Job Type <span class="required">*</span></label>
-                            {{ form.type }}
+                            <label>Work Type <span class="required">*</span></label>
+                            {{ form.work_type }}
                         </div>
                         <div class="form-group">
                             <label>Category <span class="optional">(optional)</span></label>
@@ -320,8 +322,8 @@
         const title = document.querySelector('#{{ form.title.id_for_label }}')?.value || 'No title';
         const company = document.querySelector('#{{ form.company.id_for_label }}')?.value || 'No company';
         const location = document.querySelector('#{{ form.location.id_for_label }}')?.value || 'Not specified';
-        const type = document.querySelector('#{{ form.type.id_for_label }}')?.selectedOptions[0]?.text || 'Not specified';
-        const salary = document.querySelector('#{{ form.salary.id_for_label }}')?.value || 'Not specified';
+        const workType = document.querySelector('#{{ form.work_type.id_for_label }}')?.selectedOptions[0]?.text || 'Not specified';
+        const salaryRange = document.querySelector('#{{ form.salary_range.id_for_label }}')?.value || 'Not specified';
         const description = document.querySelector('#{{ form.description.id_for_label }}')?.value || 'No description';
 
         document.getElementById('previewContent').innerHTML = `
@@ -330,8 +332,8 @@
                 <p style="color:#64748b;margin-bottom:0.75rem;"><strong>${escapeHtml(company)}</strong></p>
                 <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;color:#64748b;">
                     <span>📍 ${escapeHtml(location)}</span>
-                    <span>📌 ${escapeHtml(type)}</span>
-                    <span>💰 ${escapeHtml(salary)}</span>
+                    <span>📌 ${escapeHtml(workType)}</span>
+                    <span>💰 ${escapeHtml(salaryRange)}</span>
                 </div>
                 <div style="color:#475569;line-height:1.8;">${escapeHtml(description).replace(/\n/g, '<br>')}</div>
             </div>

@@ -142,7 +142,6 @@
         </div>
     </div>
 
-    <!-- Form Container -->
     <div class="form-container">
         <div class="form-header">
             <div>
@@ -185,8 +184,14 @@
                             <span class="help-text">e.g., 3 months</span>
                         </div>
                         <div class="form-group">
-                            <label>Type <span class="required">*</span></label>
+                            <label>Work Type <span class="required">*</span></label>
                             {{ form.type }}
+                            <span class="help-text">Remote or On-Site</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Internship Type <span class="required">*</span></label>
+                            {{ form.internship_type }}
+                            <span class="help-text">Full-Time or Part-Time</span>
                         </div>
                         <div class="form-group">
                             <label>Category <span class="optional">(optional)</span></label>

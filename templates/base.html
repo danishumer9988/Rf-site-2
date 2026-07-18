@@ -302,13 +302,13 @@
             transform: rotate(180deg);
         }
 
-        /* ===== DROPDOWN MENU - UPDATED FOR JOB CATEGORIES ===== */
+        /* ===== DROPDOWN MENU - UPDATED POSITION ===== */
         .dropdown-menu {
             display: none;
             position: absolute;
             top: calc(100% + 2px);
-            left: 90%;
-            transform: translateX(-50%);
+            left: 0;                    /* Align left with parent button */
+            transform: none;            /* Remove centering offset */
             background: white;
             min-width: 220px;
             box-shadow: 0 12px 48px rgba(0, 0, 0, 0.12);
@@ -317,16 +317,16 @@
             z-index: 1001;
             border: 1px solid var(--gray-100);
             animation: dropdownIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: top center;
-            overflow: visible !important; /* Allow sub-dropdowns to be visible */
+            transform-origin: top left;  /* Adjusted origin */
+            overflow: visible !important;
         }
 
         .dropdown-menu::before {
             content: '';
             position: absolute;
             top: -6px;
-            left: 50%;
-            transform: translateX(-50%) rotate(45deg);
+            left: 20px;                 /* Arrow position aligned with button */
+            transform: rotate(45deg);
             width: 12px;
             height: 12px;
             background: white;
@@ -346,11 +346,11 @@
         @keyframes dropdownIn {
             from {
                 opacity: 0;
-                transform: translateX(-50%) translateY(-8px) scale(0.97);
+                transform: translateY(-8px) scale(0.97);
             }
             to {
                 opacity: 1;
-                transform: translateX(-50%) translateY(0) scale(1);
+                transform: translateY(0) scale(1);
             }
         }
 
@@ -1097,7 +1097,7 @@
             margin-bottom: 0.65rem;
         }
 
-        /* ===== FOOTER LINKS – Clean hover ===== */
+        /* ===== FOOTER LINKS – UPDATED: no underline, zoom + color ===== */
         .footer-links a {
             color: #94a3b8;
             text-decoration: none;
@@ -1105,30 +1105,18 @@
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            position: relative;
-            transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* smooth zoom + color */
         }
 
-        /* Underline animation */
+        /* Remove any existing underline pseudo-element */
         .footer-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #60a5fa;   /* or use var(--primary) */
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none;
         }
 
-        /* Hover – only text color + underline */
+        /* Hover: zoom + colour change (like navbar) */
         .footer-links a:hover {
-            color: white;
-            /* No background, no transform, no padding */
-        }
-
-        .footer-links a:hover::after {
-            width: 100%;
+            color: #60a5fa !important;
+            transform: scale(1.1);
         }
 
         .footer-newsletter {
@@ -1950,6 +1938,27 @@
             margin-top: 0.15rem;
         }
 
+        /* ===== STAR RATING STYLES ===== */
+        .star-rating {
+            display: flex;
+            gap: 0.3rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            margin: 0.3rem 0 0.2rem 0;
+        }
+        .star-rating .star {
+            color: var(--gray-300);
+            transition: color 0.2s, transform 0.2s;
+        }
+        .star-rating .star.active,
+        .star-rating .star.hover {
+            color: #fbbf24; /* gold */
+            transform: scale(1.1);
+        }
+        .star-rating .star.hover {
+            transform: scale(1.2);
+        }
+
         .feedback-modal .submit-btn {
             width: 100%;
             padding: 0.7rem;
@@ -2042,6 +2051,14 @@
 
         body.dark-mode .feedback-modal-close:hover {
             color: #e2e8f0;
+        }
+
+        body.dark-mode .star-rating .star {
+            color: #475569;
+        }
+        body.dark-mode .star-rating .star.active,
+        body.dark-mode .star-rating .star.hover {
+            color: #fbbf24;
         }
 
         @media (max-width: 640px) {
@@ -2322,11 +2339,24 @@
                 {% csrf_token %}
                 <input type="hidden" id="feedbackSubmitUrl" value="{% url 'feedback_submit' %}">
 
-
                 <div class="form-group">
                     <label for="fb_message">Message <span class="required">*</span></label>
                     <textarea id="fb_message" name="message" placeholder="What do you think?" required></textarea>
                     <div class="form-error" id="fb_message_error">Please enter your message.</div>
+                </div>
+
+                <!-- STAR RATING -->
+                <div class="form-group">
+                    <label for="fb_rating">Rating (1–5) <span class="required">*</span></label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                    </div>
+                    <input type="hidden" name="rating" id="fb_rating" value="0">
+                    <div class="form-error" id="fb_rating_error">Please select a rating.</div>
                 </div>
 
                 <button type="submit" class="submit-btn" id="fbSubmitBtn">Send Feedback</button>
@@ -2425,24 +2455,6 @@
             </ul>
         </div>
 
-        <!-- Newsletter -->
-        <div class="footer-col">
-            <h4>Newsletter</h4>
-            <div class="footer-newsletter">
-                <p>Subscribe to get weekly job alerts and career tips.</p>
-                <form class="footer-newsletter-form" onsubmit="subscribeFooter(event)">
-                    {% csrf_token %}
-                    <input type="email" name="email" class="footer-newsletter-input"
-                           placeholder="Your email" required>
-                    <button type="submit" class="footer-newsletter-btn">
-                        <i class="fas fa-paper-plane"></i> Subscribe
-                    </button>
-                </form>
-            </div>
-            <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.8rem;">
-                We respect your privacy. Unsubscribe anytime.
-            </p>
-        </div>
     </div>
 
     <div class="footer-bottom">
@@ -2559,7 +2571,7 @@
         });
     }
 
-    // ========== FEEDBACK MODAL ==========
+    // ========== FEEDBACK MODAL & STAR RATING ==========
     (function() {
         const modal = document.getElementById('feedbackModal');
         const openBtn = document.getElementById('feedbackFloatBtn');
@@ -2570,9 +2582,60 @@
         const submitBtn = document.getElementById('fbSubmitBtn');
         const submitUrl = document.getElementById('feedbackSubmitUrl').value;
 
+        // ---- Star Rating ----
+        const stars = document.querySelectorAll('#starRating .star');
+        const ratingInput = document.getElementById('fb_rating');
+        let currentRating = 0;
+
+        function updateStars(rating) {
+            stars.forEach((star, index) => {
+                const icon = star.querySelector('i');
+                if (index < rating) {
+                    icon.className = 'fas fa-star';
+                    star.classList.add('active');
+                } else {
+                    icon.className = 'far fa-star';
+                    star.classList.remove('active');
+                }
+            });
+            ratingInput.value = rating;
+            currentRating = rating;
+        }
+
+        // Click handler
+        stars.forEach(star => {
+            star.addEventListener('click', function(e) {
+                const val = parseInt(this.dataset.value);
+                updateStars(val);
+                // Remove hover state after click
+                stars.forEach(s => s.classList.remove('hover'));
+                // Clear error if any
+                document.getElementById('fb_rating_error').classList.remove('show');
+            });
+
+            // Hover effect
+            star.addEventListener('mouseenter', function() {
+                const val = parseInt(this.dataset.value);
+                stars.forEach((s, idx) => {
+                    if (idx < val) {
+                        s.classList.add('hover');
+                    } else {
+                        s.classList.remove('hover');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseleave', function() {
+                stars.forEach(s => s.classList.remove('hover'));
+            });
+        });
+
+        // ---- Modal open/close ----
         function openModal() {
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            // Reset rating to 0 when opening
+            updateStars(0);
         }
 
         function closeModal() {
@@ -2598,20 +2661,31 @@
                 document.querySelectorAll('.form-error').forEach(el => el.classList.remove('show'));
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Send Feedback';
+                updateStars(0);
             }
         });
 
-        // Handle form submission
+        // ---- Form submission ----
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
             const message = document.getElementById('fb_message').value.trim();
+            const rating = parseInt(ratingInput.value);
+
+            let valid = true;
             if (!message) {
                 document.getElementById('fb_message_error').classList.add('show');
-                return;
+                valid = false;
             } else {
                 document.getElementById('fb_message_error').classList.remove('show');
             }
+            if (rating === 0) {
+                document.getElementById('fb_rating_error').classList.add('show');
+                valid = false;
+            } else {
+                document.getElementById('fb_rating_error').classList.remove('show');
+            }
+            if (!valid) return;
 
             const formData = new FormData(form);
             submitBtn.disabled = true;
@@ -2627,7 +2701,6 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    // Try to get error message from response
                     return response.text().then(text => {
                         throw new Error(text || 'Server error');
                     });

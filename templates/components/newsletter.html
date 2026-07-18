@@ -185,7 +185,12 @@
             Never miss out on your dream opportunity.
         </p>
 
-        <form class="newsletter-form-modern" id="newsletterFormModern" onsubmit="subscribeNewsletterModern(event)">
+        <!-- ✅ FIX: added action and method -->
+        <form class="newsletter-form-modern"
+              id="newsletterFormModern"
+              action="{% url 'subscribe' %}"
+              method="POST"
+              onsubmit="subscribeNewsletterModern(event)">
             {% csrf_token %}
             <input type="email" name="email" class="newsletter-input-modern"
                    placeholder="Enter your email address" required>
@@ -216,7 +221,7 @@
         btn.textContent = 'Subscribing...';
         btn.disabled = true;
 
-        fetch('/subscribe/', {
+        fetch(form.action, {
             method: 'POST',
             body: formData,
             headers: {
@@ -224,22 +229,44 @@
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                // Try to get error message from response
+                return response.text().then(text => {
+                    throw new Error(text || 'Server error');
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.status === 'success') {
-                showToast('Successfully subscribed! 🎉');
+                showToast('Successfully subscribed! 🎉', 'success');
                 form.reset();
                 createParticles(btn, '🎉');
             } else {
-                showToast('You are already subscribed!', 'info');
+                showToast(data.error || 'Something went wrong.', 'error');
             }
         })
-        .catch(() => {
+        .catch(error => {
+            console.error('Subscription error:', error);
             showToast('Something went wrong. Please try again.', 'error');
         })
         .finally(() => {
             btn.innerHTML = 'Subscribe Free';
             btn.disabled = false;
         });
+    }
+
+    // Toast helper (if not already defined globally)
+    function showToast(message, type = 'success') {
+        // ... (your toast function – ensure it exists globally)
+        // If not, you can use the one from base.html or define it here.
+    }
+
+    function createParticles(btn, emoji) {
+        // Optional celebration effect
+        if (typeof confetti !== 'undefined') {
+            confetti({ particleCount: 30, spread: 60 });
+        }
     }
 </script>

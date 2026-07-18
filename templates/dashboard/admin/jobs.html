@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Manage Jobs - Admin - Job Reference Hub</title>
+    <title>Manage Jobs - Admin - JobLidar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         /* ===== SAME BASE STYLES ===== */
@@ -259,7 +259,7 @@
         </div>
     </div>
 
-    <!-- Filters -->
+    <!-- Filters – UPDATED: work_type filter -->
     <div class="filters-bar animate-in">
         <div class="search-box">
             <span class="search-icon"><i class="fas fa-search"></i></span>
@@ -270,10 +270,10 @@
             <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
             <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
         </select>
-        <select class="filter-select" id="typeFilter">
+        <select class="filter-select" id="workTypeFilter">
             <option value="">All Types</option>
-            <option value="remote" {% if type_filter == 'remote' %}selected{% endif %}>Remote</option>
-            <option value="physical" {% if type_filter == 'physical' %}selected{% endif %}>Physical</option>
+            <option value="remote" {% if work_type_filter == 'remote' %}selected{% endif %}>Remote</option>
+            <option value="physical" {% if work_type_filter == 'physical' %}selected{% endif %}>Physical</option>
         </select>
         <select class="filter-select" id="categoryFilter">
             <option value="">All Categories</option>
@@ -307,7 +307,7 @@
                     <td><a href="{% url 'job_detail' job.slug %}" class="job-title" target="_blank">{{ job.title|truncatechars:35 }}</a></td>
                     <td>{{ job.company|truncatechars:20 }}</td>
                     <td>{{ job.location|truncatechars:20 }}</td>
-                    <td><span class="badge {% if job.type == 'remote' %}badge-remote{% else %}badge-physical{% endif %}">{{ job.get_type_display }}</span></td>
+                    <td><span class="badge {% if job.work_type == 'remote' %}badge-remote{% else %}badge-physical{% endif %}">{{ job.get_work_type_display }}</span></td>
                     <td>{{ job.category.name|default:'-' }}</td>
                     <td><span class="badge {% if job.is_active %}badge-active{% else %}badge-inactive{% endif %}">{{ job.is_active|yesno:'Active,Inactive' }}</span></td>
                     <td>{{ job.posted_at|date:"M d, Y" }}</td>
@@ -328,7 +328,7 @@
                         <div class="empty-state">
                             <span class="icon">💼</span>
                             <h3>No jobs found</h3>
-                            <p style="color:var(--gray-400);">{% if search_query or status_filter or type_filter %}Try adjusting your filters.{% else %}Start by adding your first job!{% endif %}</p>
+                            <p style="color:var(--gray-400);">{% if search_query or status_filter or work_type_filter %}Try adjusting your filters.{% else %}Start by adding your first job!{% endif %}</p>
                             <a href="{% url 'admin_add_job' %}" class="btn btn-primary" style="margin-top:0.5rem;"><i class="fas fa-plus"></i> Add Job</a>
                         </div>
                     </td>
@@ -359,23 +359,24 @@
     {% endif %}
 </main>
 
+<!-- Updated JavaScript for work_type -->
 <script>
     document.getElementById('searchInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') filterResults();
     });
     document.getElementById('statusFilter').addEventListener('change', filterResults);
-    document.getElementById('typeFilter').addEventListener('change', filterResults);
+    document.getElementById('workTypeFilter').addEventListener('change', filterResults);
     document.getElementById('categoryFilter').addEventListener('change', filterResults);
 
     function filterResults() {
         const s = document.getElementById('searchInput').value;
         const st = document.getElementById('statusFilter').value;
-        const t = document.getElementById('typeFilter').value;
+        const t = document.getElementById('workTypeFilter').value;
         const c = document.getElementById('categoryFilter').value;
         let u = window.location.pathname + '?';
         if (s) u += 'search=' + encodeURIComponent(s) + '&';
         if (st) u += 'status=' + st + '&';
-        if (t) u += 'type=' + t + '&';
+        if (t) u += 'work_type=' + t + '&';
         if (c) u += 'category=' + c + '&';
         window.location.href = u;
     }

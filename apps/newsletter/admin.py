@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from .models import Subscriber, Feedback
 
 @admin.register(Subscriber)
@@ -69,20 +70,20 @@ class SubscriberAdmin(admin.ModelAdmin):
     export_emails.short_description = "Export selected subscribers to CSV"
 
 
-# ========== FEEDBACK ADMIN ==========
+# ========== FEEDBACK ADMIN (UPDATED WITH RATING STARS) ==========
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):
-    # Removed 'rating' and 'email' from display, filters, and search
     list_display = (
         'message_preview',
         'sender_display',
-        'user_display',      # shows username or "Anonymous user"
+        'user_display',
+        'rating_stars',          # ← now renders as ★★★☆☆
         'is_read',
         'created_at'
     )
-    list_filter = ('sender', 'is_read', 'created_at')   # removed 'rating'
-    search_fields = ('message', 'user__username')      # removed 'email'
+    list_filter = ('sender', 'is_read', 'created_at', 'rating')
+    search_fields = ('message', 'user__username', 'email')
     readonly_fields = ('created_at',)
     date_hierarchy = 'created_at'
     list_per_page = 50
@@ -98,11 +99,21 @@ class FeedbackAdmin(admin.ModelAdmin):
     sender_display.short_description = 'Sender'
 
     def user_display(self, obj):
-        """Show username if logged in, else 'Anonymous user'."""
-        if obj.user:
-            return obj.user.username
-        return 'Anonymous user'
+        return obj.user.username if obj.user else 'Anonymous user'
     user_display.short_description = 'User'
+
+    def rating_stars(self, obj):
+        """Render filled (★) and empty (☆) stars based on rating."""
+        if obj.rating is None:
+            return mark_safe('—')
+        full = obj.rating
+        empty = 5 - full
+        return mark_safe(
+            f'<span style="color: #fbbf24;">{"★" * full}</span>'
+            f'<span style="color: #d1d5db;">{"★" * empty}</span>'
+        )
+    rating_stars.short_description = 'Rating'
+    rating_stars.admin_order_field = 'rating'
 
     def mark_as_read(self, request, queryset):
         updated = queryset.update(is_read=True)
