@@ -38,18 +38,14 @@ def password_reset_request(request):
         try:
             user = User.objects.get(email=email)
 
-            # Generate token and UID
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-            # Build reset link
             reset_link = request.build_absolute_uri(
                 reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
             )
 
-            # Send email
             try:
-                # Try to render HTML template
                 try:
                     html_message = render_to_string('emails/password_reset_email.html', {
                         'user': user,
@@ -60,7 +56,6 @@ def password_reset_request(request):
                     })
                     plain_message = strip_tags(html_message)
                 except Exception as template_error:
-                    # Fallback to plain text if template not found
                     print(f"Template error: {template_error}")
                     plain_message = f"""
 Hello {user.first_name or user.username},
@@ -79,7 +74,6 @@ The Job Reference Hub Team
 """
                     html_message = None
 
-                # Send email
                 if html_message:
                     send_mail(
                         subject='Password Reset Request - Job Reference Hub',
@@ -107,18 +101,17 @@ The Job Reference Hub Team
                 return render(request, 'accounts/password_reset.html')
 
         except User.DoesNotExist:
-            # Don't reveal if user exists or not for security
             messages.info(request, 'If an account exists with this email, you will receive a password reset link.')
             return redirect('password_reset_done')
 
     return render(request, 'accounts/password_reset.html')
 
+
 def password_reset_done(request):
-    """Page shown after password reset email is sent"""
     return render(request, 'accounts/password_reset_done.html')
 
+
 def password_reset_confirm(request, uidb64, token):
-    """Confirm password reset with token"""
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -139,15 +132,14 @@ def password_reset_confirm(request, uidb64, token):
     else:
         return render(request, 'accounts/password_reset_confirm.html', {'validlink': False})
 
+
 def password_reset_complete(request):
-    """Password reset complete page"""
     return render(request, 'accounts/password_reset_complete.html')
+
 
 # ========== REGISTRATION VIEWS ==========
 
 class RegisterView(View):
-    """Custom registration view without CSRF token requirement"""
-
     def get(self, request):
         if request.user.is_authenticated:
             return redirect('dashboard')
@@ -158,66 +150,56 @@ class RegisterView(View):
         form = CustomRegistrationForm(request.POST)
 
         if form.is_valid():
-            # Get cleaned data
             username = form.cleaned_data['username']
-            email = form.cleaned_data.get('email')
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
             phone_number = form.cleaned_data['phone_number']
             user_type = form.cleaned_data['user_type']
             password = form.cleaned_data['password']
 
-            # Create user
+            # Create user – first_name and last_name left empty
             user = User.objects.create_user(
                 username=username,
-                email=email or '',
+                email=email,
                 password=password,
-                first_name=first_name,
-                last_name=last_name
+                first_name='',
+                last_name=''
             )
 
-            # Update profile
             profile = user.profile
             profile.phone_number = phone_number
             profile.user_type = user_type
-            profile.first_name = first_name
-            profile.last_name = last_name
+            profile.first_name = ''
+            profile.last_name = ''
             profile.email_verified = False
 
-            # Generate verification code
             verification_code = profile.generate_verification_code()
             profile.verification_code = verification_code
             profile.verification_code_created_at = timezone.now()
             profile.save()
 
             # Send verification email
-            if email:
-                try:
-                    html_message = render_to_string('emails/verification_email.html', {
-                        'first_name': first_name,
-                        'verification_code': verification_code,
-                        'site_name': 'Job Reference Hub',
-                    })
-                    plain_message = strip_tags(html_message)
+            try:
+                html_message = render_to_string('emails/verification_email.html', {
+                    'username': username,
+                    'verification_code': verification_code,
+                    'site_name': 'Job Reference Hub',
+                })
+                plain_message = strip_tags(html_message)
 
-                    send_mail(
-                        subject='Verify Your Email - Job Reference Hub',
-                        message=plain_message,
-                        html_message=html_message,
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[email],
-                        fail_silently=False,
-                    )
-                    messages.success(request, 'Registration successful! We sent a verification code to your email.')
-                except Exception as e:
-                    logger.error(f"Email sending failed: {str(e)}")
-                    messages.warning(request, 'Registration successful but we could not send the verification email. Please contact support.')
-            else:
-                messages.info(request, 'Registration successful! Please check your phone for verification.')
+                send_mail(
+                    subject='Verify Your Email - Job Reference Hub',
+                    message=plain_message,
+                    html_message=html_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+                messages.success(request, 'Registration successful! We sent a verification code to your email.')
+            except Exception as e:
+                logger.error(f"Email sending failed: {str(e)}")
+                messages.warning(request, 'Registration successful but we could not send the verification email. Please contact support.')
 
-            # Store user ID in session for verification
             request.session['pending_verification_user_id'] = user.id
-
             return redirect('verify_email')
 
         # Form errors
@@ -227,9 +209,8 @@ class RegisterView(View):
 
         return render(request, 'accounts/register.html', {'form': form})
 
-class VerifyEmailView(View):
-    """Email verification view"""
 
+class VerifyEmailView(View):
     def get(self, request):
         user_id = request.session.get('pending_verification_user_id')
 
@@ -241,26 +222,22 @@ class VerifyEmailView(View):
             user = User.objects.get(id=user_id)
             profile = user.profile
 
-            # Check if already verified
             if profile.email_verified:
                 messages.info(request, 'Your email is already verified. Please login.')
                 return redirect('login')
 
-            # Check if code is expired (15 minutes)
             if profile.verification_code_created_at:
                 expiry_time = profile.verification_code_created_at + timedelta(minutes=15)
                 if timezone.now() > expiry_time:
-                    # Generate new code
                     new_code = profile.generate_verification_code()
                     profile.verification_code = new_code
                     profile.verification_code_created_at = timezone.now()
                     profile.save()
 
-                    # Send new code
                     if user.email:
                         try:
                             html_message = render_to_string('emails/verification_email.html', {
-                                'first_name': user.first_name,
+                                'username': user.username,
                                 'verification_code': new_code,
                                 'site_name': 'Job Reference Hub',
                             })
@@ -304,25 +281,19 @@ class VerifyEmailView(View):
         if form.is_valid():
             code = form.cleaned_data['verification_code']
 
-            # Check if code matches
             if profile.verification_code == code:
-                # Check if code is not expired
                 if profile.verification_code_created_at:
                     expiry_time = profile.verification_code_created_at + timedelta(minutes=15)
                     if timezone.now() <= expiry_time:
-                        # Verify user
                         profile.email_verified = True
                         profile.verification_code = None
                         profile.verification_code_created_at = None
                         profile.save()
 
-                        # Log user in
                         login(request, user)
-
-                        # Clear session
                         del request.session['pending_verification_user_id']
 
-                        messages.success(request, f'Welcome {user.first_name}! Your email has been verified.')
+                        messages.success(request, f'Welcome {user.username}! Your email has been verified.')
                         return redirect('dashboard')
                     else:
                         messages.error(request, 'Verification code has expired. Please request a new one.')
@@ -333,9 +304,8 @@ class VerifyEmailView(View):
 
         return render(request, 'accounts/verify_email.html', {'form': form, 'user': user})
 
-class ResendVerificationView(View):
-    """Resend verification code"""
 
+class ResendVerificationView(View):
     def post(self, request):
         user_id = request.session.get('pending_verification_user_id')
 
@@ -351,17 +321,15 @@ class ResendVerificationView(View):
         if profile.email_verified:
             return JsonResponse({'status': 'error', 'message': 'Your email is already verified.'})
 
-        # Generate new code
         new_code = profile.generate_verification_code()
         profile.verification_code = new_code
         profile.verification_code_created_at = timezone.now()
         profile.save()
 
-        # Send new code
         if user.email:
             try:
                 html_message = render_to_string('emails/verification_email.html', {
-                    'first_name': user.first_name,
+                    'username': user.username,
                     'verification_code': new_code,
                     'site_name': 'Job Reference Hub',
                 })
@@ -381,6 +349,7 @@ class ResendVerificationView(View):
         else:
             return JsonResponse({'status': 'error', 'message': 'No email address provided.'})
 
+
 class ProfileView(DetailView):
     model = User
     template_name = 'accounts/profile.html'
@@ -388,6 +357,7 @@ class ProfileView(DetailView):
 
     def get_object(self):
         return self.request.user
+
 
 class ProfileUpdateView(UpdateView):
     model = Profile
@@ -416,6 +386,7 @@ class ProfileUpdateView(UpdateView):
             return redirect('profile')
         return self.render_to_response(self.get_context_data(form=form))
 
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -424,11 +395,9 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, f'Welcome back, {user.first_name or user.username}!')
-
-            # ✅ AFTER LOGIN, GO TO THE PAGE USER WANTED
             next_url = request.GET.get('next') or request.POST.get('next')
             if next_url:
-                return redirect(next_url)  # Goes to /jobs/post/
+                return redirect(next_url)
             return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password')
@@ -436,8 +405,8 @@ def login_view(request):
     next_url = request.GET.get('next', '')
     return render(request, 'accounts/login.html', {'next': next_url})
 
+
 def logout_view(request):
-    """Logout view with confirmation page - handles both GET and POST"""
     if not request.user.is_authenticated:
         messages.info(request, 'You are already logged out.')
         return redirect('home')
@@ -450,11 +419,12 @@ def logout_view(request):
 
     return render(request, 'accounts/logout.html')
 
+
 def logout_confirm(request):
-    """Logout confirmation page"""
     if not request.user.is_authenticated:
         return redirect('home')
     return render(request, 'accounts/logout.html')
+
 
 @login_required
 def change_password(request):

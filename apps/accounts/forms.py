@@ -7,29 +7,11 @@ from .models import Profile
 from django.contrib.auth.forms import SetPasswordForm
 import re
 
+
 # ========== CUSTOM REGISTRATION FORM ==========
 class CustomRegistrationForm(forms.Form):
     """Custom registration form without CSRF token requirement"""
 
-    # User information
-    first_name = forms.CharField(
-        max_length=50,
-        required=True,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'John',
-            'class': 'form-control',
-            'id': 'firstName'
-        })
-    )
-    last_name = forms.CharField(
-        max_length=50,
-        required=True,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Doe',
-            'class': 'form-control',
-            'id': 'lastName'
-        })
-    )
     username = forms.CharField(
         max_length=150,
         required=True,
@@ -40,20 +22,20 @@ class CustomRegistrationForm(forms.Form):
         })
     )
     email = forms.EmailField(
-        required=False,
+        required=True,
         widget=forms.EmailInput(attrs={
-            'placeholder': 'john@example.com (optional)',
+            'placeholder': 'john@example.com',
             'class': 'form-control',
             'id': 'email'
         })
     )
     phone_number = forms.CharField(
-        max_length=20,
+        max_length=30,
         required=True,
         widget=forms.TextInput(attrs={
-            'placeholder': '+1 234 567 8900',
+            'placeholder': 'Enter your phone number',
             'class': 'form-control',
-            'id': 'phoneNumber'
+            'id': 'phone'
         })
     )
     user_type = forms.ChoiceField(
@@ -67,7 +49,7 @@ class CustomRegistrationForm(forms.Form):
     password = forms.CharField(
         required=True,
         widget=forms.PasswordInput(attrs={
-            'placeholder': '••••••••',
+            'placeholder': 'Password',
             'class': 'form-control',
             'id': 'password'
         })
@@ -75,7 +57,7 @@ class CustomRegistrationForm(forms.Form):
     confirm_password = forms.CharField(
         required=True,
         widget=forms.PasswordInput(attrs={
-            'placeholder': '••••••••',
+            'placeholder': 'Password',
             'class': 'form-control',
             'id': 'confirmPassword'
         })
@@ -93,20 +75,25 @@ class CustomRegistrationForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if email:
-            try:
-                validate_email(email)
-            except ValidationError:
-                raise ValidationError('Please enter a valid email address.')
-            if User.objects.filter(email=email).exists():
-                raise ValidationError('This email is already registered.')
+        if not email:
+            raise ValidationError('Email is required.')
+        try:
+            validate_email(email)
+        except ValidationError:
+            raise ValidationError('Please enter a valid email address.')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError('This email is already registered.')
         return email
 
     def clean_phone_number(self):
         phone = self.cleaned_data.get('phone_number')
-        if not phone or len(phone) < 10:
-            raise ValidationError('Please enter a valid phone number.')
-        return phone
+        if not phone:
+            raise ValidationError('Phone number is required.')
+        # Remove any non-digit except '+'
+        cleaned = ''.join(c for c in phone if c.isdigit() or c == '+')
+        if len(cleaned) < 8:
+            raise ValidationError('Please enter a valid phone number (at least 8 digits).')
+        return cleaned
 
     def clean_password(self):
         password = self.cleaned_data.get('password')
@@ -126,15 +113,13 @@ class CustomRegistrationForm(forms.Form):
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
         confirm_password = cleaned_data.get('confirm_password')
-
         if password and confirm_password and password != confirm_password:
             raise ValidationError('Passwords do not match.')
-
         return cleaned_data
+
 
 # ========== VERIFICATION FORM ==========
 class VerificationForm(forms.Form):
-    """Verification code form"""
     verification_code = forms.CharField(
         max_length=6,
         required=True,
@@ -145,6 +130,7 @@ class VerificationForm(forms.Form):
             'maxlength': '6'
         })
     )
+
 
 # ========== USER REGISTRATION FORM (Django default) ==========
 class UserRegistrationForm(UserCreationForm):
@@ -160,35 +146,23 @@ class UserRegistrationForm(UserCreationForm):
             raise ValidationError('This email is already registered.')
         return email
 
+
 # ========== USER LOGIN FORM ==========
 class UserLoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Username'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
 
+
 # ========== USER UPDATE FORM ==========
 class UserUpdateForm(forms.ModelForm):
-    """Form for updating user information"""
-
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
         widgets = {
-            'username': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Username'
-            }),
-            'email': forms.EmailInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Email address'
-            }),
-            'first_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'First name'
-            }),
-            'last_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Last name'
-            }),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email address'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last name'}),
         }
 
     def clean_username(self):
@@ -204,42 +178,20 @@ class UserUpdateForm(forms.ModelForm):
                 raise ValidationError('This email is already registered.')
         return email
 
+
 # ========== PROFILE UPDATE FORM ==========
 class ProfileUpdateForm(forms.ModelForm):
-    """Form for updating user profile"""
-
     class Meta:
         model = Profile
         fields = ['bio', 'avatar', 'phone', 'location', 'website', 'linkedin', 'github']
         widgets = {
-            'bio': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Tell us about yourself...'
-            }),
-            'avatar': forms.FileInput(attrs={
-                'class': 'form-control'
-            }),
-            'phone': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': '+1 234 567 8900'
-            }),
-            'location': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'City, Country'
-            }),
-            'website': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://yourwebsite.com'
-            }),
-            'linkedin': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://linkedin.com/in/yourprofile'
-            }),
-            'github': forms.URLInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'https://github.com/yourusername'
-            }),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Tell us about yourself...'}),
+            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+1 234 567 8900'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City, Country'}),
+            'website': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://yourwebsite.com'}),
+            'linkedin': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://linkedin.com/in/yourprofile'}),
+            'github': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://github.com/yourusername'}),
         }
 
     def clean_phone(self):
