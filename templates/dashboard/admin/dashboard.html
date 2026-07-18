@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Admin Dashboard - Job Reference Hub</title>
+    <title>Admin Dashboard - JobLidar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         /* ===== BASE STYLES ===== */
@@ -595,6 +595,26 @@
             <div class="stat-sub">{{ remote_jobs|default:0 }} remote jobs</div>
             <span class="stat-trend neutral">Content</span>
         </div>
+
+        <!-- NEW: Total Applications -->
+        <div class="stat-card">
+            <div class="stat-icon blue">📋</div>
+            <div class="stat-value">{{ total_applications|default:0 }}</div>
+            <div class="stat-label">Total Applications</div>
+            <div class="stat-sub">{{ approved_applications|default:0 }} approved</div>
+            <span class="stat-trend neutral">Applications</span>
+        </div>
+
+        <!-- NEW: Total Saved (Jobs + Internships) -->
+        {% with total_saved=total_saved_jobs|add:total_saved_internships %}
+        <div class="stat-card">
+            <div class="stat-icon yellow">⭐</div>
+            <div class="stat-value">{{ total_saved|default:0 }}</div>
+            <div class="stat-label">Total Saved</div>
+            <div class="stat-sub">{{ total_saved_jobs|default:0 }} jobs · {{ total_saved_internships|default:0 }} internships</div>
+            <span class="stat-trend neutral">Saved</span>
+        </div>
+        {% endwith %}
     </div>
 
     <!-- Content Grid -->

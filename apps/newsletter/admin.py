@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Subscriber
+from .models import Subscriber, Feedback
 
 @admin.register(Subscriber)
 class SubscriberAdmin(admin.ModelAdmin):
@@ -67,3 +67,49 @@ class SubscriberAdmin(admin.ModelAdmin):
 
         return response
     export_emails.short_description = "Export selected subscribers to CSV"
+
+
+# ========== FEEDBACK ADMIN ==========
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    # Removed 'rating' and 'email' from display, filters, and search
+    list_display = (
+        'message_preview',
+        'sender_display',
+        'user_display',      # shows username or "Anonymous user"
+        'is_read',
+        'created_at'
+    )
+    list_filter = ('sender', 'is_read', 'created_at')   # removed 'rating'
+    search_fields = ('message', 'user__username')      # removed 'email'
+    readonly_fields = ('created_at',)
+    date_hierarchy = 'created_at'
+    list_per_page = 50
+
+    actions = ['mark_as_read', 'mark_as_unread']
+
+    def message_preview(self, obj):
+        return obj.message[:60] + '...' if len(obj.message) > 60 else obj.message
+    message_preview.short_description = 'Message'
+
+    def sender_display(self, obj):
+        return 'User' if obj.sender == 'user' else 'Bot'
+    sender_display.short_description = 'Sender'
+
+    def user_display(self, obj):
+        """Show username if logged in, else 'Anonymous user'."""
+        if obj.user:
+            return obj.user.username
+        return 'Anonymous user'
+    user_display.short_description = 'User'
+
+    def mark_as_read(self, request, queryset):
+        updated = queryset.update(is_read=True)
+        self.message_user(request, f'{updated} feedback(s) marked as read.')
+    mark_as_read.short_description = "Mark as read"
+
+    def mark_as_unread(self, request, queryset):
+        updated = queryset.update(is_read=False)
+        self.message_user(request, f'{updated} feedback(s) marked as unread.')
+    mark_as_unread.short_description = "Mark as unread"

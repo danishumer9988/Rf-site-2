@@ -94,8 +94,8 @@
         }
 
         @keyframes fadeInBody {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* ========== SCROLLBAR STYLING ========== */
@@ -1097,19 +1097,38 @@
             margin-bottom: 0.65rem;
         }
 
+        /* ===== FOOTER LINKS – Clean hover ===== */
         .footer-links a {
             color: #94a3b8;
             text-decoration: none;
-            transition: var(--transition);
             font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
+            position: relative;
+            transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Underline animation */
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #60a5fa;   /* or use var(--primary) */
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Hover – only text color + underline */
         .footer-links a:hover {
             color: white;
-            transform: translateX(5px);
+            /* No background, no transform, no padding */
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
         }
 
         .footer-newsletter {
@@ -1348,6 +1367,15 @@
                 width: 40px;
                 height: 40px;
                 font-size: 1rem;
+            }
+
+            /* === Mobile override for feedback button === */
+            .feedback-float-btn {
+                bottom: 75px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.4rem;
             }
         }
 
@@ -1759,6 +1787,268 @@
             background: #3b82f6 !important;
             color: #ffffff !important;
         }
+
+
+        /* ========== FEEDBACK FLOATING BUTTON ========== */
+        .feedback-float-btn {
+            position: fixed;
+            bottom: 100px;       /* just above scroll-to-top */
+            right: 30px;
+            z-index: 998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 1.8rem;
+            border: none;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.35);
+            transition: var(--transition);
+            animation: pulse-feedback 2s infinite;
+            cursor: pointer;
+            /* Hidden by default – shown when .visible class is added */
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+            pointer-events: none;
+        }
+
+        .feedback-float-btn.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .feedback-float-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.5);
+        }
+
+        @keyframes pulse-feedback {
+            0%, 100% { box-shadow: 0 4px 20px rgba(37, 99, 235, 0.35); }
+            50% { box-shadow: 0 4px 28px rgba(37, 99, 235, 0.6); }
+        }
+
+
+        /* ========== FEEDBACK MODAL ========== */
+        .feedback-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .feedback-modal {
+            background: white;
+            border-radius: var(--radius-lg);
+            max-width: 480px;
+            width: 100%;
+            padding: 2rem 2rem 1.8rem;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .feedback-modal-overlay.active .feedback-modal {
+            transform: scale(1);
+        }
+
+        .feedback-modal-close {
+            position: absolute;
+            top: 0.75rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-400);
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .feedback-modal-close:hover {
+            color: var(--gray-700);
+        }
+
+        .feedback-modal h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.2rem;
+        }
+
+        .feedback-modal p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .feedback-modal .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .feedback-modal .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            margin-bottom: 0.25rem;
+        }
+
+        .feedback-modal .form-group label .required {
+            color: var(--danger);
+        }
+
+        .feedback-modal .form-group input,
+        .feedback-modal .form-group textarea,
+        .feedback-modal .form-group select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .feedback-modal .form-group input:focus,
+        .feedback-modal .form-group textarea:focus,
+        .feedback-modal .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .feedback-modal .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .feedback-modal .form-group .help-text {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            margin-top: 0.15rem;
+        }
+
+        .feedback-modal .submit-btn {
+            width: 100%;
+            padding: 0.7rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            font-family: inherit;
+        }
+
+        .feedback-modal .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .feedback-modal .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback-modal .form-error {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+            display: none;
+        }
+
+        .feedback-modal .form-error.show {
+            display: block;
+        }
+
+        .feedback-modal .success-message {
+            display: none;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .feedback-modal .success-message.show {
+            display: block;
+        }
+
+        .feedback-modal .success-message .check {
+            font-size: 3rem;
+            color: var(--success);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Dark mode for modal */
+        body.dark-mode .feedback-modal {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .feedback-modal h2 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .feedback-modal p {
+            color: #94a3b8;
+        }
+
+        body.dark-mode .feedback-modal .form-group label {
+            color: #94a3b8;
+        }
+
+        body.dark-mode .feedback-modal .form-group input,
+        body.dark-mode .feedback-modal .form-group textarea,
+        body.dark-mode .feedback-modal .form-group select {
+            background: #0f172a;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .feedback-modal .form-group input:focus,
+        body.dark-mode .feedback-modal .form-group textarea:focus,
+        body.dark-mode .feedback-modal .form-group select:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+        }
+
+        body.dark-mode .feedback-modal-close {
+            color: #94a3b8;
+        }
+
+        body.dark-mode .feedback-modal-close:hover {
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 640px) {
+            .feedback-modal {
+                padding: 1.5rem;
+            }
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -2015,6 +2305,42 @@
     {% block content %}{% endblock %}
 </main>
 
+<!-- ===== FEEDBACK FLOATING BUTTON ===== -->
+<button class="feedback-float-btn" id="feedbackFloatBtn" aria-label="Send feedback">
+    💬
+</button>
+
+<!-- ===== FEEDBACK MODAL ===== -->
+<div class="feedback-modal-overlay" id="feedbackModal">
+    <div class="feedback-modal">
+        <button class="feedback-modal-close" id="feedbackModalClose" aria-label="Close">&times;</button>
+        <h2>Send Feedback</h2>
+        <p>We'd love to hear your thoughts. Help us improve!</p>
+
+        <div id="feedbackFormContainer">
+            <form id="feedbackForm">
+                {% csrf_token %}
+                <input type="hidden" id="feedbackSubmitUrl" value="{% url 'feedback_submit' %}">
+
+
+                <div class="form-group">
+                    <label for="fb_message">Message <span class="required">*</span></label>
+                    <textarea id="fb_message" name="message" placeholder="What do you think?" required></textarea>
+                    <div class="form-error" id="fb_message_error">Please enter your message.</div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="fbSubmitBtn">Send Feedback</button>
+            </form>
+        </div>
+
+        <div class="success-message" id="feedbackSuccess">
+            <span class="check">✅</span>
+            <p style="font-weight: 600; color: var(--success);">Thank you for your feedback!</p>
+            <p style="font-size: 0.9rem; color: var(--gray-500);">We appreciate your input.</p>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== COOKIE CONSENT BANNER ==================== -->
 <div class="cookie-banner" id="cookieBanner">
     <p>
@@ -2037,7 +2363,7 @@
         <!-- Brand Column -->
         <div class="footer-col">
             <div class="footer-brand">
-                <span class="brand-icon">💼</span> Job Reference Hub
+                <span class="brand-icon">💼</span> JobLidar
             </div>
             <p class="footer-desc">
                 Your trusted source for finding the best jobs and internships.
@@ -2066,38 +2392,11 @@
         <div class="footer-col">
             <h4>Quick Links</h4>
             <ul class="footer-links">
-                <li>
-                    <a href="{% url 'home' %}">
-                        <i class="fas fa-chevron-right"></i> Home
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'job_list' %}">
-                        <i class="fas fa-chevron-right"></i> Find Jobs
-                    </a>
-                </li>
-                <li>
-                    <a href="{% url 'internship_list' %}">
-                        <i class="fas fa-chevron-right"></i> Internships
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'contact' %}">
-                        <i class="fas fa-chevron-right"></i> Contact Us
-                    </a>
-                </li>
-                <li>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'post_job' %}" class="{% if '/jobs/post/' in request.path %}active{% endif %}">
-                        <i class="fas fa-chevron-right"></i> Post a Job
-                    </a>
-                    {% else %}
-                    <a href="{% url 'login' %}?next={% url 'post_job' %}">
-                        <i class="fas fa-chevron-right"></i> Post a Job
-                    </a>
-                    {% endif %}
-                </li>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Find Jobs</a></li>
+                <li><a href="{% url 'internship_list' %}">Internships</a></li>
+                <li>{% if user.is_authenticated %}<a href="{% url 'post_job' %}" class="{% if '/jobs/post/' in request.path %}active{% endif %}">Post a Job</a>{% else %}<a href="{% url 'login' %}?next={% url 'post_job' %}">Post a Job</a>{% endif %}</li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
             </ul>
         </div>
 
@@ -2105,28 +2404,26 @@
         <div class="footer-col">
             <h4>Job Types</h4>
             <ul class="footer-links">
-                <li><a href="{% url 'job_list' %}?employment_type=full_time"><i class="fas fa-chevron-right"></i> Full-Time</a></li>
-                <li><a href="{% url 'job_list' %}?employment_type=part_time"><i class="fas fa-chevron-right"></i> Part-Time</a></li>
-                <li><a href="{% url 'job_list' %}?employment_type=contract"><i class="fas fa-chevron-right"></i> Contract</a></li>
-                <li><a href="{% url 'job_list' %}?employment_type=daily"><i class="fas fa-chevron-right"></i> Daily Wage</a></li>
-                <li><a href="{% url 'job_list' %}?work_type=remote"><i class="fas fa-chevron-right"></i> Remote Jobs</a></li>
-                <li><a href="{% url 'job_list' %}?work_type=physical"><i class="fas fa-chevron-right"></i> On-Site Jobs</a></li>
+                <li><a href="{% url 'job_list' %}?employment_type=full_time">Full-Time</a></li>
+                <li><a href="{% url 'job_list' %}?employment_type=part_time">Part-Time</a></li>
+                <li><a href="{% url 'job_list' %}?employment_type=contract">Contract</a></li>
+                <li><a href="{% url 'job_list' %}?employment_type=daily">Daily Wage</a></li>
+                <li><a href="{% url 'job_list' %}?work_type=physical">On-Site Jobs</a></li>
+                <li><a href="{% url 'job_list' %}?work_type=remote">Remote Jobs</a></li>
             </ul>
         </div>
 
-        <!-- Internship Types (NEW) -->
+        <!-- Internship Types -->
         <div class="footer-col">
             <h4>Internship Types</h4>
             <ul class="footer-links">
-                <li><a href="{% url 'internship_list' %}"><i class="fas fa-chevron-right"></i> All Internships</a></li>
-                <li><a href="{% url 'internship_list' %}?internship_type=full_time"><i class="fas fa-chevron-right"></i> Full-Time</a></li>
-                <li><a href="{% url 'internship_list' %}?internship_type=part_time"><i class="fas fa-chevron-right"></i> Part-Time</a></li>
-                <li><a href="{% url 'internship_list' %}?type=remote"><i class="fas fa-chevron-right"></i> Remote Internships</a></li>
-                <li><a href="{% url 'internship_list' %}?type=physical"><i class="fas fa-chevron-right"></i> On-Site Internships</a></li>
-                <li><a href="{% url 'internship_list' %}?internship_type=full_time&type=remote"><i class="fas fa-chevron-right"></i> Remote Full-Time</a></li>
+                <li><a href="{% url 'internship_list' %}">All Internships</a></li>
+                <li><a href="{% url 'internship_list' %}?internship_type=full_time">Full-Time</a></li>
+                <li><a href="{% url 'internship_list' %}?internship_type=part_time">Part-Time</a></li>
+                <li><a href="{% url 'internship_list' %}?type=physical">On-Site Internships</a></li>
+                <li><a href="{% url 'internship_list' %}?type=remote">Remote Internships</a></li>
             </ul>
         </div>
-
 
         <!-- Newsletter -->
         <div class="footer-col">
@@ -2160,10 +2457,14 @@
     </div>
 </footer>
 
+
 <!-- ==================== SCROLL TO TOP ==================== -->
 <button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()" aria-label="Scroll to top">
     <i class="fas fa-arrow-up"></i>
 </button>
+
+
+
 
 <!-- ==================== SCRIPTS ==================== -->
 <script>
@@ -2236,13 +2537,18 @@
         }
     });
 
-    // ========== SCROLL TO TOP ==========
+    // ========== SCROLL TO TOP + FEEDBACK BUTTON VISIBILITY ==========
     window.addEventListener('scroll', function() {
         const scrollBtn = document.getElementById('scrollToTop');
-        if (window.scrollY > 400) {
+        const feedbackBtn = document.getElementById('feedbackFloatBtn');
+        const threshold = 400;
+
+        if (window.scrollY > threshold) {
             scrollBtn.classList.add('visible');
+            if (feedbackBtn) feedbackBtn.classList.add('visible');
         } else {
             scrollBtn.classList.remove('visible');
+            if (feedbackBtn) feedbackBtn.classList.remove('visible');
         }
     }, { passive: true });
 
@@ -2252,6 +2558,101 @@
             behavior: 'smooth'
         });
     }
+
+    // ========== FEEDBACK MODAL ==========
+    (function() {
+        const modal = document.getElementById('feedbackModal');
+        const openBtn = document.getElementById('feedbackFloatBtn');
+        const closeBtn = document.getElementById('feedbackModalClose');
+        const form = document.getElementById('feedbackForm');
+        const formContainer = document.getElementById('feedbackFormContainer');
+        const successMsg = document.getElementById('feedbackSuccess');
+        const submitBtn = document.getElementById('fbSubmitBtn');
+        const submitUrl = document.getElementById('feedbackSubmitUrl').value;
+
+        function openModal() {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+        });
+
+        // Reset form state on close
+        modal.addEventListener('transitionend', function() {
+            if (!modal.classList.contains('active')) {
+                form.reset();
+                formContainer.style.display = 'block';
+                successMsg.classList.remove('show');
+                document.querySelectorAll('.form-error').forEach(el => el.classList.remove('show'));
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Feedback';
+            }
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const message = document.getElementById('fb_message').value.trim();
+            if (!message) {
+                document.getElementById('fb_message_error').classList.add('show');
+                return;
+            } else {
+                document.getElementById('fb_message_error').classList.remove('show');
+            }
+
+            const formData = new FormData(form);
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            fetch(submitUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Try to get error message from response
+                    return response.text().then(text => {
+                        throw new Error(text || 'Server error');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    formContainer.style.display = 'none';
+                    successMsg.classList.add('show');
+                    setTimeout(closeModal, 2500);
+                } else {
+                    alert('Error: ' + (data.error || 'Something went wrong.'));
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Feedback';
+                }
+            })
+            .catch(error => {
+                console.error('Feedback error:', error);
+                alert('Network error. Please try again.\n\n' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Feedback';
+            });
+        });
+    })();
 
     // ========== AUTO-HIDE MESSAGES ==========
     document.addEventListener('DOMContentLoaded', function() {
@@ -2525,5 +2926,7 @@
 </script>
 
 {% block extra_js %}{% endblock %}
+
+
 </body>
 </html>

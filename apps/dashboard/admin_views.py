@@ -18,6 +18,8 @@ from apps.categories.forms import CategoryForm
 from apps.newsletter.models import Subscriber
 from apps.contact.models import ContactMessage
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 def is_admin(user):
@@ -86,7 +88,7 @@ def admin_dashboard(request):
         'total_saved_jobs': SavedJob.objects.count(),
         'total_saved_internships': SavedInternship.objects.count(),
 
-        # Job Types Distribution
+        # Job Types Distribution (fixed: use work_type)
         'remote_jobs': Job.objects.filter(work_type='remote', is_active=True).count(),
         'physical_jobs': Job.objects.filter(work_type='physical', is_active=True).count(),
         'remote_internships': Internship.objects.filter(type='remote', is_active=True).count(),
@@ -382,11 +384,12 @@ def get_category_distribution_data():
     return data
 
 
+# ===== FIXED: get_job_type_data uses work_type =====
 def get_job_type_data():
-    """Get job type distribution"""
+    """Get job type distribution by work_type"""
     return [
-        {'type': 'Remote', 'jobs': Job.objects.filter(type='remote', is_active=True).count()},
-        {'type': 'On-Site', 'jobs': Job.objects.filter(type='physical', is_active=True).count()},
+        {'type': 'Remote', 'jobs': Job.objects.filter(work_type='remote', is_active=True).count()},
+        {'type': 'On-Site', 'jobs': Job.objects.filter(work_type='physical', is_active=True).count()},
     ]
 
 
@@ -405,10 +408,10 @@ def admin_jobs(request):
     elif status == 'inactive':
         jobs = jobs.filter(is_active=False)
 
-    # Filter by type
-    job_type = request.GET.get('type', '')
-    if job_type:
-        jobs = jobs.filter(type=job_type)
+    # FIXED: Filter by work_type instead of type
+    work_type = request.GET.get('work_type', '')
+    if work_type:
+        jobs = jobs.filter(work_type=work_type)
 
     # Filter by category
     category = request.GET.get('category', '')
@@ -432,7 +435,7 @@ def admin_jobs(request):
     context = {
         'jobs': jobs,
         'status_filter': status,
-        'type_filter': job_type,
+        'work_type_filter': work_type,   # renamed from type_filter
         'category_filter': category,
         'search_query': search,
         'categories': Category.objects.all(),
