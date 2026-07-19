@@ -21,7 +21,7 @@
         position: absolute;
         top: -30%;
         right: -10%;
-        width: 500px;
+        width: 700px;
         height: 500px;
         background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
         border-radius: 50%;
@@ -459,7 +459,7 @@
 <!-- ==================== HEADER ==================== -->
 <div class="contact-header">
     <div class="header-content">
-        <div class="header-badge">📬 We're Here to Help</div>
+        <div class="header-badge"> We're Here to Help</div>
         <h1>Get in <span>Touch</span></h1>
         <p>Have questions, feedback, or need assistance? We'd love to hear from you! Our team is ready to help.</p>
     </div>
@@ -470,7 +470,6 @@
     <div class="contact-form-container">
         <div class="form-header">
             <h2>
-                <span class="form-icon">✉️</span>
                 Send Us a Message
             </h2>
             <p class="form-subtitle">Fill out the form below and we'll get back to you as soon as possible.</p>
@@ -479,7 +478,6 @@
         {% if messages %}
         {% for message in messages %}
         <div class="success-message">
-            <span class="success-icon">✅</span>
             <span>{{ message }}</span>
         </div>
         {% endfor %}
@@ -491,7 +489,6 @@
             <div class="form-group">
                 <label for="{{ form.name.id_for_label }}">Full Name <span class="required">*</span></label>
                 {{ form.name }}
-                <span class="field-icon">👤</span>
                 {% if form.name.errors %}
                 <div class="error-message">❌ {{ form.name.errors.0 }}</div>
                 {% endif %}
@@ -500,7 +497,6 @@
             <div class="form-group">
                 <label for="{{ form.email.id_for_label }}">Email Address <span class="required">*</span></label>
                 {{ form.email }}
-                <span class="field-icon">✉️</span>
                 {% if form.email.errors %}
                 <div class="error-message">❌ {{ form.email.errors.0 }}</div>
                 {% endif %}
@@ -509,7 +505,6 @@
             <div class="form-group">
                 <label for="{{ form.subject.id_for_label }}">Subject <span class="required">*</span></label>
                 {{ form.subject }}
-                <span class="field-icon">📝</span>
                 {% if form.subject.errors %}
                 <div class="error-message">❌ {{ form.subject.errors.0 }}</div>
                 {% endif %}
@@ -518,7 +513,6 @@
             <div class="form-group">
                 <label for="{{ form.message.id_for_label }}">Message <span class="required">*</span></label>
                 {{ form.message }}
-                <span class="field-icon">💬</span>
                 {% if form.message.errors %}
                 <div class="error-message">❌ {{ form.message.errors.0 }}</div>
                 {% endif %}
@@ -528,7 +522,7 @@
                 <span class="btn-content">
                     <span class="spinner"></span>
                     <span class="btn-text">Send Message</span>
-                    <span>✉️</span>
+
                 </span>
             </button>
 
