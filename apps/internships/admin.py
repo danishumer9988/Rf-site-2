@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from .models import Internship, SavedInternship, InternshipView
 
 
@@ -13,9 +14,6 @@ class InternshipAdmin(admin.ModelAdmin):
     list_per_page = 25
     readonly_fields = ('posted_at', 'views', 'likes', 'clicks', 'applications_count', 'field_purpose')
 
-    # ----------------------------------------------
-    # FIELDSETS – organised and with purpose note
-    # ----------------------------------------------
     fieldsets = (
         ('Basic Information', {
             'fields': ('title', 'slug', 'company', 'location', 'type', 'internship_type', 'category')
@@ -34,7 +32,7 @@ class InternshipAdmin(admin.ModelAdmin):
             'fields': ('views', 'likes', 'clicks', 'applications_count'),
             'classes': ('wide',)
         }),
-        # ---- Purpose note at the bottom ----
+        # ---- Purpose note – using mark_safe instead of format_html ----
         ('📖 Purpose of Fields', {
             'fields': ('field_purpose',),
             'classes': ('collapse',),
@@ -42,10 +40,10 @@ class InternshipAdmin(admin.ModelAdmin):
     )
 
     # ----------------------------------------------
-    # CUSTOM METHOD FOR PURPOSE NOTE
+    # CUSTOM METHOD FOR PURPOSE NOTE – now uses mark_safe
     # ----------------------------------------------
     def field_purpose(self, obj):
-        return format_html("""
+        return mark_safe("""
             <div style="background: #f8f9fa; padding: 15px 20px; border-radius: 8px; border-left: 4px solid #2563eb; margin: 5px 0;">
                 <h4 style="margin-top:0; color: #1e293b;">Why these fields?</h4>
                 <ul style="margin-bottom:0; padding-left:20px; line-height:1.8;">

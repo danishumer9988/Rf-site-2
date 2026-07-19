@@ -1,5 +1,5 @@
 ﻿import random
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -9,20 +9,20 @@ from apps.categories.models import Category
 
 
 class Command(BaseCommand):
-    help = 'Generate fake jobs (all types) and internships for testing'
+    help = 'Generate one rich job and one rich internship (or more if specified)'
 
     def add_arguments(self, parser):
         parser.add_argument(
             '--jobs',
             type=int,
-            default=500,                     # ← changed from 50 to 500
-            help='Number of fake jobs to create (default: 500)'
+            default=1,
+            help='Number of jobs to create (default: 1)'
         )
         parser.add_argument(
             '--internships',
             type=int,
-            default=500,                     # ← changed from 20 to 500
-            help='Number of fake internships to create (default: 500)'
+            default=1,
+            help='Number of internships to create (default: 1)'
         )
         parser.add_argument(
             '--delete',
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         internship_count = options['internships']
         delete_existing = options['delete']
 
-        self.stdout.write(self.style.WARNING('🚀 Generating fake data...'))
+        self.stdout.write(self.style.WARNING('🚀 Generating data...'))
         self.stdout.write(self.style.WARNING(f'📊 Jobs: {job_count} | Internships: {internship_count}'))
 
         # Get or create a test user
@@ -64,17 +64,17 @@ class Command(BaseCommand):
         # Get or create categories
         categories = self._get_or_create_categories()
 
-        # Generate jobs
-        self.stdout.write(self.style.WARNING(f'📝 Creating {job_count} fake jobs...'))
-        jobs_created = self._create_fake_jobs(job_count, user, categories)
-        self.stdout.write(self.style.SUCCESS(f'✅ Created {jobs_created} jobs'))
+        # --- CREATE RICH JOBS ---
+        self.stdout.write(self.style.WARNING(f'📝 Creating {job_count} rich job(s)...'))
+        jobs_created = self._create_rich_jobs(job_count, user, categories)
+        self.stdout.write(self.style.SUCCESS(f'✅ Created {jobs_created} job(s)'))
 
-        # Generate internships
-        self.stdout.write(self.style.WARNING(f'📝 Creating {internship_count} fake internships...'))
-        internships_created = self._create_fake_internships(internship_count, user, categories)
-        self.stdout.write(self.style.SUCCESS(f'✅ Created {internships_created} internships'))
+        # --- CREATE RICH INTERNSHIPS ---
+        self.stdout.write(self.style.WARNING(f'📝 Creating {internship_count} rich internship(s)...'))
+        internships_created = self._create_rich_internships(internship_count, user, categories)
+        self.stdout.write(self.style.SUCCESS(f'✅ Created {internships_created} internship(s)'))
 
-        self.stdout.write(self.style.SUCCESS('🎉 Fake data generation complete!'))
+        self.stdout.write(self.style.SUCCESS('🎉 Data generation complete!'))
 
     def _get_or_create_categories(self):
         """Get or create default categories"""
@@ -108,264 +108,200 @@ class Command(BaseCommand):
 
         return categories
 
-    def _create_fake_jobs(self, count, user, categories):
-        """Create fake jobs of all types"""
+    # ============================================================
+    # RICH JOB GENERATION (uses templates)
+    # ============================================================
 
-        # Job titles by type
-        job_titles = {
-            'full_time': [
-                'Senior Software Engineer', 'Project Manager', 'Data Scientist',
-                'DevOps Engineer', 'Product Manager', 'UX Designer',
-                'Sales Director', 'Marketing Manager', 'Financial Analyst',
-                'Operations Manager', 'HR Manager', 'Business Analyst'
-            ],
-            'part_time': [
-                'Part-Time Developer', 'Weekend Sales Associate', 'Part-Time Accountant',
-                'Evening Customer Support', 'Part-Time Designer', 'Weekend Receptionist',
-                'Part-Time Teacher', 'Evening Data Entry', 'Part-Time Social Media Manager'
-            ],
-            'contract': [
-                'Contract Developer', 'Freelance Designer', 'Contract Project Manager',
-                'Contract Writer', 'Freelance Consultant', 'Contract Marketing Specialist',
-                'Contract QA Tester', 'Freelance Photographer', 'Contract Business Analyst'
-            ],
-            'daily': [
-                'Daily Warehouse Worker', 'Event Staff', 'Daily Construction Worker',
-                'Daily Delivery Driver', 'Daily Cleaner', 'Daily Security Guard',
-                'Daily Kitchen Helper', 'Daily Farm Worker', 'Daily Store Associate'
-            ]
-        }
-
-        # Company names
-        companies = [
-            'TechCorp', 'HealthPlus', 'FinancePro', 'EduWorld', 'RetailHub',
-            'BuildRight', 'MarketMasters', 'DesignStudio', 'HospitalityInc',
-            'ManufactureCo', 'TransportPros', 'EngineeringSolutions',
-            'CloudNine', 'DataFlow', 'SecureNet', 'GreenEnergy', 'SmartInnovations'
-        ]
-
-        # Locations
-        locations = [
-            'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
-            'Miami, FL', 'Seattle, WA', 'Boston, MA', 'Austin, TX',
-            'San Francisco, CA', 'Denver, CO', 'Atlanta, GA', 'Dallas, TX',
-            'Phoenix, AZ', 'Philadelphia, PA', 'San Diego, CA', 'Orlando, FL',
-            'Remote', 'Portland, OR', 'Nashville, TN', 'Charlotte, NC'
-        ]
-
-        # Descriptions
-        descriptions = [
-            'We are looking for a talented professional to join our growing team.',
-            'Exciting opportunity for a motivated individual to make a real impact.',
-            'Join our dynamic team and help us build the future of our industry.',
-            'We are seeking a dedicated person to contribute to our success.',
-            'Great opportunity for someone looking to grow their career.',
-            'We need a skilled professional to help us achieve our goals.',
-            'Come work with us and be part of something amazing!',
-            'We are expanding and need talented individuals to join us.',
-            'Join our innovative team and help shape the future.',
-            'We are looking for a passionate person to join our mission.'
-        ]
-
-        # Requirements
-        requirements = [
-            'Strong communication skills and team player mindset.',
-            'Minimum 2 years of experience in a related field.',
-            'Bachelor\'s degree or equivalent experience required.',
-            'Proficiency in relevant tools and technologies.',
-            'Ability to work independently and in a team environment.',
-            'Excellent problem-solving and analytical skills.',
-            'Strong attention to detail and organizational skills.',
-            'Ability to manage multiple tasks and meet deadlines.',
-            'Positive attitude and willingness to learn.',
-            'Experience working in a fast-paced environment.'
-        ]
-
-        jobs_created = 0
-        employment_types = ['full_time', 'part_time', 'contract', 'daily']
-
-        for i in range(count):
-            employment_type = random.choice(employment_types)
-            titles = job_titles[employment_type]
-            category = random.choice(categories)
-
-            # Generate random dates within the last 30 days
-            days_ago = random.randint(0, 30)
-            posted_at = timezone.now() - timedelta(days=days_ago)
-
-            # Generate expiry date (30-90 days from now)
-            expires_days = random.randint(30, 90)
-            expires_at = timezone.now() + timedelta(days=expires_days)
-
-            # Base fields
-            job_data = {
-                'title': random.choice(titles),
-                'company': random.choice(companies),
-                'location': random.choice(locations),
-                'description': random.choice(descriptions),
-                'requirements': random.choice(requirements),
-                'category': category,
-                'employment_type': employment_type,
-                'work_type': random.choice(['remote', 'physical', 'hybrid']),
-                'posted_at': posted_at,
-                'expires_at': expires_at,
+    def _create_rich_jobs(self, count, user, categories):
+        """Create jobs using rich templates"""
+        job_templates = [
+            {
+                'title': 'Senior Full Stack Python (Django) Developer',
+                'company': 'TechNova Solutions Pvt. Ltd.',
+                'location': 'Lahore, Punjab, Pakistan',
+                'description': 'TechNova Solutions is looking for an experienced Full Stack Python (Django) Developer to join our growing engineering team. You will be responsible for designing, developing, and maintaining scalable web applications using Django, Django REST Framework, PostgreSQL, JavaScript, HTML, and CSS.\n\nYou will work closely with UI/UX designers, product managers, and backend engineers to build secure, high-performance applications used by thousands of users worldwide.\n\nThis is an excellent opportunity for developers who enjoy solving complex technical challenges and building modern web platforms in an agile environment.',
+                'requirements': 'Bachelor\'s degree in Computer Science, Software Engineering, or a related field.\n3+ years of experience with Python and Django.\nStrong knowledge of Django REST Framework.\nExperience with PostgreSQL or MySQL.\nGood understanding of HTML5, CSS3, JavaScript, and Bootstrap.\nExperience with Git and GitHub.\nFamiliarity with REST APIs.\nUnderstanding of authentication using JWT or OAuth.\nKnowledge of Docker is a plus.\nExperience deploying applications on Linux servers.\nStrong debugging and problem-solving skills.\nExcellent communication skills.\nAbility to work independently in a remote environment.',
+                'work_type': 'remote',
+                'employment_type': 'full_time',
+                'experience_level': 'mid',
+                'salary_min': 220000.00,
+                'salary_max': 350000.00,
+                'salary_currency': 'USD',
+                'salary_period': 'monthly',
+                'benefits': 'Health Insurance\nAnnual Bonus\nRemote Work\nPaid Annual Leave\nFlexible Working Hours\nPerformance Bonus\nCareer Growth\nLearning Budget\nPaid Certifications\nTeam Retreats',
+                'is_remote': True,
+                'apply_url': 'https://careers.technovasolutions.com/jobs/senior-full-stack-python-django-developer',
+                'company_website': 'https://www.technovasolutions.com',
+                'contact_email': 'careers@technovasolutions.com',
+                'contact_phone': '+92 42 3512 4567',
                 'is_active': True,
-                'is_user_submitted': True,
+                'is_featured': True,
+                'is_urgent': False,
+                'expires_at': timezone.now() + timedelta(days=45),
+                'category': 'Technology',
+            },
+            # You can add more templates here if you want variety
+        ]
+
+        created = 0
+        for i in range(count):
+            # Pick a template (if multiple, cycle or pick random)
+            template = random.choice(job_templates) if len(job_templates) > 1 else job_templates[0]
+
+            # Find the category object
+            category = next((c for c in categories if c.name == template['category']), categories[0])
+
+            # Build the job dict
+            job_data = {
+                'title': template['title'],
+                'company': template['company'],
+                'location': template['location'],
+                'description': template['description'],
+                'requirements': template['requirements'],
+                'work_type': template['work_type'],
+                'employment_type': template['employment_type'],
+                'experience_level': template.get('experience_level'),
+                'salary_min': template.get('salary_min'),
+                'salary_max': template.get('salary_max'),
+                'salary_currency': template.get('salary_currency', 'USD'),
+                'salary_period': template.get('salary_period', 'monthly'),
+                'benefits': template.get('benefits', ''),
+                'is_remote': template.get('is_remote', False),
+                'apply_url': template.get('apply_url', ''),
+                'company_website': template.get('company_website', ''),
+                'contact_email': template.get('contact_email', ''),
+                'contact_phone': template.get('contact_phone', ''),
+                'is_active': template.get('is_active', True),
+                'is_featured': template.get('is_featured', False),
+                'is_urgent': template.get('is_urgent', False),
+                'expires_at': template.get('expires_at', timezone.now() + timedelta(days=30)),
                 'posted_by': user,
-                'views': random.randint(10, 500),
-                'likes': random.randint(0, 100),
-                'clicks': random.randint(5, 200),
-                'applications_count': random.randint(0, 50),
-                'apply_url': f'https://{random.choice(companies).lower()}.com/careers/{i}',
-                'company_website': f'https://{random.choice(companies).lower()}.com',
-                'contact_email': f'hr@{random.choice(companies).lower()}.com',
+                'is_user_submitted': True,
+                'category': category,
+                'posted_at': timezone.now() - timedelta(days=random.randint(0, 5)),
+                'views': random.randint(10, 200),
+                'likes': random.randint(1, 30),
+                'clicks': random.randint(5, 50),
+                'applications_count': random.randint(0, 10),
             }
 
-            # Add type-specific fields
-            if employment_type == 'full_time':
-                job_data['salary_range'] = random.choice([
-                    '$60,000 - $80,000', '$80,000 - $100,000',
-                    '$100,000 - $120,000', '$70,000 - $90,000',
-                    '$90,000 - $110,000', '$120,000 - $150,000'
-                ])
-                job_data['salary_min'] = random.randint(60000, 80000)
-                job_data['salary_max'] = job_data['salary_min'] + random.randint(10000, 40000)
-                job_data['salary_currency'] = 'USD'
-                job_data['salary_period'] = random.choice(['yearly', 'monthly', 'hourly'])
+            # Add any missing fields for specific types
+            if job_data['employment_type'] == 'full_time':
+                job_data.setdefault('experience_level', 'mid')
+                job_data.setdefault('salary_min', 60000)
+                job_data.setdefault('salary_max', 80000)
+                job_data.setdefault('salary_currency', 'USD')
+                job_data.setdefault('salary_period', 'yearly')
+                job_data.setdefault('benefits', 'Health Insurance, 401k, Paid Time Off')
 
-            elif employment_type == 'part_time':
-                job_data['salary_range'] = random.choice([
-                    '$20 - $25/hr', '$25 - $30/hr', '$18 - $22/hr',
-                    '$30 - $35/hr', '$15 - $20/hr', '$22 - $28/hr'
-                ])
-                job_data['salary_min'] = random.randint(15, 25)
-                job_data['salary_max'] = job_data['salary_min'] + random.randint(5, 15)
-                job_data['salary_currency'] = 'USD'
-                job_data['salary_period'] = 'hourly'
+            elif job_data['employment_type'] == 'part_time':
+                job_data.setdefault('hourly_rate', random.randint(15, 30))
+                job_data.setdefault('shift_type', random.choice(['morning', 'evening', 'flexible']))
+                job_data.setdefault('hours_per_week', random.randint(10, 30))
+                job_data.setdefault('salary_range', f"${job_data.get('hourly_rate', 20)}/hour")
+                job_data.setdefault('is_flexible_schedule', random.choice([True, False]))
+                job_data.setdefault('is_weekend_available', random.choice([True, False]))
+                job_data.setdefault('is_immediate', random.choice([True, False]))
 
-            elif employment_type == 'contract':
-                job_data['contract_type'] = random.choice(['fixed', 'hourly', 'milestone'])
-                job_data['budget_min'] = random.randint(1000, 5000)
-                job_data['budget_max'] = job_data['budget_min'] + random.randint(1000, 10000)
-                job_data['currency'] = 'USD'
-                job_data['experience_level'] = random.choice(['entry', 'intermediate', 'expert'])
-                job_data['duration_type'] = random.choice(['short', 'medium', 'long', 'ongoing'])
-                job_data['estimated_duration'] = random.choice([
-                    '2-3 months', '3-6 months', '6-12 months', '1 year', 'Ongoing'
-                ])
-                job_data['start_date'] = (timezone.now() + timedelta(days=random.randint(1, 30))).date()
-                job_data['end_date'] = (timezone.now() + timedelta(days=random.randint(60, 180))).date()
-                job_data['is_urgent'] = random.choice([True, False])
+            elif job_data['employment_type'] == 'contract':
+                job_data.setdefault('contract_type', random.choice(['fixed', 'hourly']))
+                job_data.setdefault('budget_min', random.randint(1000, 5000))
+                job_data.setdefault('budget_max', job_data['budget_min'] + random.randint(1000, 5000))
+                job_data.setdefault('contract_currency', 'USD')
+                job_data.setdefault('contract_experience_level', random.choice(['entry', 'mid', 'senior']))
+                job_data.setdefault('duration_type', random.choice(['short', 'medium', 'long']))
+                job_data.setdefault('estimated_duration', random.choice(['3 months', '6 months']))
+                job_data.setdefault('contract_start_date', (timezone.now() + timedelta(days=random.randint(1, 10))).date())
+                job_data.setdefault('contract_end_date', (timezone.now() + timedelta(days=random.randint(60, 120))).date())
+                job_data.setdefault('is_contract_remote', random.choice([True, False]))
+                job_data.setdefault('is_contract_urgent', random.choice([True, False]))
 
-            elif employment_type == 'daily':
-                job_data['payment_method'] = random.choice(['hourly', 'daily', 'weekly'])
-                job_data['payment_amount'] = random.randint(50, 500)
-                job_data['currency'] = 'USD'
-                job_data['start_date'] = (timezone.now() + timedelta(days=random.randint(1, 7))).date()
-                job_data['end_date'] = (timezone.now() + timedelta(days=random.randint(7, 60))).date()
-                job_data['working_hours'] = random.choice([
-                    '9 AM - 5 PM', '8 AM - 4 PM', '10 AM - 6 PM',
-                    '7 AM - 3 PM', '11 AM - 7 PM', '6 AM - 2 PM'
-                ])
-                job_data['is_immediate'] = random.choice([True, False])
-                job_data['contact_phone'] = f'+1-{random.randint(200, 999)}-{random.randint(100, 999)}-{random.randint(1000, 9999)}'
+            elif job_data['employment_type'] == 'daily':
+                job_data.setdefault('payment_method', random.choice(['daily', 'hourly']))
+                job_data.setdefault('payment_amount', random.randint(50, 300))
+                job_data.setdefault('currency', 'USD')
+                job_data.setdefault('start_date', (timezone.now() + timedelta(days=1)).date())
+                job_data.setdefault('end_date', (timezone.now() + timedelta(days=random.randint(7, 30))).date())
+                job_data.setdefault('working_hours', random.choice(['9 AM - 5 PM', '8 AM - 4 PM', '10 AM - 6 PM']))
+                job_data.setdefault('is_immediate_joining', random.choice([True, False]))
 
             # Create the job
             job = Job(**job_data)
             job.save()
-            jobs_created += 1
+            created += 1
 
-            if jobs_created % 50 == 0:
-                self.stdout.write(f'  Created {jobs_created} jobs...')
+            if created % 10 == 0:
+                self.stdout.write(f'  Created {created} job(s)...')
 
-        return jobs_created
+        return created
 
-    def _create_fake_internships(self, count, user, categories):
-        """Create fake internships"""
+    # ============================================================
+    # RICH INTERNSHIP GENERATION (uses templates)
+    # ============================================================
 
-        internship_titles = [
-            'Software Engineering Intern', 'Marketing Intern', 'Finance Intern',
-            'HR Intern', 'Design Intern', 'Data Analytics Intern',
-            'Business Development Intern', 'Content Writing Intern',
-            'Social Media Intern', 'Accounting Intern', 'Legal Intern',
-            'Research Intern', 'Engineering Intern', 'Sales Intern',
-            'Customer Success Intern', 'Product Management Intern',
-            'UI/UX Design Intern', 'DevOps Intern', 'Data Science Intern'
+    def _create_rich_internships(self, count, user, categories):
+        """Create internships using rich templates"""
+        internship_templates = [
+            {
+                'title': 'Software Engineering Intern (Remote)',
+                'company': 'TechNova Solutions Pvt. Ltd.',
+                'location': 'Remote',
+                'type': 'remote',
+                'internship_type': 'full_time',
+                'description': 'We are looking for a motivated Software Engineering Intern to join our remote team. You will work on real-world projects, collaborate with senior engineers, and gain hands-on experience in full-stack development using Django, React, and PostgreSQL.',
+                'requirements': 'Currently pursuing a Bachelor\'s or Master\'s degree in Computer Science or related field.\nFamiliarity with Python, Django, or JavaScript.\nBasic understanding of web development.\nGood communication skills.\nAbility to work remotely and self-motivated.',
+                'stipend': '$1,200/month',
+                'duration': '6 months',
+                'category': 'Technology',
+                'is_active': True,
+                'expires_at': timezone.now() + timedelta(days=60),
+                'apply_url': 'https://technovasolutions.com/internships/software-engineering-remote',
+                'company_website': 'https://technovasolutions.com',
+                'is_user_submitted': True,
+                'posted_by': user,
+                'posted_at': timezone.now() - timedelta(days=2),
+                'views': random.randint(10, 100),
+                'likes': random.randint(1, 20),
+                'clicks': random.randint(5, 30),
+                'applications_count': random.randint(1, 10),
+            },
         ]
 
-        companies = [
-            'TechStart', 'HealthHub', 'FinFocus', 'EduLearn', 'RetailNow',
-            'BuildSmart', 'MarketPulse', 'DesignLab', 'HospitalityWorld',
-            'ManufacturePlus', 'TransportFast', 'EngineerPro', 'CloudSolutions',
-            'DataVault', 'SecureNet', 'GreenFuture', 'SmartTech'
-        ]
-
-        locations = [
-            'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
-            'Miami, FL', 'Seattle, WA', 'Boston, MA', 'Austin, TX',
-            'San Francisco, CA', 'Denver, CO', 'Remote', 'Atlanta, GA',
-            'Portland, OR', 'Nashville, TN', 'Charlotte, NC'
-        ]
-
-        descriptions = [
-            'Gain valuable experience in a fast-paced environment.',
-            'Learn from industry experts and grow your career.',
-            'Exciting opportunity to kickstart your professional journey.',
-            'Work on real projects and build your portfolio.',
-            'Develop skills that will set you up for success.',
-            'Join our team and make a meaningful contribution.',
-            'Get hands-on experience in a dynamic work environment.',
-            'Start your career with a leading company in the industry.'
-        ]
-
-        requirements = [
-            'Currently enrolled in a Bachelor\'s or Master\'s program.',
-            'Strong communication and interpersonal skills.',
-            'Eagerness to learn and take on new challenges.',
-            'Basic knowledge of relevant tools and technologies.',
-            'Ability to work in a team environment.',
-            'Detail-oriented and well-organized.',
-            'Passion for learning and professional growth.'
-        ]
-
-        internships_created = 0
-
+        created = 0
         for i in range(count):
-            category = random.choice(categories)
-            days_ago = random.randint(0, 30)
-            posted_at = timezone.now() - timedelta(days=days_ago)
+            template = random.choice(internship_templates) if len(internship_templates) > 1 else internship_templates[0]
+
+            category = next((c for c in categories if c.name == template['category']), categories[0])
 
             internship_data = {
-                'title': random.choice(internship_titles),
-                'company': random.choice(companies),
-                'location': random.choice(locations),
-                'description': random.choice(descriptions),
-                'requirements': random.choice(requirements),
+                'title': template['title'],
+                'company': template['company'],
+                'location': template['location'],
+                'type': template['type'],
+                'internship_type': template['internship_type'],
+                'description': template['description'],
+                'requirements': template['requirements'],
+                'stipend': template['stipend'],
+                'duration': template['duration'],
                 'category': category,
-                'type': random.choice(['remote', 'physical']),
-                'stipend': random.choice([
-                    '$500 - $1,000/month', '$1,000 - $1,500/month',
-                    '$1,500 - $2,000/month', 'Unpaid', '$2,000 - $3,000/month',
-                    '$3,000 - $4,000/month', '$800 - $1,200/month'
-                ]),
-                'duration': random.choice([
-                    '3 months', '6 months', '12 months', '4 months', '2 months'
-                ]),
-                'posted_at': posted_at,
-                'is_active': True,
-                # If your model has these fields, uncomment:
-                # 'is_user_submitted': True,
-                # 'posted_by': user,
-                # 'apply_url': f'https://{random.choice(companies).lower()}.com/internships/{i}',
-                # 'company_website': f'https://{random.choice(companies).lower()}.com',
-                # 'contact_email': f'hr@{random.choice(companies).lower()}.com',
+                'is_active': template.get('is_active', True),
+                'expires_at': template.get('expires_at', timezone.now() + timedelta(days=45)),
+                'apply_url': template.get('apply_url', ''),
+                'company_website': template.get('company_website', ''),
+                'posted_by': user,
+                'is_user_submitted': True,
+                'posted_at': template.get('posted_at', timezone.now() - timedelta(days=random.randint(0, 5))),
+                'views': template.get('views', random.randint(10, 100)),
+                'likes': template.get('likes', random.randint(1, 20)),
+                'clicks': template.get('clicks', random.randint(5, 30)),
+                'applications_count': template.get('applications_count', random.randint(1, 10)),
             }
 
             internship = Internship(**internship_data)
             internship.save()
-            internships_created += 1
+            created += 1
 
-            if internships_created % 50 == 0:
-                self.stdout.write(f'  Created {internships_created} internships...')
+            if created % 10 == 0:
+                self.stdout.write(f'  Created {created} internship(s)...')
 
-        return internships_created
+        return created
