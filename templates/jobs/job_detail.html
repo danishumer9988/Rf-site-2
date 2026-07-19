@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load job_filters %}
 
 {% block title %}{{ job.title }} at {{ job.company }}{% endblock %}
 
-{% block content %}
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
 <style>
     /* ============================================================
-       JOB DETAIL PAGE - Unified Design
+       JOB DETAIL – FINAL (with filter, salary card normal)
        ============================================================ */
     :root {
         --jd-primary: #2563eb;
@@ -26,1052 +30,1086 @@
         --jd-gray-700: #334155;
         --jd-gray-800: #1e293b;
         --jd-gray-900: #0f172a;
-        --jd-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-        --jd-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
-        --jd-shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
         --jd-radius-sm: 8px;
         --jd-radius-md: 12px;
         --jd-radius-lg: 16px;
-        --jd-radius-xl: 20px;
+        --jd-radius-xl: 24px;
+        --jd-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+        --jd-shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+        --jd-shadow-lg: 0 12px 48px rgba(0,0,0,0.12);
         --jd-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --jd-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
+    .jd-page {
+        font-family: var(--jd-font);
+        background: var(--jd-gray-50);
+        color: var(--jd-gray-800);
+        line-height: 1.6;
+    }
+
+    /* ===== HERO – taller ===== */
     .jd-hero {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        padding: 3rem 5% 2.5rem;
         position: relative;
+        padding: 3.5rem 0 3rem;
+        background: #0f172a;
+        background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
         overflow: hidden;
-        border-bottom: 4px solid var(--jd-primary);
     }
-
     .jd-hero::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: floatGlow 8s ease-in-out infinite;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.88);
+        backdrop-filter: blur(2px);
+        z-index: 1;
     }
-
-    .jd-hero::after {
-        content: '';
-        position: absolute;
-        bottom: -40%;
-        left: -5%;
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: floatGlow 10s ease-in-out infinite reverse;
-    }
-
-    @keyframes floatGlow {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        50% { transform: translate(30px, -30px) scale(1.1); }
-    }
-
-    .jd-hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        align-items: center;
-        gap: 2.5rem;
-    }
-
-    .jd-hero-icon {
-        font-size: 4rem;
-        width: 100px;
-        height: 100px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: var(--jd-radius-xl);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
-        flex-shrink: 0;
-        animation: iconFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes iconFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    .jd-hero-text {
-        flex: 1;
-    }
-
-    .jd-hero-text .breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-        color: #94a3b8;
-        margin-bottom: 0.5rem;
-    }
-
-    .jd-hero-text .breadcrumb a {
-        color: #94a3b8;
-        text-decoration: none;
-        transition: color 0.3s;
-    }
-
-    .jd-hero-text .breadcrumb a:hover {
-        color: #60a5fa;
-    }
-
-    .jd-hero-text .breadcrumb .separator {
-        color: #475569;
-    }
-
-    .jd-hero-text h1 {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: white;
-        margin-bottom: 0.25rem;
-        letter-spacing: -0.5px;
-    }
-
-    .jd-hero-text .company-name {
-        color: #94a3b8;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .jd-hero-text .company-name i {
-        color: #64748b;
-    }
-
-    .jd-hero-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-top: 1rem;
-        color: #94a3b8;
-        font-size: 0.9rem;
-    }
-
-    .jd-hero-meta span {
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-    }
-
-    .jd-hero-meta i {
-        color: #64748b;
-        width: 16px;
-        text-align: center;
-    }
-
-    .jd-hero-badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 1rem;
-    }
-
-    .jd-badge {
-        padding: 0.25rem 0.9rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border: 1px solid transparent;
-    }
-
-    .jd-badge-fulltime {
-        background: rgba(37, 99, 235, 0.15);
-        color: #60a5fa;
-        border-color: rgba(37, 99, 235, 0.2);
-    }
-
-    .jd-badge-parttime {
-        background: rgba(245, 158, 11, 0.15);
-        color: #fbbf24;
-        border-color: rgba(245, 158, 11, 0.2);
-    }
-
-    .jd-badge-contract {
-        background: rgba(139, 92, 246, 0.15);
-        color: #a78bfa;
-        border-color: rgba(139, 92, 246, 0.2);
-    }
-
-    .jd-badge-daily {
-        background: rgba(16, 185, 129, 0.15);
-        color: #34d399;
-        border-color: rgba(16, 185, 129, 0.2);
-    }
-
-    .jd-badge-remote {
-        background: rgba(59, 130, 246, 0.15);
-        color: #60a5fa;
-        border-color: rgba(59, 130, 246, 0.2);
-    }
-
-    .jd-badge-onsite {
-        background: rgba(16, 185, 129, 0.15);
-        color: #34d399;
-        border-color: rgba(16, 185, 129, 0.2);
-    }
-
-    .jd-badge-urgent {
-        background: rgba(239, 68, 68, 0.15);
-        color: #f87171;
-        border-color: rgba(239, 68, 68, 0.2);
-        animation: urgentPulse 1.5s ease-in-out infinite;
-    }
-
-    .jd-badge-immediate {
-        background: rgba(239, 68, 68, 0.15);
-        color: #f87171;
-        border-color: rgba(239, 68, 68, 0.2);
-        animation: urgentPulse 1.5s ease-in-out infinite;
-    }
-
-    .jd-badge-featured {
-        background: rgba(245, 158, 11, 0.15);
-        color: #fbbf24;
-        border-color: rgba(245, 158, 11, 0.2);
-        animation: featuredPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes urgentPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-
-    @keyframes featuredPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
-    }
-
-    .jd-container {
-        max-width: 1200px;
+    .jd-hero .container {
+        max-width: 1280px;
         margin: 0 auto;
         padding: 0 5%;
+        position: relative;
+        z-index: 2;
     }
 
-    .jd-wrapper {
-        display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 2.5rem;
-        padding: 2rem 0 4rem;
-    }
-
-    .jd-back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--jd-gray-500);
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: var(--jd-transition);
-        margin-bottom: 0.5rem;
-        padding: 0.4rem 0;
-    }
-
-    .jd-back-link:hover {
-        color: var(--jd-primary);
-        gap: 0.75rem;
-    }
-
-    .jd-actions {
+    .jd-breadcrumb {
         display: flex;
-        gap: 0.75rem;
         flex-wrap: wrap;
         align-items: center;
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .jd-btn {
-        padding: 0.6rem 1.5rem;
-        border-radius: var(--jd-radius-sm);
-        font-weight: 600;
+        gap: 0.3rem 0.6rem;
         font-size: 0.85rem;
+        color: var(--jd-gray-400);
+        margin-bottom: 0.75rem;
+    }
+    .jd-breadcrumb a {
+        color: var(--jd-gray-400);
         text-decoration: none;
-        display: inline-flex;
+        transition: color 0.2s;
+    }
+    .jd-breadcrumb a:hover { color: #60a5fa; }
+    .jd-breadcrumb .sep { color: var(--jd-gray-600); }
+    .jd-breadcrumb .current { color: #e2e8f0; font-weight: 500; }
+
+    .jd-hero-top {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem 1rem;
+        margin: 0.5rem 0 0.25rem;
+    }
+    .jd-hero-top h1 {
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+    }
+    .jd-hero-top .time-ago {
+        font-size: 0.9rem;
+        color: var(--jd-gray-400);
+        white-space: nowrap;
+    }
+    .jd-hero-top .time-ago i { margin-right: 0.2rem; }
+
+    .jd-hero-actions {
+        display: flex;
+        flex-wrap: wrap;
         align-items: center;
         gap: 0.5rem;
-        transition: var(--jd-transition);
+        margin-left: auto;
+    }
+    .jd-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.5rem 1.2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.85rem;
         border: none;
         cursor: pointer;
+        background: rgba(255,255,255,0.06);
+        color: #fff;
+        transition: var(--jd-transition);
+        text-decoration: none;
         font-family: inherit;
-        background: rgba(255, 255, 255, 0.1);
-        color: #e2e8f0;
+        line-height: 1.4;
     }
-
-    .jd-btn:hover {
-        transform: translateY(-2px);
-    }
-
+    .jd-btn:hover { transform: translateY(-2px); }
     .jd-btn-primary {
         background: var(--jd-primary);
-        color: white;
+        color: #fff;
     }
-
     .jd-btn-primary:hover {
         background: var(--jd-primary-dark);
-        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 4px 16px rgba(37,99,235,0.35);
     }
-
-    .jd-btn-save {
-        background: rgba(255, 255, 255, 0.08);
-        color: #e2e8f0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .jd-btn-save:hover {
-        border-color: #ef4444;
-        color: #ef4444;
-        background: rgba(239, 68, 68, 0.1);
-    }
-
-    .jd-btn-save.saved {
-        background: rgba(239, 68, 68, 0.15);
-        border-color: #ef4444;
-        color: #ef4444;
-    }
-
-    .jd-btn-like {
-        background: rgba(255, 255, 255, 0.08);
-        color: #e2e8f0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .jd-btn-like:hover {
-        border-color: #f59e0b;
-        color: #f59e0b;
-        background: rgba(245, 158, 11, 0.1);
-    }
-
-    .jd-btn-like.liked {
-        background: rgba(245, 158, 11, 0.15);
-        border-color: #f59e0b;
-        color: #f59e0b;
-    }
-
     .jd-btn-outline {
         background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: #e2e8f0;
+        border: 1px solid rgba(255,255,255,0.15);
     }
-
     .jd-btn-outline:hover {
         border-color: var(--jd-primary);
         color: var(--jd-primary);
-        background: rgba(37, 99, 235, 0.1);
+        background: rgba(37,99,235,0.1);
+    }
+    .jd-btn-like {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid transparent;
+    }
+    .jd-btn-like.liked {
+        background: rgba(245,158,11,0.15);
+        border-color: #f59e0b;
+        color: #fbbf24;
+    }
+    .jd-btn-save {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid transparent;
+    }
+    .jd-btn-save.saved {
+        background: rgba(239,68,68,0.15);
+        border-color: #ef4444;
+        color: #f87171;
     }
 
-    .jd-section {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: var(--jd-radius-lg);
-        padding: 1.75rem 2rem;
-        box-shadow: var(--jd-shadow-sm);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        transition: var(--jd-transition);
-        margin-bottom: 1.5rem;
-    }
-
-    .jd-section:hover {
-        box-shadow: var(--jd-shadow-md);
-        background: rgba(255, 255, 255, 0.85);
-    }
-
-    .jd-section h2 {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--jd-gray-900);
-        margin-bottom: 1rem;
+    .jd-poster {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.3rem 1.5rem;
+        color: var(--jd-gray-300);
+        font-size: 0.9rem;
+        margin: 0.75rem 0 0.2rem;
+    }
+    .jd-poster i { color: var(--jd-gray-500); width: 16px; text-align: center; }
+    .jd-poster .by { opacity: 0.7; }
+    .jd-poster .name { color: #e2e8f0; font-weight: 600; }
+    .jd-poster .location { color: #94a3b8; }
+    .jd-poster .dot { color: var(--jd-gray-600); padding: 0 0.2rem; }
+    .jd-poster .date { color: var(--jd-gray-400); }
+
+    .jd-category {
+        display: inline-block;
+        margin-top: 0.5rem;
+        padding: 0.2rem 1.2rem;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.08);
+        color: var(--jd-gray-300);
+        font-size: 0.85rem;
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+    .jd-badge-hero {
+        display: inline-block;
+        padding: 0.15rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-left: 0.5rem;
+    }
+    .jd-badge-hero.featured {
+        background: rgba(245,158,11,0.2);
+        color: #fbbf24;
+        border: 1px solid rgba(245,158,11,0.2);
+        animation: pulseBadge 2s infinite;
+    }
+    .jd-badge-hero.urgent {
+        background: rgba(239,68,68,0.2);
+        color: #f87171;
+        border: 1px solid rgba(239,68,68,0.2);
+        animation: pulseBadge 1.5s infinite;
+    }
+    @keyframes pulseBadge {
+        0%,100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
     }
 
-    .jd-section h2 i {
-        color: var(--jd-primary);
-        width: 24px;
-        text-align: center;
+    /* ===== MAIN LAYOUT ===== */
+    .jd-main {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem 5% 3rem;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
     }
 
-    .jd-section p {
-        color: var(--jd-gray-700);
-        line-height: 1.8;
-        font-size: 0.95rem;
-        margin: 0;
-    }
-
-    .jd-section .description-text {
-        white-space: pre-wrap;
-    }
-
-    .jd-sidebar {
+    /* ===== RELATED JOBS ===== */
+    .jd-related {
         position: sticky;
         top: 90px;
         align-self: start;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+        padding-right: 0.5rem;
+        scrollbar-width: thin;
+    }
+    .jd-related::-webkit-scrollbar {
+        width: 5px;
+    }
+    .jd-related::-webkit-scrollbar-track {
+        background: var(--jd-gray-100);
+        border-radius: 10px;
+    }
+    .jd-related::-webkit-scrollbar-thumb {
+        background: var(--jd-gray-300);
+        border-radius: 10px;
+    }
+    .jd-related::-webkit-scrollbar-thumb:hover {
+        background: var(--jd-primary);
+    }
+
+    .jd-related h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--jd-gray-800);
+        margin: 0 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .jd-related h3 i { color: var(--jd-primary); }
+
+    .jd-related-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .jd-related-list li {
+        background: #fff;
+        border-radius: var(--jd-radius-md);
+        padding: 1rem 1.25rem;
+        box-shadow: var(--jd-shadow-sm);
+        border: 1px solid var(--jd-gray-200);
+        transition: var(--jd-transition);
+    }
+    .jd-related-list li:hover {
+        box-shadow: var(--jd-shadow-md);
+        transform: translateY(-3px);
+    }
+    .jd-related-list a {
+        text-decoration: none;
+        display: block;
+    }
+    .jd-related-list .rel-title {
+        font-weight: 700;
+        color: var(--jd-gray-800);
+        font-size: 1rem;
+        margin-bottom: 0.1rem;
+    }
+    .jd-related-list .rel-company {
+        color: var(--jd-gray-500);
+        font-size: 0.85rem;
+    }
+    .jd-related-list .rel-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem 0.8rem;
+        font-size: 0.75rem;
+        color: var(--jd-gray-400);
+        margin-top: 0.3rem;
+    }
+    .jd-related-list .rel-meta i { width: 14px; text-align: center; }
+
+    /* ===== RIGHT COLUMN ===== */
+    .jd-right {
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
     }
 
-    .jd-sidebar-card {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: var(--jd-radius-lg);
-        padding: 1.5rem;
+    /* Slider – all cards equal */
+    .jd-slider-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+    .jd-slider-card {
+        background: #fff;
+        border-radius: var(--jd-radius-md);
+        padding: 0.9rem 0.5rem;
         box-shadow: var(--jd-shadow-sm);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid var(--jd-gray-200);
+        text-align: center;
         transition: var(--jd-transition);
     }
-
-    .jd-sidebar-card:hover {
+    .jd-slider-card:hover {
         box-shadow: var(--jd-shadow-md);
-        background: rgba(255, 255, 255, 0.85);
+        transform: translateY(-3px);
+    }
+    .jd-slider-card .label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--jd-gray-500);
+        font-weight: 600;
+    }
+    .jd-slider-card .value {
+        font-weight: 700;
+        color: var(--jd-gray-800);
+        font-size: 0.9rem;
+        margin-top: 0.1rem;
+        word-break: break-word;
     }
 
-    .jd-sidebar-card h3 {
-        font-size: 0.9rem;
+    /* Description & Requirements + side panel */
+    .jd-content-row {
+        display: flex;
+        gap: 1.5rem;
+        align-items: stretch;
+    }
+    .jd-content-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .jd-content-side {
+        flex: 0 0 220px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .jd-card {
+        background: #fff;
+        border-radius: var(--jd-radius-lg);
+        padding: 1.5rem 1.75rem;
+        box-shadow: var(--jd-shadow-sm);
+        border: 1px solid var(--jd-gray-200);
+        transition: var(--jd-transition);
+    }
+    .jd-card:hover {
+        box-shadow: var(--jd-shadow-md);
+    }
+    .jd-card h2 {
+        font-size: 1.05rem;
         font-weight: 700;
         color: var(--jd-gray-900);
-        margin-bottom: 1rem;
-        padding-bottom: 0.6rem;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+        margin: 0 0 0.75rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
-
-    .jd-sidebar-card h3 i {
-        color: var(--jd-primary);
-        width: 20px;
-        text-align: center;
-        font-size: 0.9rem;
-    }
-
-    .jd-info-list {
-        list-style: none;
-        padding: 0;
+    .jd-card h2 i { color: var(--jd-primary); width: 22px; text-align: center; }
+    .jd-card .text {
+        color: var(--jd-gray-700);
+        font-size: 0.95rem;
+        line-height: 1.8;
+        white-space: pre-wrap;
         margin: 0;
     }
 
-    .jd-info-list li {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        font-size: 0.85rem;
+    /* Numbered requirements list */
+    .jd-requirements-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        counter-reset: req-counter;
     }
-
-    .jd-info-list li:last-child {
-        border-bottom: none;
-    }
-
-    .jd-info-list .label {
-        color: var(--jd-gray-500);
-    }
-
-    .jd-info-list .value {
-        font-weight: 500;
-        color: var(--jd-gray-800);
-        text-align: right;
-    }
-
-    .jd-apply-card {
-        background: linear-gradient(135deg, var(--jd-primary) 0%, var(--jd-primary-dark) 100%);
-        color: white;
-        border-radius: var(--jd-radius-lg);
-        padding: 1.75rem 1.5rem;
-        text-align: center;
-        box-shadow: var(--jd-shadow-md);
-        transition: var(--jd-transition);
-    }
-
-    .jd-apply-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--jd-shadow-lg);
-    }
-
-    .jd-apply-card h3 {
-        color: white;
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin-bottom: 0.25rem;
-        border-bottom: none;
-        padding-bottom: 0;
-    }
-
-    .jd-apply-card p {
-        opacity: 0.85;
-        margin-bottom: 1.25rem;
-        font-size: 0.9rem;
-        line-height: 1.5;
-    }
-
-    .jd-apply-card .jd-btn-apply {
-        display: inline-block;
-        padding: 0.7rem 2.5rem;
-        background: white;
-        color: var(--jd-primary);
-        border-radius: var(--jd-radius-sm);
-        font-weight: 700;
-        text-decoration: none;
-        transition: var(--jd-transition);
+    .jd-requirements-list li {
+        counter-increment: req-counter;
+        padding: 0.5rem 0 0.5rem 2.2rem;
+        position: relative;
+        border-bottom: 1px solid var(--jd-gray-100);
         font-size: 0.95rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        border: none;
-        cursor: pointer;
-        font-family: inherit;
+        color: var(--jd-gray-700);
+        line-height: 1.6;
     }
-
-    .jd-apply-card .jd-btn-apply:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    }
-
-    .jd-company-link {
+    .jd-requirements-list li::before {
+        content: counter(req-counter);
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        width: 1.6rem;
+        height: 1.6rem;
+        background: var(--jd-primary-light);
+        color: var(--jd-primary);
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
-        padding: 0.6rem 1rem;
-        border: 2px solid rgba(0, 0, 0, 0.08);
-        border-radius: var(--jd-radius-sm);
+        font-weight: 700;
+        font-size: 0.75rem;
+    }
+    .jd-requirements-list li:last-child {
+        border-bottom: none;
+    }
+    body.dark-mode .jd-requirements-list li {
+        border-bottom-color: rgba(255,255,255,0.05);
+        color: #94a3b8;
+    }
+    body.dark-mode .jd-requirements-list li::before {
+        background: rgba(96,165,250,0.15);
+        color: #60a5fa;
+    }
+
+    /* Benefits as checkmark grid */
+    .jd-benefits-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.3rem 1.5rem;
+    }
+    .jd-benefits-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.9rem;
         color: var(--jd-gray-700);
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.85rem;
-        transition: var(--jd-transition);
-        background: rgba(255, 255, 255, 0.5);
+        padding: 0.15rem 0;
+    }
+    .jd-benefits-list li i {
+        color: var(--jd-success);
+    }
+    body.dark-mode .jd-benefits-list li {
+        color: #94a3b8;
     }
 
-    .jd-company-link:hover {
-        border-color: var(--jd-primary);
-        color: var(--jd-primary);
-        transform: translateY(-2px);
+    /* Side boxes */
+    .jd-share-box,
+    .jd-stats-box,
+    .jd-details-box {
+        background: #fff;
+        border-radius: var(--jd-radius-md);
+        padding: 1.25rem 1.25rem;
         box-shadow: var(--jd-shadow-sm);
+        border: 1px solid var(--jd-gray-200);
+        transition: var(--jd-transition);
+    }
+    .jd-share-box:hover,
+    .jd-stats-box:hover,
+    .jd-details-box:hover {
+        box-shadow: var(--jd-shadow-md);
+    }
+    .jd-share-box h4,
+    .jd-stats-box h4,
+    .jd-details-box h4 {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--jd-gray-800);
+        margin: 0 0 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        border-bottom: 2px solid var(--jd-gray-100);
+        padding-bottom: 0.4rem;
+    }
+    .jd-share-box h4 i,
+    .jd-stats-box h4 i,
+    .jd-details-box h4 i { color: var(--jd-primary); }
+
+    .jd-share-links {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .jd-share-links a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--jd-gray-100);
+        color: var(--jd-gray-600);
+        transition: var(--jd-transition);
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    .jd-share-links a:hover {
+        background: var(--jd-primary);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37,99,235,0.25);
     }
 
-    .jd-analytics-grid {
+    .jd-stats-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 0.5rem;
     }
-
-    .jd-analytics-grid .jd-stat {
+    .jd-stat-item {
         text-align: center;
-        background: rgba(0, 0, 0, 0.03);
-        padding: 0.6rem 0.3rem;
+        background: var(--jd-gray-50);
         border-radius: var(--jd-radius-sm);
-        transition: var(--jd-transition);
+        padding: 0.4rem 0.2rem;
     }
-
-    .jd-analytics-grid .jd-stat:hover {
-        background: var(--jd-primary-light);
-    }
-
-    .jd-analytics-grid .jd-stat .number {
-        font-size: 1.1rem;
+    .jd-stat-item .number {
+        display: block;
+        font-size: 1rem;
         font-weight: 700;
         color: var(--jd-gray-800);
-        display: block;
     }
-
-    .jd-analytics-grid .jd-stat .label {
+    .jd-stat-item .label {
         font-size: 0.6rem;
-        color: var(--jd-gray-500);
         text-transform: uppercase;
-        letter-spacing: 0.4px;
+        letter-spacing: 0.3px;
+        color: var(--jd-gray-500);
     }
 
-    .jd-analytics-grid .jd-stat .label i {
-        font-size: 0.6rem;
-        margin-right: 0.2rem;
-    }
-
-    .jd-btn-analytics {
-        display: block;
-        width: 100%;
-        text-align: center;
-        padding: 0.5rem;
-        margin-top: 0.75rem;
-        background: var(--jd-primary-light);
-        color: var(--jd-primary);
-        border: none;
-        border-radius: var(--jd-radius-sm);
+    .jd-details-box .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.3rem 0;
+        border-bottom: 1px solid var(--jd-gray-100);
         font-size: 0.8rem;
+    }
+    .jd-details-box .detail-item:last-child { border-bottom: none; }
+    .jd-details-box .detail-item .label {
+        color: var(--jd-gray-500);
+        font-weight: 500;
+    }
+    .jd-details-box .detail-item .value {
+        color: var(--jd-gray-800);
+        text-align: right;
+        word-break: break-word;
+        max-width: 60%;
+    }
+    .jd-details-box .badge-status {
+        display: inline-block;
+        padding: 0.1rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.7rem;
         font-weight: 600;
-        text-decoration: none;
+    }
+    .jd-details-box .badge-status.active {
+        background: rgba(16,185,129,0.15);
+        color: #10b981;
+    }
+    .jd-details-box .badge-status.featured {
+        background: rgba(245,158,11,0.15);
+        color: #f59e0b;
+    }
+    .jd-details-box .badge-status.urgent {
+        background: rgba(239,68,68,0.15);
+        color: #ef4444;
+    }
+
+    /* Comments */
+    .jd-comment-form textarea {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 2px solid var(--jd-gray-200);
+        border-radius: var(--jd-radius-sm);
+        font-size: 0.9rem;
+        font-family: inherit;
+        transition: border-color 0.2s;
+        resize: vertical;
+        min-height: 70px;
+        background: var(--jd-gray-50);
+    }
+    .jd-comment-form textarea:focus {
+        outline: none;
+        border-color: var(--jd-primary);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+    }
+    .jd-btn-submit {
+        margin-top: 0.5rem;
+        padding: 0.5rem 1.5rem;
+        background: var(--jd-primary);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
         transition: var(--jd-transition);
         font-family: inherit;
-        cursor: pointer;
+        font-size: 0.85rem;
     }
-
-    .jd-btn-analytics:hover {
-        background: var(--jd-primary);
-        color: white;
+    .jd-btn-submit:hover {
+        background: var(--jd-primary-dark);
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 4px 12px rgba(37,99,235,0.3);
     }
-
     .jd-comment-list {
         list-style: none;
         padding: 0;
-        margin: 0;
+        margin: 1rem 0 0;
     }
-
     .jd-comment-item {
-        padding: 1rem 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         display: flex;
         gap: 1rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--jd-gray-100);
     }
-
-    .jd-comment-item:last-child {
-        border-bottom: none;
-    }
-
+    .jd-comment-item:last-child { border-bottom: none; }
     .jd-comment-avatar {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        background: linear-gradient(135deg, var(--jd-primary), #8b5cf6);
+        background: linear-gradient(135deg, var(--jd-primary), var(--jd-purple));
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: #fff;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         flex-shrink: 0;
     }
-
     .jd-comment-content {
         flex: 1;
     }
-
     .jd-comment-author {
         font-weight: 600;
         color: var(--jd-gray-800);
         font-size: 0.9rem;
     }
-
     .jd-comment-time {
         font-size: 0.7rem;
         color: var(--jd-gray-400);
         margin-left: 0.5rem;
     }
-
     .jd-comment-text {
         color: var(--jd-gray-600);
-        margin-top: 0.15rem;
         font-size: 0.9rem;
         line-height: 1.6;
+        margin-top: 0.1rem;
     }
-
-    .jd-comment-form textarea {
-        width: 100%;
-        padding: 0.7rem 1rem;
-        border: 2px solid rgba(0, 0, 0, 0.08);
-        border-radius: var(--jd-radius-sm);
-        font-size: 0.9rem;
-        font-family: inherit;
-        transition: all 0.3s;
-        resize: vertical;
-        min-height: 70px;
-        background: rgba(255, 255, 255, 0.5);
-    }
-
-    .jd-comment-form textarea:focus {
-        outline: none;
-        border-color: var(--jd-primary);
-        background: white;
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
-    }
-
-    .jd-comment-form .jd-btn-submit {
-        margin-top: 0.5rem;
-        padding: 0.5rem 1.5rem;
-        background: var(--jd-primary);
-        color: white;
-        border: none;
-        border-radius: var(--jd-radius-sm);
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--jd-transition);
-        font-family: inherit;
-        font-size: 0.85rem;
-    }
-
-    .jd-comment-form .jd-btn-submit:hover {
-        background: var(--jd-primary-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    }
-
     .jd-empty-comments {
         text-align: center;
-        padding: 1.5rem;
+        padding: 1rem 0;
         color: var(--jd-gray-400);
         font-size: 0.9rem;
     }
-
     .jd-empty-comments i {
         font-size: 2rem;
         display: block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
         color: var(--jd-gray-300);
     }
 
-    /* Dark Mode */
-    body.dark-mode .jd-section {
-        background: rgba(30, 41, 59, 0.5);
-        border-color: rgba(255, 255, 255, 0.05);
+    /* ===== DARK MODE ===== */
+    body.dark-mode .jd-page { background: #0f172a; }
+    body.dark-mode .jd-related-list li,
+    body.dark-mode .jd-slider-card,
+    body.dark-mode .jd-card,
+    body.dark-mode .jd-share-box,
+    body.dark-mode .jd-stats-box,
+    body.dark-mode .jd-details-box {
+        background: rgba(30,41,59,0.6);
+        border-color: rgba(255,255,255,0.05);
     }
-
-    body.dark-mode .jd-section:hover {
-        background: rgba(30, 41, 59, 0.8);
+    body.dark-mode .jd-related-list li:hover,
+    body.dark-mode .jd-slider-card:hover,
+    body.dark-mode .jd-card:hover,
+    body.dark-mode .jd-share-box:hover,
+    body.dark-mode .jd-stats-box:hover,
+    body.dark-mode .jd-details-box:hover {
+        background: rgba(30,41,59,0.8);
     }
-
-    body.dark-mode .jd-section h2 {
+    body.dark-mode .jd-related h3,
+    body.dark-mode .jd-slider-card .value,
+    body.dark-mode .jd-card h2,
+    body.dark-mode .jd-share-box h4,
+    body.dark-mode .jd-stats-box h4,
+    body.dark-mode .jd-details-box h4,
+    body.dark-mode .jd-stat-item .number,
+    body.dark-mode .jd-comment-author,
+    body.dark-mode .jd-details-box .detail-item .value {
         color: #e2e8f0;
     }
-
-    body.dark-mode .jd-section p {
+    body.dark-mode .jd-card .text,
+    body.dark-mode .jd-comment-text,
+    body.dark-mode .jd-requirements-list li {
         color: #94a3b8;
     }
-
-    body.dark-mode .jd-sidebar-card {
-        background: rgba(30, 41, 59, 0.5);
-        border-color: rgba(255, 255, 255, 0.05);
-    }
-
-    body.dark-mode .jd-sidebar-card:hover {
-        background: rgba(30, 41, 59, 0.8);
-    }
-
-    body.dark-mode .jd-sidebar-card h3 {
-        color: #e2e8f0;
-        border-bottom-color: rgba(255, 255, 255, 0.05);
-    }
-
-    body.dark-mode .jd-info-list .value {
+    body.dark-mode .jd-related-list .rel-title {
         color: #e2e8f0;
     }
-
-    body.dark-mode .jd-info-list li {
-        border-bottom-color: rgba(255, 255, 255, 0.05);
-    }
-
-    body.dark-mode .jd-analytics-grid .jd-stat {
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    body.dark-mode .jd-analytics-grid .jd-stat .number {
-        color: #e2e8f0;
-    }
-
-    body.dark-mode .jd-analytics-grid .jd-stat:hover {
-        background: rgba(96, 165, 250, 0.1);
-    }
-
-    body.dark-mode .jd-comment-author {
-        color: #e2e8f0;
-    }
-
-    body.dark-mode .jd-comment-text {
+    body.dark-mode .jd-related-list .rel-company,
+    body.dark-mode .jd-related-list .rel-meta {
         color: #94a3b8;
     }
-
     body.dark-mode .jd-comment-item {
-        border-bottom-color: rgba(255, 255, 255, 0.05);
+        border-bottom-color: rgba(255,255,255,0.05);
     }
-
     body.dark-mode .jd-comment-form textarea {
-        background: rgba(30, 41, 59, 0.5);
-        border-color: rgba(255, 255, 255, 0.08);
+        background: rgba(30,41,59,0.5);
+        border-color: rgba(255,255,255,0.08);
         color: #e2e8f0;
     }
-
     body.dark-mode .jd-comment-form textarea:focus {
         background: #1e293b;
         border-color: #60a5fa;
     }
-
-    body.dark-mode .jd-company-link {
-        background: rgba(30, 41, 59, 0.5);
-        border-color: rgba(255, 255, 255, 0.08);
+    body.dark-mode .jd-stat-item {
+        background: rgba(255,255,255,0.03);
+    }
+    body.dark-mode .jd-share-links a {
+        background: rgba(255,255,255,0.06);
+        color: var(--jd-gray-400);
+    }
+    body.dark-mode .jd-share-links a:hover {
+        background: var(--jd-primary);
+        color: #fff;
+    }
+    body.dark-mode .jd-details-box .detail-item {
+        border-bottom-color: rgba(255,255,255,0.05);
+    }
+    body.dark-mode .jd-benefits-list li {
         color: #94a3b8;
     }
 
-    body.dark-mode .jd-company-link:hover {
-        border-color: #60a5fa;
-        color: #60a5fa;
-    }
-
-    body.dark-mode .jd-empty-comments {
-        color: #64748b;
-    }
-
-    body.dark-mode .jd-btn-analytics {
-        background: rgba(96, 165, 250, 0.1);
-        color: #60a5fa;
-    }
-
-    body.dark-mode .jd-btn-analytics:hover {
-        background: #3b82f6;
-        color: white;
-    }
-
-    /* Responsive */
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 1024px) {
-        .jd-wrapper {
-            gap: 1.5rem;
-        }
+        .jd-slider-grid { grid-template-columns: repeat(2, 1fr); }
     }
-
     @media (max-width: 992px) {
-        .jd-wrapper {
+        .jd-main {
             grid-template-columns: 1fr;
+            gap: 1.5rem;
         }
-
-        .jd-sidebar {
+        .jd-related {
             position: static;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .jd-related-list {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .jd-sidebar .jd-sidebar-card,
-        .jd-sidebar .jd-apply-card {
-            margin-bottom: 0;
-        }
-
-        .jd-sidebar .jd-apply-card {
-            grid-column: 1 / -1;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
         }
     }
-
     @media (max-width: 768px) {
-        .jd-hero-content {
+        .jd-hero-top {
             flex-direction: column;
-            text-align: center;
-            gap: 1.5rem;
+            align-items: flex-start;
         }
-
-        .jd-hero-text h1 {
-            font-size: 1.8rem;
-        }
-
-        .jd-hero-meta {
-            justify-content: center;
-        }
-
-        .jd-hero-badges {
-            justify-content: center;
-        }
-
-        .jd-actions {
-            justify-content: center;
-        }
-
-        .jd-hero-icon {
-            width: 80px;
-            height: 80px;
-            font-size: 3rem;
-        }
-
-        .jd-section {
-            padding: 1.5rem;
-        }
-
-        .jd-sidebar {
-            grid-template-columns: 1fr;
-        }
-
-        .jd-actions .jd-btn {
-            flex: 1;
-            justify-content: center;
-            min-width: 100px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .jd-hero {
-            padding: 2rem 4% 1.5rem;
-        }
-
-        .jd-hero-text h1 {
-            font-size: 1.5rem;
-        }
-
-        .jd-section {
-            padding: 1.25rem;
-        }
-
-        .jd-actions {
-            flex-direction: column;
-        }
-
-        .jd-actions .jd-btn {
+        .jd-hero-top h1 { font-size: 1.8rem; }
+        .jd-hero-actions {
+            margin-left: 0;
             width: 100%;
-            justify-content: center;
+            justify-content: flex-start;
+            flex-wrap: wrap;
         }
-
-        .jd-analytics-grid {
-            grid-template-columns: repeat(3, 1fr);
+        .jd-content-row {
+            flex-direction: column;
         }
+        .jd-content-side {
+            flex: 1;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .jd-content-side > * {
+            flex: 1;
+            min-width: 150px;
+        }
+        .jd-slider-grid { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        .jd-card { padding: 1.25rem; }
+        .jd-related-list { grid-template-columns: 1fr; }
+        .jd-benefits-list { grid-template-columns: 1fr; }
     }
-
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
+    @media (max-width: 480px) {
+        .jd-hero-top h1 { font-size: 1.5rem; }
+        .jd-slider-grid { grid-template-columns: 1fr; }
+        .jd-content-side { flex-direction: column; }
     }
-
-    .jd-animate {
-        animation: fadeUp 0.4s ease-out forwards;
-    }
-
-    .jd-animate.delay-1 { animation-delay: 0.05s; opacity: 0; }
-    .jd-animate.delay-2 { animation-delay: 0.1s; opacity: 0; }
-    .jd-animate.delay-3 { animation-delay: 0.15s; opacity: 0; }
-    .jd-animate.delay-4 { animation-delay: 0.2s; opacity: 0; }
 </style>
+{% endblock %}
 
-<!-- ===== HERO SECTION ===== -->
-<div class="jd-hero">
-    <div class="jd-hero-content">
-        <div class="jd-hero-icon">💼</div>
-        <div class="jd-hero-text">
-            <div class="breadcrumb">
+{% block content %}
+<div class="jd-page">
+    <!-- ===== HERO ===== -->
+    <div class="jd-hero">
+        <div class="container">
+            <div class="jd-breadcrumb">
                 <a href="/">Home</a>
-                <span class="separator">›</span>
+                <span class="sep">›</span>
                 <a href="{% url 'job_list' %}">Jobs</a>
-                <span class="separator">›</span>
-                <span>{{ job.title }}</span>
-            </div>
-            <h1>{{ job.title }}</h1>
-            <div class="company-name">
-                <i class="fas fa-building"></i> {{ job.company }}
+                <span class="sep">›</span>
+                {% if job.employment_type %}
+                <span class="current">{{ job.get_employment_type_display }}</span>
+                <span class="sep">›</span>
+                {% endif %}
+                <span class="current">{{ job.title }}</span>
             </div>
 
-            <div class="jd-hero-meta">
-                <span><i class="fas fa-map-pin"></i> {{ job.location }}</span>
-                <span><i class="far fa-calendar-alt"></i> Posted {{ job.posted_at|date:"M d, Y" }}</span>
-                {% if job.expires_at %}
-                <span><i class="far fa-clock"></i> Expires {{ job.expires_at|date:"M d, Y" }}</span>
-                {% endif %}
-                {% if job.posted_by %}
-                <span><i class="fas fa-user"></i> Posted by {{ job.posted_by.username }}</span>
-                {% endif %}
-            </div>
-
-            <div class="jd-hero-badges">
-                <!-- Employment Type Badge -->
-                <span class="jd-badge jd-badge-{{ job.employment_type }}">
-                    {% if job.employment_type == 'full_time' %}💼 Full-Time
-                    {% elif job.employment_type == 'part_time' %}⏰ Part-Time
-                    {% elif job.employment_type == 'contract' %}📄 Contract
-                    {% elif job.employment_type == 'daily' %}⚡ Daily
+            <div class="jd-hero-top">
+                <h1>
+                    {{ job.title }}
+                    {% if job.is_featured %}
+                    <span class="jd-badge-hero featured">⭐ Featured</span>
                     {% endif %}
-                </span>
-                <!-- Work Location Badge -->
-                <span class="jd-badge {% if job.work_location == 'remote' %}jd-badge-remote{% else %}jd-badge-onsite{% endif %}">
-                    {% if job.work_location == 'remote' %}🌐 Remote{% else %}🏢 On-Site{% endif %}
-                </span>
-                {% if job.is_featured %}
-                <span class="jd-badge jd-badge-featured">⭐ Featured</span>
-                {% endif %}
-                {% if job.is_urgent %}
-                <span class="jd-badge jd-badge-urgent">⚡ Urgent</span>
-                {% endif %}
-                {% if job.is_immediate %}
-                <span class="jd-badge jd-badge-immediate">⚡ Immediate</span>
-                {% endif %}
-                {% if job.category %}
-                <span class="jd-badge" style="background:rgba(139,92,246,0.15);color:#a78bfa;border-color:rgba(139,92,246,0.2);">📂 {{ job.category.name }}</span>
-                {% endif %}
+                    {% if job.is_urgent %}
+                    <span class="jd-badge-hero urgent">⚡ Urgent</span>
+                    {% endif %}
+                </h1>
+                <span class="time-ago"><i class="far fa-clock"></i> {{ job.posted_at|timesince }} ago</span>
+
+                <div class="jd-hero-actions">
+                    {% if user.is_authenticated %}
+                    <button class="jd-btn jd-btn-like {% if is_liked %}liked{% endif %}" onclick="toggleLike('{{ job.slug }}', this)">
+                        <i class="fas fa-heart"></i> <span>{% if is_liked %}Liked{% else %}Like{% endif %}</span>
+                    </button>
+                    <button class="jd-btn jd-btn-save {% if is_saved %}saved{% endif %}" onclick="toggleSave('{{ job.slug }}', this)">
+                        <i class="fas fa-bookmark"></i> <span>{% if is_saved %}Saved{% else %}Save{% endif %}</span>
+                    </button>
+                    {% endif %}
+                    {% if job.apply_url %}
+                    <a href="{% url 'track_click' job.slug %}?type=apply" target="_blank" class="jd-btn jd-btn-primary">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </a>
+                    {% endif %}
+                    {% if is_owner %}
+                    <a href="{% url 'my_job_analytics' job.slug %}" class="jd-btn jd-btn-outline">
+                        <i class="fas fa-chart-line"></i> Analytics
+                    </a>
+                    {% endif %}
+                </div>
             </div>
 
-            <!-- Actions -->
-            <div class="jd-actions">
-                {% if user.is_authenticated %}
-                <button class="jd-btn jd-btn-like {% if is_liked %}liked{% endif %}" onclick="toggleLike('{{ job.slug }}', this)">
-                    <i class="fas {% if is_liked %}fa-heart{% else %}fa-heart{% endif %}"></i>
-                    {% if is_liked %}Liked{% else %}Like{% endif %}
-                </button>
-                <button class="jd-btn jd-btn-save {% if is_saved %}saved{% endif %}" onclick="toggleSave('{{ job.slug }}', this)">
-                    <i class="fas {% if is_saved %}fa-bookmark{% else %}fa-bookmark{% endif %}"></i>
-                    {% if is_saved %}Saved{% else %}Save{% endif %}
-                </button>
-                {% endif %}
-
-                {% if job.apply_url %}
-                <a href="{% url 'track_click' job.slug %}?type=apply" target="_blank" class="jd-btn jd-btn-primary">
-                    <i class="fas fa-paper-plane"></i> Apply Now
-                </a>
-                {% endif %}
-
-                {% if is_owner %}
-                <a href="{% url 'my_job_analytics' job.slug %}" class="jd-btn jd-btn-outline">
-                    <i class="fas fa-chart-line"></i> Analytics
-                </a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ===== MAIN CONTENT ===== -->
-<div class="jd-container">
-    <a href="{% url 'job_list' %}" class="jd-back-link">
-        <i class="fas fa-arrow-left"></i> Back to Jobs
-    </a>
-
-    <div class="jd-wrapper">
-        <!-- ===== LEFT COLUMN ===== -->
-        <div class="jd-left">
-            <!-- Description -->
-            <div class="jd-section jd-animate">
-                <h2><i class="fas fa-align-left"></i> About This Job</h2>
-                <p class="description-text">{{ job.description|linebreaks }}</p>
+            <!-- Poster info -->
+            <div class="jd-poster">
+                <span><i class="fas fa-user-circle"></i> By <span class="name">{{ job.posted_by.username|default:'Admin' }}</span></span>
+                <span class="dot">•</span>
+                <span><i class="fas fa-map-pin"></i> <span class="location">{{ job.posted_by.profile.location|default:'Worldwide' }}</span></span>
+                <span class="dot">•</span>
+                <span class="date"><i class="far fa-calendar-alt"></i> Posted {{ job.posted_at|date:"M d, Y" }}</span>
             </div>
 
-            <!-- Requirements -->
-            {% if job.requirements %}
-            <div class="jd-section jd-animate delay-1">
-                <h2><i class="fas fa-check-circle"></i> Requirements & Qualifications</h2>
-                <p class="description-text">{{ job.requirements|linebreaks }}</p>
+            {% if job.category %}
+            <div class="jd-category">
+                <i class="fas fa-tag"></i> {{ job.category.name }}
             </div>
             {% endif %}
+        </div>
+    </div>
+
+    <!-- ===== MAIN ===== -->
+    <div class="jd-main">
+        <!-- LEFT: Related Jobs -->
+        <aside class="jd-related">
+            <h3><i class="fas fa-briefcase"></i> Related Jobs</h3>
+            {% if related_jobs %}
+            <ul class="jd-related-list">
+                {% for rel in related_jobs %}
+                <li>
+                    <a href="{% url 'job_detail' rel.slug %}">
+                        <div class="rel-title">{{ rel.title }}</div>
+                        <div class="rel-company"><i class="fas fa-building"></i> {{ rel.company }}</div>
+                        <div class="rel-meta">
+                            <span><i class="fas fa-map-pin"></i> {{ rel.location }}</span>
+                            <span><i class="far fa-calendar-alt"></i> {{ rel.posted_at|date:"M d" }}</span>
+                            <span><i class="fas fa-briefcase"></i> {{ rel.get_employment_type_display|default:'-' }}</span>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p style="color:var(--jd-gray-500);font-size:0.9rem;">No related jobs found.</p>
+            {% endif %}
+        </aside>
+
+        <!-- RIGHT: main content -->
+        <div class="jd-right">
+
+            <!-- Slider (conditionally show cards) -->
+            <div class="jd-slider-grid">
+                {% if job.experience_level or job.contract_experience_level %}
+                <div class="jd-slider-card">
+                    <div class="label">Experience</div>
+                    <div class="value">
+                        {% if job.experience_level %}
+                        {{ job.get_experience_level_display }}
+                        {% elif job.contract_experience_level %}
+                        {{ job.get_contract_experience_level_display }}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if job.employment_type %}
+                <div class="jd-slider-card">
+                    <div class="label">Job Type</div>
+                    <div class="value">{{ job.get_employment_type_display }}</div>
+                </div>
+                {% endif %}
+
+                {% if job.work_type %}
+                <div class="jd-slider-card">
+                    <div class="label">Work Type</div>
+                    <div class="value">{{ job.get_work_type_display }}</div>
+                </div>
+                {% endif %}
+
+                {% if job.salary_range or job.salary_min or job.hourly_rate or job.payment_amount or job.budget_min %}
+                <div class="jd-slider-card">
+                    <div class="label">Salary</div>
+                    <div class="value">
+                        {% if job.salary_range %}
+                        {{ job.salary_range }}
+                        {% elif job.salary_min and job.salary_max %}
+                        {{ job.salary_currency|default:'$' }}{{ job.salary_min|floatformat:0 }} – {{ job.salary_currency|default:'$' }}{{ job.salary_max|floatformat:0 }}
+                        {% if job.salary_period %}/{{ job.get_salary_period_display }}{% endif %}
+                        {% elif job.hourly_rate %}
+                        ${{ job.hourly_rate|floatformat:2 }}/hr
+                        {% elif job.payment_amount %}
+                        ${{ job.payment_amount|floatformat:0 }}/{{ job.get_payment_method_display|default:'day' }}
+                        {% elif job.budget_min and job.budget_max %}
+                        ${{ job.budget_min|floatformat:0 }} – ${{ job.budget_max|floatformat:0 }}
+                        {% else %}
+                        Not specified
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Content Row -->
+            <div class="jd-content-row">
+                <!-- Left column: Description, Requirements, Benefits -->
+                <div class="jd-content-main">
+                    <!-- Description (always) -->
+                    <div class="jd-card">
+                        <h2><i class="fas fa-align-left"></i> Description</h2>
+                        <p class="text">{{ job.description|linebreaks }}</p>
+                    </div>
+
+                    <!-- Requirements (only if present) -->
+                    {% if job.requirements %}
+                    <div class="jd-card">
+                        <h2><i class="fas fa-list-ol"></i> Requirements</h2>
+                        <ol class="jd-requirements-list">
+                            {% for req in job.requirements|splitlines %}
+                            <li>{{ req }}</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    {% endif %}
+
+                    <!-- Benefits (only if present) -->
+                    {% if job.benefits %}
+                    <div class="jd-card">
+                        <h2><i class="fas fa-gift"></i> Benefits</h2>
+                        <ul class="jd-benefits-list">
+                            {% for benefit in job.benefits|splitlines %}
+                            <li><i class="fas fa-check-circle"></i> {{ benefit }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Right sidebar – reordered: Additional Details, Share, Performance -->
+                <div class="jd-content-side">
+                    <!-- Additional Details (top) -->
+                    <div class="jd-details-box">
+                        <h4><i class="fas fa-ellipsis-h"></i> Additional Details</h4>
+                        <div class="detail-item">
+                            <span class="label">Status</span>
+                            <span class="value">
+                                <span class="badge-status {% if job.is_active %}active{% else %}" style="background:rgba(239,68,68,0.15);color:#ef4444;{% endif %}">
+                                    {% if job.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </span>
+                        </div>
+                        {% if job.is_featured %}
+                        <div class="detail-item">
+                            <span class="label">Featured</span>
+                            <span class="value"><span class="badge-status featured">Yes</span></span>
+                        </div>
+                        {% endif %}
+                        {% if job.is_urgent %}
+                        <div class="detail-item">
+                            <span class="label">Urgent</span>
+                            <span class="value"><span class="badge-status urgent">Yes</span></span>
+                        </div>
+                        {% endif %}
+                        {% if job.expires_at %}
+                        <div class="detail-item">
+                            <span class="label">Expires</span>
+                            <span class="value">{{ job.expires_at|date:"M d, Y" }}</span>
+                        </div>
+                        {% endif %}
+                        {% if job.contact_email %}
+                        <div class="detail-item">
+                            <span class="label">Contact Email</span>
+                            <span class="value"><a href="mailto:{{ job.contact_email }}" style="color:var(--jd-primary);">{{ job.contact_email }}</a></span>
+                        </div>
+                        {% endif %}
+                        {% if job.contact_phone %}
+                        <div class="detail-item">
+                            <span class="label">Contact Phone</span>
+                            <span class="value">{{ job.contact_phone }}</span>
+                        </div>
+                        {% endif %}
+                        {% if job.company_website %}
+                        <div class="detail-item">
+                            <span class="label">Website</span>
+                            <span class="value"><a href="{{ job.company_website }}" target="_blank" style="color:var(--jd-primary);">Visit</a></span>
+                        </div>
+                        {% endif %}
+                        {% if job.apply_url %}
+                        <div class="detail-item">
+                            <span class="label">Apply URL</span>
+                            <span class="value"><a href="{{ job.apply_url }}" target="_blank" style="color:var(--jd-primary);">Apply link</a></span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Share (middle) -->
+                    <div class="jd-share-box">
+                        <h4><i class="fas fa-share-alt"></i> Share</h4>
+                        <div class="jd-share-links">
+                            <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ job.title }} at {{ job.company }}" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="mailto:?subject={{ job.title }} at {{ job.company }}&body=Check out this job: {{ request.build_absolute_uri }}" title="Email"><i class="fas fa-envelope"></i></a>
+                            <button onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}')" title="Copy link" style="background:var(--jd-gray-100);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;transition:var(--jd-transition);color:var(--jd-gray-600);font-size:0.9rem;">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Performance (bottom) -->
+                    <div class="jd-stats-box">
+                        <h4><i class="fas fa-chart-simple"></i> Performance</h4>
+                        <div class="jd-stats-grid">
+                            <div class="jd-stat-item">
+                                <span class="number">{{ job.views }}</span>
+                                <span class="label"><i class="far fa-eye"></i> Views</span>
+                            </div>
+                            <div class="jd-stat-item">
+                                <span class="number">{{ job.likes }}</span>
+                                <span class="label"><i class="fas fa-heart"></i> Likes</span>
+                            </div>
+                            <div class="jd-stat-item">
+                                <span class="number">{{ job.clicks }}</span>
+                                <span class="label"><i class="fas fa-mouse-pointer"></i> Clicks</span>
+                            </div>
+                        </div>
+                        {% if is_owner %}
+                        <a href="{% url 'my_job_analytics' job.slug %}" style="display:block;text-align:center;margin-top:0.5rem;font-size:0.75rem;color:var(--jd-primary);text-decoration:none;font-weight:600;">View full analytics →</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
             <!-- Comments -->
-            <div class="jd-section jd-animate delay-2">
+            <div class="jd-card">
                 <h2>
                     <i class="fas fa-comments"></i> Comments
-                    <span style="font-size:0.7rem;background:rgba(0,0,0,0.06);color:var(--jd-gray-500);padding:0.05rem 0.5rem;border-radius:10px;font-weight:500;margin-left:0.25rem;">{{ comments.count }}</span>
+                    <span style="font-size:0.7rem;background:var(--jd-gray-100);color:var(--jd-gray-500);padding:0.05rem 0.6rem;border-radius:10px;font-weight:500;margin-left:0.25rem;">{{ comments|length }}</span>
                 </h2>
 
                 {% if user.is_authenticated %}
                 <form method="POST" action="{% url 'comment_job' job.slug %}" class="jd-comment-form">
                     {% csrf_token %}
                     {{ comment_form.comment }}
-                    <button type="submit" class="jd-btn-submit">
-                        <i class="fas fa-paper-plane"></i> Post Comment
-                    </button>
+                    <button type="submit" class="jd-btn-submit"><i class="fas fa-paper-plane"></i> Post Comment</button>
                 </form>
                 {% else %}
                 <p style="color: var(--jd-gray-500); margin-bottom: 0.5rem; font-size: 0.9rem;">
@@ -1079,14 +1117,12 @@
                 </p>
                 {% endif %}
 
-                <div style="margin-top: 1.25rem;">
+                <div>
                     {% if comments %}
                     <ul class="jd-comment-list">
                         {% for comment in comments %}
                         <li class="jd-comment-item">
-                            <div class="jd-comment-avatar">
-                                {{ comment.user.username|slice:":1"|upper }}
-                            </div>
+                            <div class="jd-comment-avatar">{{ comment.user.username|slice:":1"|upper }}</div>
                             <div class="jd-comment-content">
                                 <div>
                                     <span class="jd-comment-author">{{ comment.user.username }}</span>
@@ -1100,129 +1136,23 @@
                     {% else %}
                     <div class="jd-empty-comments">
                         <i class="fas fa-comment-slash"></i>
-                        <p>No comments yet. Be the first to share your thoughts!</p>
+                        <p>No comments yet. Be the first!</p>
                     </div>
                     {% endif %}
                 </div>
             </div>
-        </div>
-
-        <!-- ===== RIGHT COLUMN - SIDEBAR ===== -->
-        <div class="jd-sidebar">
-            <!-- Quick Info -->
-            <div class="jd-sidebar-card jd-animate delay-1">
-                <h3><i class="fas fa-circle-info"></i> Quick Info</h3>
-                <ul class="jd-info-list">
-                    <li><span class="label">Company</span><span class="value">{{ job.company }}</span></li>
-                    <li><span class="label">Location</span><span class="value">{{ job.location }}</span></li>
-                    <li><span class="label">Employment Type</span><span class="value">{{ job.get_employment_type_display }}</span></li>
-                    <li><span class="label">Work Location</span><span class="value">{{ job.get_work_location_display }}</span></li>
-
-                    <!-- Full-Time/Part-Time -->
-                    {% if job.salary %}
-                    <li><span class="label">Salary</span><span class="value">{{ job.salary }}</span></li>
-                    {% endif %}
-
-                    <!-- Contract -->
-                    {% if job.contract_type %}
-                    <li><span class="label">Contract Type</span><span class="value">{{ job.get_contract_type_display }}</span></li>
-                    {% endif %}
-                    {% if job.budget_min or job.budget_max %}
-                    <li><span class="label">Budget</span><span class="value">
-                        {% if job.budget_min and job.budget_max %}
-                            ${{ job.budget_min }} - ${{ job.budget_max }}
-                        {% elif job.budget_max %}
-                            Up to ${{ job.budget_max }}
-                        {% else %}
-                            Negotiable
-                        {% endif %}
-                    </span></li>
-                    {% endif %}
-                    {% if job.experience_level %}
-                    <li><span class="label">Experience</span><span class="value">{{ job.get_experience_level_display }}</span></li>
-                    {% endif %}
-                    {% if job.duration_type %}
-                    <li><span class="label">Duration</span><span class="value">{{ job.get_duration_type_display }}</span></li>
-                    {% endif %}
-
-                    <!-- Daily -->
-                    {% if job.payment_amount %}
-                    <li><span class="label">Payment</span><span class="value">${{ job.payment_amount }}/{{ job.get_payment_method_display|default:'day' }}</span></li>
-                    {% endif %}
-                    {% if job.start_date %}
-                    <li><span class="label">Start Date</span><span class="value">{{ job.start_date|date:"M d, Y" }}</span></li>
-                    {% endif %}
-                    {% if job.end_date %}
-                    <li><span class="label">End Date</span><span class="value">{{ job.end_date|date:"M d, Y" }}</span></li>
-                    {% endif %}
-                    {% if job.working_hours %}
-                    <li><span class="label">Working Hours</span><span class="value">{{ job.working_hours }}</span></li>
-                    {% endif %}
-
-                    <li><span class="label">Posted</span><span class="value">{{ job.posted_at|date:"M d, Y" }}</span></li>
-                </ul>
-            </div>
-
-            <!-- Performance Stats -->
-            <div class="jd-sidebar-card jd-animate delay-2">
-                <h3><i class="fas fa-chart-simple"></i> Performance</h3>
-                <div class="jd-analytics-grid">
-                    <div class="jd-stat">
-                        <span class="number">{{ analytics.views }}</span>
-                        <span class="label"><i class="far fa-eye"></i> Views</span>
-                    </div>
-                    <div class="jd-stat">
-                        <span class="number">{{ analytics.likes }}</span>
-                        <span class="label"><i class="fas fa-heart"></i> Likes</span>
-                    </div>
-                    <div class="jd-stat">
-                        <span class="number">{{ analytics.comments_count }}</span>
-                        <span class="label"><i class="fas fa-comment"></i> Comments</span>
-                    </div>
-                    <div class="jd-stat">
-                        <span class="number">{{ analytics.clicks }}</span>
-                        <span class="label"><i class="fas fa-mouse-pointer"></i> Clicks</span>
-                    </div>
-                </div>
-                {% if is_owner %}
-                <a href="{% url 'my_job_analytics' job.slug %}" class="jd-btn-analytics">
-                    <i class="fas fa-chart-line"></i> View Full Analytics
-                </a>
-                {% endif %}
-            </div>
-
-            <!-- Apply Now -->
-            {% if job.apply_url %}
-            <div class="jd-apply-card jd-animate delay-3">
-                <h3>🚀 Ready to Apply?</h3>
-                <p>Don't miss this opportunity. Apply now!</p>
-                <a href="{% url 'track_click' job.slug %}?type=apply" target="_blank" class="jd-btn-apply">
-                    Apply Now <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-            {% endif %}
-
-            <!-- Company Website -->
-            {% if job.company_website %}
-            <div class="jd-sidebar-card jd-animate delay-3">
-                <a href="{% url 'track_click' job.slug %}?type=website" target="_blank" class="jd-company-link">
-                    <i class="fas fa-globe"></i> Visit Company Website
-                    <i class="fas fa-external-link-alt" style="font-size:0.65rem;opacity:0.5;"></i>
-                </a>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>
 
-<!-- ===== JAVASCRIPT ===== -->
+<!-- ===== JAVASCRIPT (unchanged) ===== -->
 <script>
-    function toggleLike(slug, button) {
+    // ========== LIKE ==========
+    function toggleLike(slug, btn) {
         {% if not user.is_authenticated %}
             window.location.href = '/login/';
             return;
         {% endif %}
-
         fetch(`/jobs/${slug}/like/`, {
             method: 'POST',
             headers: {
@@ -1230,37 +1160,33 @@
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
             if (data.status === 'success') {
+                const span = btn.querySelector('span');
                 if (data.liked) {
-                    button.innerHTML = '<i class="fas fa-heart"></i> Liked';
-                    button.classList.add('liked');
+                    btn.classList.add('liked');
+                    span.textContent = 'Liked';
                     showToast(data.message, 'success');
                 } else {
-                    button.innerHTML = '<i class="fas fa-heart"></i> Like';
-                    button.classList.remove('liked');
+                    btn.classList.remove('liked');
+                    span.textContent = 'Like';
                     showToast(data.message, 'info');
                 }
-                // Update like count in analytics
-                const likeStat = document.querySelector('.jd-analytics-grid .jd-stat:nth-child(2) .number');
-                if (likeStat) {
-                    likeStat.textContent = data.likes_count;
-                }
+                // update stats
+                const likeStat = document.querySelector('.jd-stat-item:nth-child(2) .number');
+                if (likeStat) likeStat.textContent = data.likes_count;
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Something went wrong. Please try again.', 'error');
-        });
+        .catch(() => showToast('Something went wrong.', 'error'));
     }
 
-    function toggleSave(slug, button) {
+    // ========== SAVE ==========
+    function toggleSave(slug, btn) {
         {% if not user.is_authenticated %}
             window.location.href = '/login/';
             return;
         {% endif %}
-
         fetch(`/jobs/${slug}/save/`, {
             method: 'POST',
             headers: {
@@ -1268,87 +1194,66 @@
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
             if (data.status === 'success') {
+                const span = btn.querySelector('span');
                 if (data.saved) {
-                    button.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
-                    button.classList.add('saved');
-                    showToast('Job saved successfully! ✅', 'success');
+                    btn.classList.add('saved');
+                    span.textContent = 'Saved';
+                    showToast('Job saved! ✅', 'success');
                 } else {
-                    button.innerHTML = '<i class="fas fa-bookmark"></i> Save';
-                    button.classList.remove('saved');
-                    showToast('Job removed from saved.', 'info');
+                    btn.classList.remove('saved');
+                    span.textContent = 'Save';
+                    showToast('Removed from saved.', 'info');
                 }
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Something went wrong. Please try again.', 'error');
-        });
+        .catch(() => showToast('Something went wrong.', 'error'));
     }
 
+    // ========== UTILITIES ==========
     function getCookie(name) {
-        let cookieValue = null;
+        let v = null;
         if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
+            document.cookie.split(';').forEach(c => {
+                const [k, val] = c.trim().split('=');
+                if (k === name) v = decodeURIComponent(val);
+            });
         }
-        return cookieValue;
+        return v;
     }
 
-    function showToast(message, type = 'success') {
-        const colors = {
-            success: '#10b981',
-            error: '#ef4444',
-            info: '#3b82f6',
-            warning: '#f59e0b'
-        };
-        const toast = document.createElement('div');
-        toast.style.cssText = `
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: ${colors[type] || colors.success};
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            z-index: 9999;
+    function showToast(msg, type='success') {
+        const colors = { success:'#10b981', error:'#ef4444', info:'#3b82f6', warning:'#f59e0b' };
+        const el = document.createElement('div');
+        el.style.cssText = `
+            position: fixed; bottom: 30px; right: 30px;
+            background: ${colors[type] || colors.success}; color: #fff;
+            padding: 1rem 1.5rem; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 9999;
             animation: slideInToast 0.3s ease-out;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.95rem;
-            max-width: 400px;
+            font-weight: 500; display: flex; align-items: center;
+            gap: 0.75rem; font-size: 0.95rem; max-width: 400px;
         `;
-        toast.innerHTML = `<span>${message}</span>`;
-        document.body.appendChild(toast);
-
+        el.innerHTML = `<span>${msg}</span>`;
+        document.body.appendChild(el);
         setTimeout(() => {
-            toast.style.animation = 'slideOutToast 0.3s ease-out forwards';
-            setTimeout(() => toast.remove(), 300);
+            el.style.animation = 'slideOutToast 0.3s ease-out forwards';
+            setTimeout(() => el.remove(), 300);
         }, 3500);
     }
 
-    const toastStyle = document.createElement('style');
-    toastStyle.textContent = `
-        @keyframes slideInToast {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+    (function() {
+        if (!document.getElementById('jd-toast-style')) {
+            const style = document.createElement('style');
+            style.id = 'jd-toast-style';
+            style.textContent = `
+                @keyframes slideInToast { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+                @keyframes slideOutToast { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+            `;
+            document.head.appendChild(style);
         }
-        @keyframes slideOutToast {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-    `;
-    document.head.appendChild(toastStyle);
+    })();
 </script>
 {% endblock %}

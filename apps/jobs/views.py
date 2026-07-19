@@ -21,7 +21,7 @@ class JobListView(ListView):
     model = Job
     template_name = 'jobs/job_list.html'
     context_object_name = 'jobs'
-    paginate_by = 15
+    paginate_by = 30
 
     def get_queryset(self):
         queryset = Job.objects.filter(is_active=True)

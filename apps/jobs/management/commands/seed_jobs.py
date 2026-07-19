@@ -15,14 +15,14 @@ class Command(BaseCommand):
         parser.add_argument(
             '--jobs',
             type=int,
-            default=50,
-            help='Number of fake jobs to create (default: 50)'
+            default=500,                     # ← changed from 50 to 500
+            help='Number of fake jobs to create (default: 500)'
         )
         parser.add_argument(
             '--internships',
             type=int,
-            default=20,
-            help='Number of fake internships to create (default: 20)'
+            default=500,                     # ← changed from 20 to 500
+            help='Number of fake internships to create (default: 500)'
         )
         parser.add_argument(
             '--delete',
@@ -36,6 +36,7 @@ class Command(BaseCommand):
         delete_existing = options['delete']
 
         self.stdout.write(self.style.WARNING('🚀 Generating fake data...'))
+        self.stdout.write(self.style.WARNING(f'📊 Jobs: {job_count} | Internships: {internship_count}'))
 
         # Get or create a test user
         user, created = User.objects.get_or_create(
@@ -274,7 +275,7 @@ class Command(BaseCommand):
             job.save()
             jobs_created += 1
 
-            if jobs_created % 10 == 0:
+            if jobs_created % 50 == 0:
                 self.stdout.write(f'  Created {jobs_created} jobs...')
 
         return jobs_created
@@ -334,7 +335,6 @@ class Command(BaseCommand):
             days_ago = random.randint(0, 30)
             posted_at = timezone.now() - timedelta(days=days_ago)
 
-            # Only use fields that exist in your Internship model
             internship_data = {
                 'title': random.choice(internship_titles),
                 'company': random.choice(companies),
@@ -353,7 +353,7 @@ class Command(BaseCommand):
                 ]),
                 'posted_at': posted_at,
                 'is_active': True,
-                # If your Internship model has these fields, uncomment them
+                # If your model has these fields, uncomment:
                 # 'is_user_submitted': True,
                 # 'posted_by': user,
                 # 'apply_url': f'https://{random.choice(companies).lower()}.com/internships/{i}',
@@ -361,12 +361,11 @@ class Command(BaseCommand):
                 # 'contact_email': f'hr@{random.choice(companies).lower()}.com',
             }
 
-            # Create internship with only valid fields
             internship = Internship(**internship_data)
             internship.save()
             internships_created += 1
 
-            if internships_created % 5 == 0:
+            if internships_created % 50 == 0:
                 self.stdout.write(f'  Created {internships_created} internships...')
 
         return internships_created

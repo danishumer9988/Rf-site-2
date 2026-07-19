@@ -7,6 +7,7 @@ from django.conf import settings
 from django.utils.text import slugify
 from django.utils import timezone
 from django.utils.html import format_html
+from django.template.response import TemplateResponse
 from .models import (
     Job, JobApplication, SavedJob, JobComment, JobLike, JobView,
     JobClick
@@ -37,9 +38,15 @@ class JobAdmin(admin.ModelAdmin):
     list_per_page = 25
     readonly_fields = ('posted_at', 'views', 'likes', 'clicks', 'applications_count')
 
+    # ----------------------------------------------
+    # FIELDSETS – separate per type (ordered: Full Time, Part Time, Daily, Contract)
+    # ----------------------------------------------
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'slug', 'company', 'location', 'work_type', 'category')
+            'fields': (
+                'title', 'slug', 'company', 'location', 'work_type',
+                'category', 'employment_type', 'is_remote'
+            )
         }),
         ('Content', {
             'fields': ('description', 'requirements')
@@ -50,33 +57,103 @@ class JobAdmin(admin.ModelAdmin):
         ('Status & Expiry', {
             'fields': ('is_active', 'is_featured', 'is_urgent', 'expires_at', 'posted_at')
         }),
-        ('Full Time / Part Time Details', {
-            'fields': ('employment_type', 'experience_level', 'salary_min', 'salary_max',
-                       'salary_currency', 'salary_period', 'benefits', 'is_remote',
-                       'shift_type', 'hours_per_week', 'hourly_rate', 'salary_range',
-                       'currency', 'is_flexible_schedule', 'is_weekend_available', 'is_immediate'),
-            'classes': ('collapse',)
+        # ---- Full Time Details (visible only when employment_type == 'full_time') ----
+        ('Full Time Details', {
+            'fields': (
+                'experience_level', 'salary_min', 'salary_max',
+                'salary_currency', 'salary_period', 'benefits'
+            ),
+            'classes': ('fieldset-job-type-full_time',),
         }),
+        # ---- Part Time Details (visible only when employment_type == 'part_time') ----
+        ('Part Time Details', {
+            'fields': (
+                'shift_type', 'hours_per_week', 'hourly_rate', 'salary_range',
+                'currency', 'is_flexible_schedule', 'is_weekend_available', 'is_immediate'
+            ),
+            'classes': ('fieldset-job-type-part_time',),
+        }),
+        # ---- Daily Wage Details (visible only when employment_type == 'daily') ----
         ('Daily Wage Details', {
-            'fields': ('payment_method', 'payment_amount', 'start_date', 'end_date',
-                       'working_hours', 'is_immediate_joining'),
-            'classes': ('collapse',)
+            'fields': (
+                'payment_method', 'payment_amount', 'start_date', 'end_date',
+                'working_hours', 'is_immediate_joining'
+            ),
+            'classes': ('fieldset-job-type-daily',),
         }),
+        # ---- Contract Details (visible only when employment_type == 'contract') ----
         ('Contract Details', {
-            'fields': ('contract_type', 'budget_min', 'budget_max', 'contract_currency',
-                       'contract_experience_level', 'duration_type', 'estimated_duration',
-                       'contract_start_date', 'contract_end_date', 'is_contract_remote',
-                       'is_contract_urgent'),
-            'classes': ('collapse',)
+            'fields': (
+                'contract_type', 'budget_min', 'budget_max', 'contract_currency',
+                'contract_experience_level', 'duration_type', 'estimated_duration',
+                'contract_start_date', 'contract_end_date', 'is_contract_remote',
+                'is_contract_urgent'
+            ),
+            'classes': ('fieldset-job-type-contract',),
         }),
         ('Analytics', {
             'fields': ('views', 'likes', 'clicks', 'applications_count'),
-            'classes': ('collapse',)
+            'classes': ('collapse',),
         }),
     )
 
+    # ----------------------------------------------
+    # DYNAMIC FIELD TOGGLING (JavaScript)
+    # ----------------------------------------------
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        response = super().changeform_view(request, object_id, form_url, extra_context)
+
+        if request.method == 'GET' and isinstance(response, TemplateResponse):
+            response.render()
+
+            script = """
+            <script>
+            (function($) {
+                $(document).ready(function() {
+                    var typeField = $('#id_employment_type');
+
+                    function toggleFields() {
+                        var val = typeField.val();
+
+                        // Hide all type-specific fieldsets
+                        $('.fieldset-job-type-full_time, .fieldset-job-type-part_time, '
+                          + '.fieldset-job-type-daily, .fieldset-job-type-contract').hide();
+
+                        // Show the relevant one based on selected value
+                        if (val === 'full_time') {
+                            $('.fieldset-job-type-full_time').show();
+                        } else if (val === 'part_time') {
+                            $('.fieldset-job-type-part_time').show();
+                        } else if (val === 'daily') {
+                            $('.fieldset-job-type-daily').show();
+                        } else if (val === 'contract') {
+                            $('.fieldset-job-type-contract').show();
+                        } else {
+                            // If empty or unknown, show all (to avoid hiding existing data)
+                            $('.fieldset-job-type-full_time, .fieldset-job-type-part_time, '
+                              + '.fieldset-job-type-daily, .fieldset-job-type-contract').show();
+                        }
+                    }
+
+                    typeField.on('change', toggleFields);
+                    toggleFields();  // apply on page load
+                });
+            })(django.jQuery);
+            </script>
+            """
+
+            content = response.content.decode('utf-8')
+            if '</body>' in content:
+                content = content.replace('</body>', script + '</body>')
+                response.content = content.encode('utf-8')
+
+        return response
+
+    # ----------------------------------------------
+    # CUSTOM DISPLAY METHODS
+    # ----------------------------------------------
+
     def job_type_display(self, obj):
-        """Determine job type from populated fields"""
         if obj.employment_type == 'full_time':
             return '💼 Full Time'
         elif obj.employment_type == 'part_time':
@@ -140,6 +217,10 @@ class JobAdmin(admin.ModelAdmin):
                 )
         return format_html('<span style="color: #6b7280;">No expiry set</span>')
     expiry_status_display.short_description = 'Expiry Status'
+
+    # ----------------------------------------------
+    # ACTIONS
+    # ----------------------------------------------
 
     actions = ['make_active', 'make_inactive', 'extend_expiry']
 
@@ -370,7 +451,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
                     'expires_at': timezone.now() + timezone.timedelta(days=30),
                 }
 
-                # Full Time / Part Time fields
                 if obj.employment_type:
                     job_data['employment_type'] = obj.employment_type
                     job_data['experience_level'] = obj.experience_level
@@ -389,7 +469,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
                     job_data['is_weekend_available'] = obj.is_weekend_available
                     job_data['is_immediate'] = obj.is_immediate
 
-                # Daily Wage fields
                 if obj.payment_method:
                     job_data['payment_method'] = obj.payment_method
                     job_data['payment_amount'] = obj.payment_amount
@@ -398,7 +477,6 @@ class JobApplicationAdmin(admin.ModelAdmin):
                     job_data['working_hours'] = obj.working_hours
                     job_data['is_immediate_joining'] = obj.is_immediate_joining
 
-                # Contract fields
                 if obj.contract_type:
                     job_data['contract_type'] = obj.contract_type
                     job_data['budget_min'] = obj.budget_min

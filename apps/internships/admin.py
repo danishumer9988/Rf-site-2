@@ -11,7 +11,11 @@ class InternshipAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'posted_at'
     list_per_page = 25
+    readonly_fields = ('posted_at', 'views', 'likes', 'clicks', 'applications_count', 'field_purpose')
 
+    # ----------------------------------------------
+    # FIELDSETS – organised and with purpose note
+    # ----------------------------------------------
     fieldsets = (
         ('Basic Information', {
             'fields': ('title', 'slug', 'company', 'location', 'type', 'internship_type', 'category')
@@ -30,9 +34,35 @@ class InternshipAdmin(admin.ModelAdmin):
             'fields': ('views', 'likes', 'clicks', 'applications_count'),
             'classes': ('wide',)
         }),
+        # ---- Purpose note at the bottom ----
+        ('📖 Purpose of Fields', {
+            'fields': ('field_purpose',),
+            'classes': ('collapse',),
+        }),
     )
 
-    readonly_fields = ('posted_at', 'views', 'likes', 'clicks', 'applications_count')
+    # ----------------------------------------------
+    # CUSTOM METHOD FOR PURPOSE NOTE
+    # ----------------------------------------------
+    def field_purpose(self, obj):
+        return format_html("""
+            <div style="background: #f8f9fa; padding: 15px 20px; border-radius: 8px; border-left: 4px solid #2563eb; margin: 5px 0;">
+                <h4 style="margin-top:0; color: #1e293b;">Why these fields?</h4>
+                <ul style="margin-bottom:0; padding-left:20px; line-height:1.8;">
+                    <li><strong>Type</strong> – Remote or Physical – indicates where the internship takes place.</li>
+                    <li><strong>Internship Type</strong> – Full-Time or Part-Time – defines the weekly commitment.</li>
+                    <li><strong>Stipend</strong> – The financial compensation (monthly, fixed, or range).</li>
+                    <li><strong>Duration</strong> – How long the internship lasts (e.g., 3 months, 6 months).</li>
+                    <li><strong>Apply URL</strong> – Link where candidates can apply directly.</li>
+                    <li><strong>Company Website</strong> – For additional company information.</li>
+                </ul>
+            </div>
+        """)
+    field_purpose.short_description = ''
+
+    # ----------------------------------------------
+    # CUSTOM DISPLAY METHODS
+    # ----------------------------------------------
 
     def type_badge(self, obj):
         colors = {
@@ -59,6 +89,10 @@ class InternshipAdmin(admin.ModelAdmin):
         )
     internship_type_badge.short_description = 'Employment Type'
     internship_type_badge.admin_order_field = 'internship_type'
+
+    # ----------------------------------------------
+    # ACTIONS
+    # ----------------------------------------------
 
     actions = ['make_active', 'make_inactive', 'mark_as_remote', 'mark_as_physical', 'mark_as_full_time', 'mark_as_part_time']
 
