@@ -7,7 +7,7 @@
     <title>{% if action == 'Add' %}Add New{% else %}Edit{% endif %} Internship - Admin - JobLidar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* ===== SAME FORM STYLES AS JOB_FORM ===== */
+        /* ===== SAME FORM STYLES ===== */
         :root {
             --primary: #2563eb; --primary-dark: #1d4ed8;
             --success: #10b981; --success-bg: #d1fae5;
@@ -76,14 +76,6 @@
         .badge-edit { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); padding: 0.3rem 0.85rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
 
         .form-body { padding: 2.5rem; }
-        .form-section { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--gray-100); }
-        .form-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
-        .section-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
-        .section-icon.basic { background: var(--info-bg); color: var(--primary); }
-        .section-icon.details { background: var(--success-bg); color: var(--success); }
-        .section-icon.settings { background: var(--warning-bg); color: var(--warning); }
-
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
         .form-group { display: flex; flex-direction: column; }
         .form-group.full-width { grid-column: 1 / -1; }
@@ -101,7 +93,6 @@
         .form-group textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
         .form-group .help-text { font-size: 0.78rem; color: var(--gray-400); margin-top: 0.3rem; }
         .form-group .char-count { font-size: 0.75rem; color: var(--gray-400); text-align: right; margin-top: 0.25rem; }
-
         .checkbox-group {
             display: flex; align-items: center; gap: 0.65rem;
             padding: 0.75rem 1rem; background: var(--gray-50);
@@ -128,7 +119,6 @@
 </head>
 <body>
 <div class="form-wrapper">
-    <!-- Top Navigation -->
     <div class="top-nav">
         <div class="breadcrumb">
             <a href="/">🏠 Home</a> <span class="separator">›</span>
@@ -156,87 +146,94 @@
             <form method="POST" id="internshipForm">
                 {% csrf_token %}
 
-                <!-- Section 1: Basic Information -->
-                <div class="form-section" id="section1">
-                    <h3 class="section-title"><span class="section-icon basic">📋</span> Basic Information</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Title <span class="required">*</span></label>
-                            {{ form.title }}
-                            <span class="char-count" id="titleCount">0/200</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Company <span class="required">*</span></label>
-                            {{ form.company }}
-                        </div>
-                        <div class="form-group">
-                            <label>Location <span class="optional">(optional)</span></label>
-                            {{ form.location }}
-                        </div>
-                        <div class="form-group">
-                            <label>Stipend <span class="optional">(optional)</span></label>
-                            {{ form.stipend }}
-                            <span class="help-text">e.g., $1000/month</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Duration <span class="optional">(optional)</span></label>
-                            {{ form.duration }}
-                            <span class="help-text">e.g., 3 months</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Work Type <span class="required">*</span></label>
-                            {{ form.type }}
-                            <span class="help-text">Remote or On-Site</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Internship Type <span class="required">*</span></label>
-                            {{ form.internship_type }}
-                            <span class="help-text">Full-Time or Part-Time</span>
-                        </div>
-                        <div class="form-group">
-                            <label>Category <span class="optional">(optional)</span></label>
-                            {{ form.category }}
-                        </div>
+                <div class="form-grid">
+                    <!-- Title -->
+                    <div class="form-group full-width">
+                        <label>Title <span class="required">*</span></label>
+                        {{ form.title }}
+                        <span class="char-count" id="titleCount">0/200</span>
+                        {% if form.title.errors %}
+                        <span class="error-text" style="color:var(--danger);font-size:0.8rem;">⚠️ {{ form.title.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    <!-- Company -->
+                    <div class="form-group">
+                        <label>Company <span class="required">*</span></label>
+                        {{ form.company }}
+                        {% if form.company.errors %}
+                        <span class="error-text" style="color:var(--danger);font-size:0.8rem;">⚠️ {{ form.company.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    <!-- Location -->
+                    <div class="form-group">
+                        <label>Location <span class="optional">(optional)</span></label>
+                        {{ form.location }}
+                    </div>
+                    <!-- Stipend -->
+                    <div class="form-group">
+                        <label>Stipend <span class="optional">(optional)</span></label>
+                        {{ form.stipend }}
+                        <span class="help-text">e.g., $1000/month</span>
+                    </div>
+                    <!-- Duration -->
+                    <div class="form-group">
+                        <label>Duration <span class="optional">(optional)</span></label>
+                        {{ form.duration }}
+                        <span class="help-text">e.g., 3 months</span>
+                    </div>
+                    <!-- Work Type -->
+                    <div class="form-group">
+                        <label>Work Type <span class="required">*</span></label>
+                        {{ form.type }}
+                        <span class="help-text">Remote or On-Site</span>
+                    </div>
+                    <!-- Internship Type -->
+                    <div class="form-group">
+                        <label>Internship Type <span class="required">*</span></label>
+                        {{ form.internship_type }}
+                        <span class="help-text">Full-Time or Part-Time</span>
+                    </div>
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label>Category <span class="optional">(optional)</span></label>
+                        {{ form.category }}
+                    </div>
+                    <!-- Description -->
+                    <div class="form-group full-width">
+                        <label>Description <span class="required">*</span></label>
+                        {{ form.description }}
+                        <span class="char-count" id="descCount">0 characters</span>
+                        {% if form.description.errors %}
+                        <span class="error-text" style="color:var(--danger);font-size:0.8rem;">⚠️ {{ form.description.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    <!-- Requirements -->
+                    <div class="form-group full-width">
+                        <label>Requirements <span class="optional">(optional)</span></label>
+                        {{ form.requirements }}
+                    </div>
+                    <!-- Apply URL -->
+                    <div class="form-group">
+                        <label>Apply URL <span class="optional">(optional)</span></label>
+                        {{ form.apply_url }}
+                    </div>
+                    <!-- Company Website -->
+                    <div class="form-group">
+                        <label>Company Website <span class="optional">(optional)</span></label>
+                        {{ form.company_website }}
+                    </div>
+                    <!-- Expiry Date -->
+                    <div class="form-group">
+                        <label>Expiry Date <span class="optional">(optional)</span></label>
+                        {{ form.expires_at }}
+                        <span class="help-text">Leave blank for no expiry</span>
                     </div>
                 </div>
 
-                <!-- Section 2: Details -->
-                <div class="form-section" id="section2">
-                    <h3 class="section-title"><span class="section-icon details">📝</span> Internship Details</h3>
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label>Description <span class="required">*</span></label>
-                            {{ form.description }}
-                            <span class="char-count" id="descCount">0 characters</span>
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Requirements <span class="optional">(optional)</span></label>
-                            {{ form.requirements }}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 3: Links & Settings -->
-                <div class="form-section" id="section3">
-                    <h3 class="section-title"><span class="section-icon settings">🔗</span> Links & Settings</h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Apply URL <span class="optional">(optional)</span></label>
-                            {{ form.apply_url }}
-                        </div>
-                        <div class="form-group">
-                            <label>Company Website <span class="optional">(optional)</span></label>
-                            {{ form.company_website }}
-                        </div>
-                        <div class="form-group">
-                            <label>Expiry Date <span class="optional">(optional)</span></label>
-                            {{ form.expires_at }}
-                        </div>
-                    </div>
-                    <div class="checkbox-group" style="margin-top:1.25rem;">
-                        {{ form.is_active }}
-                        <label><strong>Publish Immediately</strong> <span style="display:block;font-size:0.78rem;color:var(--gray-400);font-weight:400;">Make this internship visible to all users</span></label>
-                    </div>
+                <!-- Publish Status -->
+                <div class="checkbox-group" style="margin-top:1.5rem;">
+                    {{ form.is_active }}
+                    <label><strong>Publish Immediately</strong> <span style="display:block;font-size:0.78rem;color:var(--gray-400);font-weight:400;">Make this internship visible to all users</span></label>
                 </div>
 
                 <!-- Form Actions -->
