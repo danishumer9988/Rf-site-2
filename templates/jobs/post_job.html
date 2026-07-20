@@ -3,131 +3,15 @@
 
 {% block title %}Post a Job - JobLidar{% endblock %}
 
-{% block content %}
+{% block extra_css %}
+<!-- intl-tel-input CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@29.1.2/dist/css/intlTelInput.css">
 <style>
     /* ===== GENERAL ===== */
     .pj-container {
-        max-width: 800px;
+        max-width: 1200px;
         margin: 2rem auto 4rem;
         padding: 0 5%;
-    }
-
-    /* ===== HERO ===== */
-    .pj-hero {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        padding: 3rem 5% 2.5rem;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 4px solid #2563eb;
-        margin-bottom: 2.5rem;
-    }
-
-    .pj-hero::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: floatGlow 8s ease-in-out infinite;
-    }
-
-    .pj-hero::after {
-        content: '';
-        position: absolute;
-        bottom: -40%;
-        left: -5%;
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: floatGlow 10s ease-in-out infinite reverse;
-    }
-
-    @keyframes floatGlow {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        50% { transform: translate(30px, -30px) scale(1.1); }
-    }
-
-    .pj-hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        align-items: center;
-        gap: 2.5rem;
-    }
-
-    .pj-hero-icon {
-        font-size: 4rem;
-        width: 100px;
-        height: 100px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
-        flex-shrink: 0;
-        animation: iconFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes iconFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    .pj-hero-text {
-        flex: 1;
-    }
-
-    .pj-hero-text .breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-        color: #94a3b8;
-        margin-bottom: 0.5rem;
-    }
-
-    .pj-hero-text .breadcrumb a {
-        color: #94a3b8;
-        text-decoration: none;
-        transition: color 0.3s;
-    }
-
-    .pj-hero-text .breadcrumb a:hover {
-        color: #60a5fa;
-    }
-
-    .pj-hero-text .breadcrumb .separator {
-        color: #475569;
-    }
-
-    .pj-hero-text h1 {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: white;
-        margin-bottom: 0.25rem;
-        letter-spacing: -0.5px;
-    }
-
-    .pj-hero-text h1 span {
-        background: linear-gradient(135deg, #60a5fa, #34d399);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .pj-hero-text p {
-        color: #94a3b8;
-        font-size: 1.05rem;
-        max-width: 500px;
-        line-height: 1.6;
     }
 
     /* ===== FORM CARD ===== */
@@ -152,14 +36,16 @@
         font-weight: 700;
         color: #0f172a;
         margin-bottom: 0.25rem;
+        text-align: center;
     }
 
     .pj-form-subtitle {
         color: #64748b;
         margin-bottom: 2rem;
+        text-align: center;
     }
 
-    /* ===== JOB TYPE SELECTOR - NO ICONS ===== */
+    /* ===== JOB TYPE SELECTOR ===== */
     .pj-type-selector {
         display: flex;
         gap: 0.75rem;
@@ -182,7 +68,6 @@
         flex: 1 1 auto;
         min-width: 120px;
         text-align: center;
-        /* no transform on hover to prevent blinking */
     }
 
     .pj-type-btn:hover {
@@ -212,41 +97,27 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    .pj-info-box {
-        background: #eff6ff;
-        border: 1px solid rgba(37, 99, 235, 0.1);
-        border-radius: 8px;
-        padding: 1rem 1.25rem;
-        margin-bottom: 2rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
+    /* ===== HORIZONTAL GRID LAYOUT ===== */
+    .pj-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
     }
 
-    .pj-info-box .info-icon {
-        font-size: 1.2rem;
-        flex-shrink: 0;
-    }
-
-    .pj-info-box .info-content {
-        color: #334155;
-        font-size: 0.95rem;
-    }
-
-    .pj-info-box .info-content strong {
-        color: #0f172a;
+    .pj-form-grid .full-width {
+        grid-column: 1 / -1;
     }
 
     .pj-form-group {
-        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
     }
 
     .pj-form-group label {
-        display: block;
-        margin-bottom: 0.4rem;
-        color: #334155;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        color: #334155;
     }
 
     .pj-form-group label .required {
@@ -255,19 +126,19 @@
     }
 
     .pj-form-group .help-text {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         color: #94a3b8;
-        margin-top: 0.25rem;
+        margin-top: 0.1rem;
     }
 
     .pj-form-group input,
     .pj-form-group select,
     .pj-form-group textarea {
         width: 100%;
-        padding: 0.8rem 1rem;
+        padding: 0.7rem 0.9rem;
         border: 2px solid rgba(0, 0, 0, 0.08);
         border-radius: 8px;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         font-family: inherit;
         transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
         background: rgba(255, 255, 255, 0.5);
@@ -292,13 +163,61 @@
 
     .pj-form-group textarea {
         resize: vertical;
-        min-height: 120px;
+        min-height: 100px;
     }
 
-    .pj-form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+    /* ===== PHONE FIELD – improved search input visibility ===== */
+    .iti {
+        width: 100%;
+    }
+    .iti__country-list {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    body.dark-mode .iti__country-list {
+        background: #1e293b;
+        border-color: #334155;
+    }
+    body.dark-mode .iti__country {
+        color: #e2e8f0;
+    }
+    body.dark-mode .iti__country:hover {
+        background: #334155;
+    }
+
+    /* Hide the magnifying glass icon */
+    .iti__search-input {
+        background-image: none !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        border-radius: 6px;
+        border: 1px solid #d1d5db;
+        font-size: 0.9rem;
+        height: 36px;
+        color: #1e293b !important;        /* ensure text is visible */
+        background-color: #ffffff !important;
+        text-indent: 20px;
+    }
+
+    .iti__search-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .iti__search-input::placeholder {
+        color: #9ca3af;
+    }
+
+    body.dark-mode .iti__search-input {
+        background: #0f172a !important;
+        color: #e2e8f0 !important;
+        border-color: #334155;
+    }
+
+    body.dark-mode .iti__search-input::placeholder {
+        color: #64748b;
     }
 
     /* ===== CUSTOM CHECKBOX ===== */
@@ -307,7 +226,7 @@
         align-items: center;
         gap: 0.6rem;
         cursor: pointer;
-        padding: 0.4rem 0;
+        padding: 0.2rem 0;
     }
 
     .pj-checkbox-group input[type="checkbox"] {
@@ -350,7 +269,7 @@
     .pj-checkbox-label {
         font-weight: 500;
         color: #334155;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         user-select: none;
     }
 
@@ -361,10 +280,11 @@
         margin-top: 2rem;
         padding-top: 2rem;
         border-top: 2px solid rgba(0, 0, 0, 0.06);
+        justify-content: flex-end;
     }
 
     .pj-btn {
-        padding: 0.75rem 2rem;
+        padding: 0.7rem 2rem;
         border-radius: 8px;
         font-size: 1rem;
         font-weight: 600;
@@ -404,11 +324,38 @@
 
     .pj-error-message {
         color: #ef4444;
-        font-size: 0.85rem;
-        margin-top: 0.3rem;
+        font-size: 0.8rem;
+        margin-top: 0.2rem;
         display: flex;
         align-items: center;
         gap: 0.3rem;
+    }
+
+    /* ===== INFO BOX ===== */
+    .pj-info-box {
+        background: #eff6ff;
+        border: 1px solid rgba(37, 99, 235, 0.1);
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        grid-column: 1 / -1;
+    }
+
+    .pj-info-box .info-icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .pj-info-box .info-content {
+        color: #334155;
+        font-size: 0.95rem;
+    }
+
+    .pj-info-box .info-content strong {
+        color: #0f172a;
     }
 
     /* ===== DARK MODE ===== */
@@ -507,37 +454,24 @@
     }
 
     /* ===== RESPONSIVE ===== */
+    @media (max-width: 992px) {
+        .pj-container {
+            max-width: 100%;
+        }
+    }
+
     @media (max-width: 768px) {
-        .pj-hero-content {
-            flex-direction: column;
-            text-align: center;
-            gap: 1.5rem;
-        }
-
-        .pj-hero-text h1 {
-            font-size: 1.8rem;
-        }
-
-        .pj-hero-text p {
-            margin: 0 auto;
-        }
-
-        .pj-hero-icon {
-            width: 80px;
-            height: 80px;
-            font-size: 3rem;
+        .pj-form-grid {
+            grid-template-columns: 1fr;
         }
 
         .pj-form-card {
             padding: 1.5rem;
         }
 
-        .pj-form-row {
-            grid-template-columns: 1fr;
-        }
-
         .pj-form-actions {
             flex-direction: column;
+            align-items: stretch;
         }
 
         .pj-form-actions .pj-btn {
@@ -552,58 +486,29 @@
         .pj-type-btn {
             flex: 1;
         }
+
+        .pj-info-box {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
     }
 
     @media (max-width: 480px) {
-        .pj-hero {
-            padding: 2rem 4% 1.5rem;
-        }
-
-        .pj-hero-text h1 {
-            font-size: 1.5rem;
-        }
-
         .pj-form-card {
             padding: 1.25rem;
         }
     }
-
-    /* ===== ANIMATION ON PAGE LOAD ===== */
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(15px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .pj-animate {
-        animation: fadeUp 0.4s ease-out forwards;
-    }
 </style>
+{% endblock %}
 
-<!-- ===== HERO SECTION ===== -->
-<div class="pj-hero">
-    <div class="pj-hero-content">
-        <div class="pj-hero-icon">📝</div>
-        <div class="pj-hero-text">
-            <div class="breadcrumb">
-                <a href="/">Home</a>
-                <span class="separator">›</span>
-                <a href="{% url 'dashboard' %}">Dashboard</a>
-                <span class="separator">›</span>
-                <span>Post a Job</span>
-            </div>
-            <h1>Post a <span>Job</span></h1>
-            <p>Share your job opportunity with thousands of talented professionals.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ===== FORM ===== -->
+{% block content %}
 <div class="pj-container">
-    <div class="pj-form-card pj-animate">
-        <h2 class="pj-form-title">Job Details</h2>
+    <div class="pj-form-card">
+        <h2 class="pj-form-title">Post a Job</h2>
         <p class="pj-form-subtitle">Select a job type, then fill in the relevant details.</p>
 
-        <!-- ===== JOB TYPE SELECTOR (no icons) ===== -->
+        <!-- ===== JOB TYPE SELECTOR ===== -->
         <div class="pj-type-selector">
             <button type="button" class="pj-type-btn active" data-type="full_time">Full-Time</button>
             <button type="button" class="pj-type-btn" data-type="part_time">Part-Time</button>
@@ -622,27 +527,30 @@
         <form method="POST" id="postJobForm">
             {% csrf_token %}
 
-            <!-- ===== HIDDEN JOB TYPE INPUT ===== -->
             <input type="hidden" name="employment_type" id="id_employment_type" value="full_time">
 
             <!-- ===== COMMON FIELDS ===== -->
             <div class="pj-form-section active" id="section-common">
-                <div class="pj-form-group">
-                    <label for="{{ form.title.id_for_label }}">Job Title <span class="required">*</span></label>
-                    {{ form.title }}
-                    {% if form.title.errors %}
-                    <div class="pj-error-message">❌ {{ form.title.errors.0 }}</div>
-                    {% endif %}
-                </div>
+                <div class="pj-form-grid">
+                    <!-- Title -->
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.title.id_for_label }}">Job Title <span class="required">*</span></label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                        <div class="pj-error-message">❌ {{ form.title.errors.0 }}</div>
+                        {% endif %}
+                    </div>
 
-                <div class="pj-form-row">
+                    <!-- Company -->
                     <div class="pj-form-group">
-                        <label for="{{ form.company.id_for_label }}">Company Name <span class="required">*</span></label>
+                        <label for="{{ form.company.id_for_label }}">Company <span class="required">*</span></label>
                         {{ form.company }}
                         {% if form.company.errors %}
                         <div class="pj-error-message">❌ {{ form.company.errors.0 }}</div>
                         {% endif %}
                     </div>
+
+                    <!-- Location -->
                     <div class="pj-form-group">
                         <label for="{{ form.location.id_for_label }}">Location <span class="required">*</span></label>
                         {{ form.location }}
@@ -650,9 +558,8 @@
                         <div class="pj-error-message">❌ {{ form.location.errors.0 }}</div>
                         {% endif %}
                     </div>
-                </div>
 
-                <div class="pj-form-row">
+                    <!-- Work Type -->
                     <div class="pj-form-group">
                         <label for="{{ form.work_type.id_for_label }}">Work Type <span class="required">*</span></label>
                         {{ form.work_type }}
@@ -660,6 +567,8 @@
                         <div class="pj-error-message">❌ {{ form.work_type.errors.0 }}</div>
                         {% endif %}
                     </div>
+
+                    <!-- Category -->
                     <div class="pj-form-group">
                         <label for="{{ form.category.id_for_label }}">Category <span class="required">*</span></label>
                         {{ form.category }}
@@ -667,27 +576,28 @@
                         <div class="pj-error-message">❌ {{ form.category.errors.0 }}</div>
                         {% endif %}
                     </div>
-                </div>
 
-                <div class="pj-form-group">
-                    <label for="{{ form.description.id_for_label }}">Job Description <span class="required">*</span></label>
-                    {{ form.description }}
-                    <div class="help-text">Describe the role, responsibilities, and what makes this opportunity great</div>
-                    {% if form.description.errors %}
-                    <div class="pj-error-message">❌ {{ form.description.errors.0 }}</div>
-                    {% endif %}
-                </div>
+                    <!-- Description -->
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.description.id_for_label }}">Job Description <span class="required">*</span></label>
+                        {{ form.description }}
+                        <div class="help-text">Describe the role, responsibilities, and what makes this opportunity great</div>
+                        {% if form.description.errors %}
+                        <div class="pj-error-message">❌ {{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
 
-                <div class="pj-form-group">
-                    <label for="{{ form.requirements.id_for_label }}">Requirements & Qualifications</label>
-                    {{ form.requirements }}
-                    <div class="help-text">List the skills, experience, and qualifications required</div>
-                    {% if form.requirements.errors %}
-                    <div class="pj-error-message">❌ {{ form.requirements.errors.0 }}</div>
-                    {% endif %}
-                </div>
+                    <!-- Requirements -->
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.requirements.id_for_label }}">Requirements & Qualifications</label>
+                        {{ form.requirements }}
+                        <div class="help-text">List the skills, experience, and qualifications required</div>
+                        {% if form.requirements.errors %}
+                        <div class="pj-error-message">❌ {{ form.requirements.errors.0 }}</div>
+                        {% endif %}
+                    </div>
 
-                <div class="pj-form-row">
+                    <!-- Apply URL -->
                     <div class="pj-form-group">
                         <label for="{{ form.apply_url.id_for_label }}">Application URL</label>
                         {{ form.apply_url }}
@@ -696,6 +606,8 @@
                         <div class="pj-error-message">❌ {{ form.apply_url.errors.0 }}</div>
                         {% endif %}
                     </div>
+
+                    <!-- Company Website -->
                     <div class="pj-form-group">
                         <label for="{{ form.company_website.id_for_label }}">Company Website</label>
                         {{ form.company_website }}
@@ -704,9 +616,8 @@
                         <div class="pj-error-message">❌ {{ form.company_website.errors.0 }}</div>
                         {% endif %}
                     </div>
-                </div>
 
-                <div class="pj-form-row">
+                    <!-- Contact Email -->
                     <div class="pj-form-group">
                         <label for="{{ form.contact_email.id_for_label }}">Contact Email <span class="required">*</span></label>
                         {{ form.contact_email }}
@@ -715,10 +626,12 @@
                         <div class="pj-error-message">❌ {{ form.contact_email.errors.0 }}</div>
                         {% endif %}
                     </div>
-                    <div class="pj-form-group">
+
+                    <!-- Contact Phone (intl-tel-input) -->
+                    <div class="pj-form-group" id="phone-group">
                         <label for="{{ form.contact_phone.id_for_label }}">Contact Phone</label>
                         {{ form.contact_phone }}
-                        <div class="help-text">Optional - for urgent communications</div>
+                        <div class="help-text">Enter your phone number</div>
                         {% if form.contact_phone.errors %}
                         <div class="pj-error-message">❌ {{ form.contact_phone.errors.0 }}</div>
                         {% endif %}
@@ -726,74 +639,92 @@
                 </div>
             </div>
 
-            <!-- ===== FULL-TIME FIELDS ===== -->
-            <div class="pj-form-section" id="section-full_time">
-                <div class="pj-form-group">
-                    <label for="{{ form.experience_level.id_for_label }}">Experience Level <span class="required">*</span></label>
-                    {{ form.experience_level }}
-                    {% if form.experience_level.errors %}
-                    <div class="pj-error-message">❌ {{ form.experience_level.errors.0 }}</div>
-                    {% endif %}
-                </div>
-                <div class="pj-form-row">
+            <!-- ===== FULL-TIME ===== -->
+            <div class="pj-form-section active" id="section-full_time">
+                <div class="pj-form-grid">
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.experience_level.id_for_label }}">Experience Level <span class="required">*</span></label>
+                        {{ form.experience_level }}
+                        {% if form.experience_level.errors %}
+                        <div class="pj-error-message">❌ {{ form.experience_level.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
                     <div class="pj-form-group">
                         <label for="{{ form.salary_min.id_for_label }}">Salary Min</label>
                         {{ form.salary_min }}
                         <div class="help-text">Minimum salary (e.g., 50000)</div>
                     </div>
+
                     <div class="pj-form-group">
                         <label for="{{ form.salary_max.id_for_label }}">Salary Max</label>
                         {{ form.salary_max }}
                         <div class="help-text">Maximum salary (e.g., 70000)</div>
                     </div>
-                </div>
-                <div class="pj-form-row">
+
                     <div class="pj-form-group">
                         <label for="{{ form.salary_currency.id_for_label }}">Currency</label>
                         {{ form.salary_currency }}
                     </div>
+
                     <div class="pj-form-group">
                         <label for="{{ form.salary_period.id_for_label }}">Salary Period</label>
                         {{ form.salary_period }}
                     </div>
-                </div>
-                <div class="pj-form-group">
-                    <label for="{{ form.benefits.id_for_label }}">Benefits</label>
-                    {{ form.benefits }}
-                    <div class="help-text">e.g., Health insurance, 401k, etc.</div>
+
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.benefits.id_for_label }}">Benefits</label>
+                        {{ form.benefits }}
+                        <div class="help-text">e.g., Health insurance, 401k, etc.</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- ===== PART-TIME FIELDS ===== -->
+            <!-- ===== PART-TIME ===== -->
             <div class="pj-form-section" id="section-part_time">
-                <div class="pj-form-group">
-                    <label for="{{ form.shift_type.id_for_label }}">Shift Type</label>
-                    {{ form.shift_type }}
-                </div>
-                <div class="pj-form-row">
+                <div class="pj-form-grid">
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.experience_level.id_for_label }}">Experience Level <span class="required">*</span></label>
+                        {{ form.experience_level }}
+                        {% if form.experience_level.errors %}
+                        <div class="pj-error-message">❌ {{ form.experience_level.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="pj-form-group">
+                        <label for="{{ form.shift_type.id_for_label }}">Shift Type</label>
+                        {{ form.shift_type }}
+                    </div>
+
                     <div class="pj-form-group">
                         <label for="{{ form.hours_per_week.id_for_label }}">Hours per Week</label>
                         {{ form.hours_per_week }}
                     </div>
+
                     <div class="pj-form-group">
                         <label for="{{ form.hourly_rate.id_for_label }}">Hourly Rate</label>
                         {{ form.hourly_rate }}
                         <div class="help-text">e.g., 15.00</div>
                     </div>
-                </div>
-                <div class="pj-form-group">
-                    <label for="{{ form.salary_range.id_for_label }}">Salary Range (optional)</label>
-                    {{ form.salary_range }}
-                    <div class="help-text">e.g., $15-20/hour</div>
-                </div>
-                <div class="pj-form-row">
+
+                    <div class="pj-form-group">
+                        <label for="{{ form.salary_range.id_for_label }}">Salary Range (optional)</label>
+                        {{ form.salary_range }}
+                        <div class="help-text">e.g., $15-20/hour</div>
+                    </div>
+
                     <div class="pj-form-group">
                         <label for="{{ form.currency.id_for_label }}">Currency</label>
                         {{ form.currency }}
                     </div>
-                </div>
-                <!-- Checkboxes with custom styling -->
-                <div class="pj-form-row">
+
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.benefits.id_for_label }}">Benefits</label>
+                        {{ form.benefits }}
+                        <div class="help-text">e.g., Health insurance, 401k, etc.</div>
+                    </div>
+
+                    <!-- Checkboxes -->
                     <div class="pj-form-group">
                         <label class="pj-checkbox-group">
                             {{ form.is_flexible_schedule }}
@@ -818,16 +749,17 @@
                 </div>
             </div>
 
-            <!-- ===== CONTRACT FIELDS ===== -->
+            <!-- ===== CONTRACT ===== -->
             <div class="pj-form-section" id="section-contract">
-                <div class="pj-form-group">
-                    <label for="{{ form.contract_type.id_for_label }}">Contract Type <span class="required">*</span></label>
-                    {{ form.contract_type }}
-                    {% if form.contract_type.errors %}
-                    <div class="pj-error-message">❌ {{ form.contract_type.errors.0 }}</div>
-                    {% endif %}
-                </div>
-                <div class="pj-form-row">
+                <div class="pj-form-grid">
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.contract_type.id_for_label }}">Contract Type <span class="required">*</span></label>
+                        {{ form.contract_type }}
+                        {% if form.contract_type.errors %}
+                        <div class="pj-error-message">❌ {{ form.contract_type.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
                     <div class="pj-form-group">
                         <label for="{{ form.budget_min.id_for_label }}">Budget Min</label>
                         {{ form.budget_min }}
@@ -836,8 +768,6 @@
                         <label for="{{ form.budget_max.id_for_label }}">Budget Max</label>
                         {{ form.budget_max }}
                     </div>
-                </div>
-                <div class="pj-form-row">
                     <div class="pj-form-group">
                         <label for="{{ form.contract_currency.id_for_label }}">Currency</label>
                         {{ form.contract_currency }}
@@ -846,8 +776,6 @@
                         <label for="{{ form.contract_experience_level.id_for_label }}">Experience Level</label>
                         {{ form.contract_experience_level }}
                     </div>
-                </div>
-                <div class="pj-form-row">
                     <div class="pj-form-group">
                         <label for="{{ form.duration_type.id_for_label }}">Duration Type</label>
                         {{ form.duration_type }}
@@ -857,8 +785,6 @@
                         {{ form.estimated_duration }}
                         <div class="help-text">e.g., 3 months, 6 months</div>
                     </div>
-                </div>
-                <div class="pj-form-row">
                     <div class="pj-form-group">
                         <label for="{{ form.contract_start_date.id_for_label }}">Start Date</label>
                         {{ form.contract_start_date }}
@@ -867,9 +793,6 @@
                         <label for="{{ form.contract_end_date.id_for_label }}">End Date</label>
                         {{ form.contract_end_date }}
                     </div>
-                </div>
-                <!-- Checkboxes -->
-                <div class="pj-form-row">
                     <div class="pj-form-group">
                         <label class="pj-checkbox-group">
                             {{ form.is_contract_remote }}
@@ -887,24 +810,24 @@
                 </div>
             </div>
 
-            <!-- ===== DAILY WAGE FIELDS ===== -->
+            <!-- ===== DAILY ===== -->
             <div class="pj-form-section" id="section-daily">
-                <div class="pj-form-group">
-                    <label for="{{ form.payment_method.id_for_label }}">Payment Method <span class="required">*</span></label>
-                    {{ form.payment_method }}
-                    {% if form.payment_method.errors %}
-                    <div class="pj-error-message">❌ {{ form.payment_method.errors.0 }}</div>
-                    {% endif %}
-                </div>
-                <div class="pj-form-group">
-                    <label for="{{ form.payment_amount.id_for_label }}">Payment Amount <span class="required">*</span></label>
-                    {{ form.payment_amount }}
-                    <div class="help-text">Amount per hour/day/week</div>
-                    {% if form.payment_amount.errors %}
-                    <div class="pj-error-message">❌ {{ form.payment_amount.errors.0 }}</div>
-                    {% endif %}
-                </div>
-                <div class="pj-form-row">
+                <div class="pj-form-grid">
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.payment_method.id_for_label }}">Payment Method <span class="required">*</span></label>
+                        {{ form.payment_method }}
+                        {% if form.payment_method.errors %}
+                        <div class="pj-error-message">❌ {{ form.payment_method.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.payment_amount.id_for_label }}">Payment Amount <span class="required">*</span></label>
+                        {{ form.payment_amount }}
+                        <div class="help-text">Amount per hour/day/week</div>
+                        {% if form.payment_amount.errors %}
+                        <div class="pj-error-message">❌ {{ form.payment_amount.errors.0 }}</div>
+                        {% endif %}
+                    </div>
                     <div class="pj-form-group">
                         <label for="{{ form.start_date.id_for_label }}">Start Date</label>
                         {{ form.start_date }}
@@ -913,32 +836,36 @@
                         <label for="{{ form.end_date.id_for_label }}">End Date</label>
                         {{ form.end_date }}
                     </div>
-                </div>
-                <div class="pj-form-group">
-                    <label for="{{ form.working_hours.id_for_label }}">Working Hours</label>
-                    {{ form.working_hours }}
-                    <div class="help-text">e.g., 9 AM - 5 PM</div>
-                </div>
-                <div class="pj-form-group">
-                    <label class="pj-checkbox-group">
-                        {{ form.is_immediate_joining }}
-                        <span class="pj-checkbox-custom"></span>
-                        <span class="pj-checkbox-label">Immediate Joining</span>
-                    </label>
+                    <div class="pj-form-group full-width">
+                        <label for="{{ form.working_hours.id_for_label }}">Working Hours</label>
+                        {{ form.working_hours }}
+                        <div class="help-text">e.g., 9 AM - 5 PM</div>
+                    </div>
+                    <div class="pj-form-group">
+                        <label class="pj-checkbox-group">
+                            {{ form.is_immediate_joining }}
+                            <span class="pj-checkbox-custom"></span>
+                            <span class="pj-checkbox-label">Immediate Joining</span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
             <!-- ===== ACTIONS ===== -->
             <div class="pj-form-actions">
+                <a href="{% url 'dashboard' %}" class="pj-btn pj-btn-outline">Cancel</a>
                 <button type="submit" class="pj-btn pj-btn-primary">
                     Submit for Approval
                 </button>
-                <a href="{% url 'dashboard' %}" class="pj-btn pj-btn-outline">Cancel</a>
             </div>
         </form>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
+<!-- Use your local intl-tel-input JS file -->
+<script src="{% static 'js/phone/intlTelInput.min.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // ===== JOB TYPE SELECTOR =====
@@ -952,13 +879,12 @@
         const commonSection = document.getElementById('section-common');
         const hiddenEmploymentType = document.getElementById('id_employment_type');
 
-        // Initially show only common + full-time (default)
+        // Initially show common + full-time
         commonSection.classList.add('active');
-        sections.full_time.classList.add('active');
+        if (sections.full_time) sections.full_time.classList.add('active');
 
         typeButtons.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Update active button
                 typeButtons.forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
 
@@ -970,28 +896,51 @@
                     section.classList.remove('active');
                 });
 
-                // Show the selected section
+                // Show the selected one
                 if (sections[selectedType]) {
                     sections[selectedType].classList.add('active');
                 }
 
-                // Common section always stays visible
+                // Common stays visible
                 commonSection.classList.add('active');
             });
         });
 
-        // ===== FORM SUBMISSION =====
+        // ===== PHONE FIELD (intl-tel-input) =====
+        const phoneInput = document.querySelector('#id_contact_phone');
+        let iti = null;
+        if (phoneInput) {
+            iti = window.intlTelInput(phoneInput, {
+                initialCountry: 'us',
+                separateDialCode: true,
+                nationalMode: false,
+                loadUtils: () => import('https://cdn.jsdelivr.net/npm/intl-tel-input@29.1.2/dist/js/utils.js'),
+                formatOnDisplay: true,
+                strictMode: true,
+                autoHideDialCode: false,
+                preferredCountries: ['us', 'gb', 'in', 'au', 'ca', 'de', 'fr', 'jp', 'cn', 'br'],
+                searchPlaceholder: ''          // removes "Search" placeholder text
+            });
+        }
+
+        // ===== FORM SUBMISSION – set full phone number =====
         const form = document.getElementById('postJobForm');
         form.addEventListener('submit', function(e) {
+            // Get the full international number from intl-tel-input
+            if (iti) {
+                const fullNumber = iti.getNumber();
+                if (fullNumber) {
+                    phoneInput.value = fullNumber;  // store full number in the field
+                } else {
+                    // Optionally show a validation message
+                    // but we'll let it submit with empty
+                }
+            }
+
             const submitBtn = this.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
-
-            // Re-enable after 5s (will be redirected anyway)
-            setTimeout(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit for Approval';
-            }, 5000);
+            // The form will submit normally after this
         });
 
         // ===== AUTO-RESIZE TEXTAREAS =====

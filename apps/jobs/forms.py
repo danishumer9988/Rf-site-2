@@ -47,7 +47,7 @@ class JobForm(forms.ModelForm):
             'apply_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://...'}),
             'company_website': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'https://...'}),
             'contact_email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'contact@company.com'}),
-            'contact_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+1 (555) 123-4567'}),
+            'contact_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Phone Number'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_featured': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_urgent': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

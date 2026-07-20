@@ -7,7 +7,7 @@
 <!-- intl-tel-input CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@29.1.2/dist/css/intlTelInput.css">
 <style>
-    /* Override for dark mode and layout */
+    /* ========== PHONE FIELD FIXES (like post_job) ========== */
     .iti {
         width: 100%;
     }
@@ -28,23 +28,43 @@
     body.dark-mode .iti__country:hover {
         background: #334155;
     }
+
+    /* Hide the magnifying glass icon and fix text visibility */
+    .iti__search-input {
+        background-image: none !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        border-radius: 6px;
+        border: 1px solid #d1d5db;
+        font-size: 0.9rem;
+        height: 36px;
+        color: #1e293b !important;
+        background-color: #ffffff !important;
+        text-indent: 20px;
+    }
+    .iti__search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+    .iti__search-input::placeholder {
+        color: #9ca3af;
+    }
     body.dark-mode .iti__search-input {
-        background: #0f172a;
-        color: #e2e8f0;
+        background: #0f172a !important;
+        color: #e2e8f0 !important;
         border-color: #334155;
     }
-    .iti__flag-container {
-        /* adjust if needed */
+    body.dark-mode .iti__search-input::placeholder {
+        color: #64748b;
     }
-    .iti--allow-dropdown .iti__flag-container:hover .iti__selected-flag {
-        background-color: rgba(0,0,0,0.05);
-    }
+
     /* Ensure the input inside iti gets proper height */
     .iti__input {
         padding: 0.8rem 1rem;
         border: 2px solid rgba(0,0,0,0.08);
         border-radius: var(--radius-sm);
-        font-size: 1.95rem;
+        font-size: 0.95rem;
         font-family: inherit;
         background: rgba(255,255,255,0.5);
         color: var(--gray-800);
@@ -64,9 +84,9 @@
 
 {% block content %}
 <style>
-    /* ========== AUTH CONTAINER STYLES (same as before) ========== */
+    /* ========== AUTH CONTAINER STYLES ========== */
     .auth-container {
-        max-width: 700px;
+        max-width: 800px;
         margin: 3rem auto;
         padding: 0 5%;
     }
@@ -457,33 +477,13 @@
                 strictMode: true,
                 autoHideDialCode: false,
                 preferredCountries: ['us', 'gb', 'in', 'au', 'ca', 'de', 'fr', 'jp', 'cn', 'br'],
-                searchPlaceholder: '',
-            });
-
-            // Listen for country change (optional)
-            input.addEventListener('countrychange', function(e) {
-                // e.detail contains country data
-            });
-
-            // Listen for strict mode rejections (optional)
-            input.addEventListener('strict:reject', function(e) {
-                const { source, rejectedInput, reason } = e.detail;
-                let msg;
-                if (reason === 'max-length') {
-                    msg = 'Maximum length reached for this country';
-                } else if (source === 'paste') {
-                    msg = 'Stripped invalid characters from pasted text';
-                } else {
-                    msg = `Character not allowed: "${rejectedInput}"`;
-                }
-                showToast(msg, 'warning');
+                searchPlaceholder: ''          // removes "Search" placeholder text
             });
 
             // ========== FORM SUBMIT – set full number ==========
             const form = document.getElementById('registerForm');
             form.addEventListener('submit', function(e) {
-                // Get the full international number
-                const fullNumber = iti.getNumber(); // e.g., +1234567890
+                const fullNumber = iti.getNumber();
                 if (fullNumber) {
                     input.value = fullNumber;  // store full number in the field
                 } else {
@@ -498,12 +498,11 @@
                 if (password !== confirm) {
                     e.preventDefault();
                     showToast('Passwords do not match!', 'error');
-                    return;
                 }
             });
         }
 
-        // ========== PASSWORD STRENGTH (unchanged) ==========
+        // ========== PASSWORD STRENGTH ==========
         const passwordInput = document.getElementById('password');
         const confirmInput = document.getElementById('confirmPassword');
         const strengthBar = document.getElementById('strengthBar');
@@ -591,7 +590,7 @@
             });
         }
 
-        // Toast function (same as before)
+        // Toast function
         function showToast(message, type = 'success') {
             const colors = { success: '#10b981', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' };
             const toast = document.createElement('div');
