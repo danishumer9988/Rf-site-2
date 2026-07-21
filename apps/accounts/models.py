@@ -8,7 +8,7 @@ import string
 class Profile(models.Model):
     USER_TYPES = [
         ('student', 'Student'),
-        ('professional', 'Professional'),
+        ('employee', 'Employee'),
         ('employer', 'Employer'),
         ('other', 'Other'),
     ]

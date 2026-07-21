@@ -6,7 +6,7 @@
 {% block content %}
 <style>
     /* ============================================================
-       TERMS OF SERVICE - Glassmorphism Design
+       TERMS OF SERVICE - Glassmorphism Design (no hero)
        ============================================================ */
     :root {
         --legal-primary: #2563eb;
@@ -32,94 +32,36 @@
         --legal-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* ===== HERO SECTION ===== */
-    .legal-hero {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        padding: 4rem 5% 3rem;
-        position: relative;
-        overflow: hidden;
-        border-bottom: 4px solid var(--legal-primary);
+    .legal-page {
+        max-width: 900px;
+        margin: 2rem auto 4rem;
+        padding: 0 5%;
+    }
+
+    .legal-header {
         text-align: center;
+        margin-bottom: 2.5rem;
     }
 
-    .legal-hero::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 600px;
-        height: 600px;
-        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: floatGlow 8s ease-in-out infinite;
-    }
-
-    .legal-hero::after {
-        content: '';
-        position: absolute;
-        bottom: -40%;
-        left: -5%;
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(circle, rgba(6, 182, 212, 0.06) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: floatGlow 10s ease-in-out infinite reverse;
-    }
-
-    @keyframes floatGlow {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        50% { transform: translate(30px, -30px) scale(1.1); }
-    }
-
-    .legal-hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .legal-hero-content .legal-icon-large {
-        font-size: 4rem;
-        display: block;
-        margin-bottom: 1rem;
-        animation: iconFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes iconFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    .legal-hero-content h1 {
-        font-size: 2.8rem;
+    .legal-header h1 {
+        font-size: 2.2rem;
         font-weight: 800;
-        color: white;
-        margin-bottom: 0.5rem;
-        letter-spacing: -0.5px;
+        color: var(--legal-gray-900);
+        margin-bottom: 0.25rem;
     }
 
-    .legal-hero-content h1 span {
-        background: linear-gradient(135deg, #60a5fa, #34d399);
+    .legal-header h1 span {
+        background: linear-gradient(135deg, var(--legal-primary), #34d399);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
 
-    .legal-hero-content p {
-        color: #94a3b8;
-        font-size: 1.1rem;
-        max-width: 600px;
+    .legal-header p {
+        color: var(--legal-gray-500);
+        font-size: 1.05rem;
+        max-width: 500px;
         margin: 0 auto;
-        line-height: 1.7;
-    }
-
-    /* ===== CONTENT ===== */
-    .legal-content {
-        max-width: 900px;
-        margin: -1.5rem auto 4rem;
-        padding: 0 5%;
-        position: relative;
-        z-index: 5;
     }
 
     .legal-card {
@@ -216,20 +158,6 @@
         text-decoration: underline;
     }
 
-    .legal-card .contact-email {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: rgba(37, 99, 235, 0.05);
-        border-radius: var(--legal-radius-sm);
-        border: 1px solid rgba(37, 99, 235, 0.1);
-        font-family: monospace;
-        font-size: 0.95rem;
-        color: var(--legal-primary);
-        margin-top: 0.5rem;
-    }
-
     /* ===== DARK MODE ===== */
     body.dark-mode .legal-card {
         background: rgba(30, 41, 59, 0.6);
@@ -267,20 +195,15 @@
         color: #64748b;
     }
 
-    body.dark-mode .legal-card .contact-email {
-        background: rgba(96, 165, 250, 0.1);
-        border-color: rgba(96, 165, 250, 0.15);
-        color: #60a5fa;
-    }
-
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-        .legal-hero-content h1 {
-            font-size: 2rem;
+        .legal-header h1 {
+            font-size: 1.8rem;
         }
 
-        .legal-hero {
-            padding: 2.5rem 4% 2rem;
+        .legal-page {
+            margin: 1.5rem auto 3rem;
+            padding: 0 4%;
         }
 
         .legal-card {
@@ -293,12 +216,8 @@
     }
 
     @media (max-width: 480px) {
-        .legal-hero-content h1 {
-            font-size: 1.6rem;
-        }
-
-        .legal-hero-content .legal-icon-large {
-            font-size: 3rem;
+        .legal-header h1 {
+            font-size: 1.5rem;
         }
 
         .legal-card {
@@ -325,26 +244,21 @@
     }
 
     .animate-in.delay-1 { animation-delay: 0.05s; opacity: 0; }
-    .animate-in.delay-2 { animation-delay: 0.1s; opacity: 0; }
 </style>
 
-<!-- ===== HERO SECTION ===== -->
-<div class="legal-hero">
-    <div class="legal-hero-content">
-        <span class="legal-icon-large">📜</span>
+<!-- ===== TERMS PAGE ===== -->
+<div class="legal-page">
+    <div class="legal-header animate-in">
         <h1>Terms of <span>Service</span></h1>
-        <p>Please read these terms carefully before using our platform. They govern your access to and use of Job Reference Hub.</p>
+        <p>Please read these terms carefully before using our platform. They govern your access to and use of JobLidar.</p>
     </div>
-</div>
 
-<!-- ===== CONTENT ===== -->
-<div class="legal-content">
-    <div class="legal-card animate-in">
+    <div class="legal-card animate-in delay-1">
         <h2>
             <span class="section-number">01</span>
             Acceptance of Terms
         </h2>
-        <p>By creating an account, browsing, or using any feature of Job Reference Hub, you agree to be bound by these Terms of Service. If you do not agree, you must not use our services.</p>
+        <p>By creating an account, browsing, or using any feature of JobLidar, you agree to be bound by these Terms of Service. If you do not agree, you must not use our services.</p>
 
         <h2>
             <span class="section-number">02</span>
@@ -389,7 +303,7 @@
             <span class="section-number">06</span>
             Intellectual Property
         </h2>
-        <p>All content on Job Reference Hub (including logos, design, and code) is our property or that of our licensors. You may not reproduce, distribute, or create derivative works without our prior written consent.</p>
+        <p>All content on JobLidar (including logos, design, and code) is our property or that of our licensors. You may not reproduce, distribute, or create derivative works without our prior written consent.</p>
 
         <h2>
             <span class="section-number">07</span>

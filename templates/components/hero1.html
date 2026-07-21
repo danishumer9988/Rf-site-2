@@ -8,7 +8,6 @@
     <title>Hero Section</title>
 
     <style>
-
         /* ==========================
            HERO SECTION – AUTO HEIGHT
         ========================== */
@@ -73,15 +72,9 @@
         }
 
         /* ==========================
-           BUTTONS – NEW CLASSES
+           BUTTONS – NO WRAPPER CLASS
         ========================== */
-        .buttons {
-            display: flex;
-            gap: 18px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
+        .btn-hero {
             display: inline-flex;
             justify-content: center;
             align-items: center;
@@ -91,30 +84,24 @@
             font-size: 16px;
             font-weight: 700;
             transition: .35s ease;
-        }
-
-        /* Filled button (formerly btn-primary) */
-        .btn-filled {
-            background: #2563eb;
-            color: #fff;
-            border: none;
-        }
-        .btn-filled:hover {
-            background: #3b82f6;
-            transform: translateY(-4px);
-            box-shadow: 0 18px 35px rgba(37,99,235,.35);
-        }
-
-        /* Outlined button (formerly btn-secondary) */
-        .btn-outlined {
-            background: rgba(255,255,255,.08);
+            background: transparent;
             color: #ffffff;
             border: 2px solid rgba(255,255,255,.25);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(4px);
+            margin-right: 18px;           /* gap between buttons */
         }
-        .btn-outlined:hover {
-            background: rgba(255,255,255,.18);
+
+        .btn-hero:last-child {
+            margin-right: 0;
+        }
+
+        /* Hover: blue background, white text, lifted */
+        .btn-hero:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
             transform: translateY(-4px);
+            box-shadow: 0 18px 35px rgba(37,99,235,.35);
         }
 
         /* ==========================
@@ -187,7 +174,7 @@
         }
 
         /* ==========================
-           RESPONSIVE BREAKPOINTS (ENHANCED)
+           RESPONSIVE BREAKPOINTS
         ========================== */
 
         /* Large Laptop */
@@ -225,10 +212,6 @@
                 max-width: 100%;
             }
 
-            .buttons {
-                justify-content: center;
-            }
-
             .hero-badge {
                 font-size: 14px;
                 padding: 10px 18px;
@@ -243,12 +226,11 @@
             }
         }
 
-        /* Mobile (portrait) – improved */
+        /* Mobile (portrait) */
         @media (max-width: 768px) {
             .hero {
                 min-height: auto;
                 padding: 40px 0;
-                /* Stronger overlay for better text readability */
                 background-image:
                     linear-gradient(
                         rgba(15,23,42,.95),
@@ -257,7 +239,7 @@
                     url("{% static 'images/hero4.png' %}");
                 background-repeat: no-repeat;
                 background-position: center center;
-                background-size: cover;  /* cover ensures image fills width */
+                background-size: cover;
                 align-items: center;
             }
 
@@ -279,18 +261,18 @@
                 max-width: 100%;
             }
 
-            .buttons {
-                flex-direction: column;
-                align-items: center;
-                gap: 12px;
-            }
-
-            .btn {
+            .btn-hero {
                 width: 100%;
                 max-width: 300px;
                 padding: 14px 28px;
                 font-size: 15px;
                 justify-content: center;
+                margin-right: 0;
+                margin-bottom: 12px;
+            }
+
+            .btn-hero:last-child {
+                margin-bottom: 0;
             }
 
             .hero-badge {
@@ -316,7 +298,7 @@
             }
         }
 
-        /* Small Mobile (phones) */
+        /* Small Mobile */
         @media (max-width: 480px) {
             .hero {
                 padding: 32px 0;
@@ -333,7 +315,7 @@
                 margin-bottom: 22px;
             }
 
-            .btn {
+            .btn-hero {
                 padding: 12px 24px;
                 font-size: 14px;
                 max-width: 260px;
@@ -357,7 +339,7 @@
             }
         }
 
-        /* Very small screens (e.g., iPhone SE) */
+        /* Very small screens */
         @media (max-width: 380px) {
             .hero {
                 padding: 28px 0;
@@ -368,7 +350,7 @@
             .hero-content p {
                 font-size: 13px;
             }
-            .btn {
+            .btn-hero {
                 font-size: 13px;
                 padding: 10px 20px;
             }
@@ -392,24 +374,23 @@
         </div>
 
         <div class="hero-content">
-            <h1>Scanning Opportunities Connecting careers</h1>
+            <h1>Scanning Opportunities Connecting Careers</h1>
             <p>
                 Discover verified jobs and internships from trusted employers. Start your journey toward the right opportunity with a platform built for ambitious professionals.
             </p>
 
-            <div class="buttons">
-                <a href="{% url 'job_list' %}" class="btn btn-filled">Find Jobs</a>
-                <a href="{% url 'internship_list' %}" class="btn btn-outlined">Explore Internships</a>
-            </div>
+            <!-- No wrapper class – just anchor tags with btn-hero -->
+            <a href="{% url 'job_list' %}" class="btn-hero">Find Jobs</a>
+            <a href="{% url 'internship_list' %}" class="btn-hero">Explore Internships</a>
         </div>
     </div>
 </section>
 
 <script>
-    const hero=document.querySelector(".hero-content");
+    const hero = document.querySelector(".hero-content");
 
-    window.addEventListener("load",()=>{
-        hero.style.opacity="1";
+    window.addEventListener("load", () => {
+        hero.style.opacity = "1";
     });
 
     // ========== LAST UPDATED TIME FUNCTION ==========
