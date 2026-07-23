@@ -1043,7 +1043,7 @@
                 <span class="separator">›</span>
                 <span class="current">Jobs</span>
             </div>
-            <h1>Find Your <span>Dream Job</span></h1>
+            <h1>Find Your <span> Job</span></h1>
             <p>Discover thousands of job opportunities from top companies around the world. Full-Time, Part-Time, Contract, and Daily jobs available.</p>
         </div>
     </div>
@@ -1073,7 +1073,7 @@
                 </a>
                 <a href="?employment_type=daily{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
                    class="jl-filter-tab {% if request.GET.employment_type == 'daily' %}active{% endif %}">
-                    <span class="badge-dot badge-dot-daily"></span> Daily <span class="count">{{ daily_count|default:0 }}</span>
+                    <span class="badge-dot badge-dot-daily"></span> Daily wage {{ daily_count|default:0 }}</span>
                 </a>
             </div>
             <div class="jl-filter-right">
@@ -1134,7 +1134,7 @@
     {% if request.GET.employment_type == 'full_time' %}Full-Time
     {% elif request.GET.employment_type == 'part_time' %}Part-Time
     {% elif request.GET.employment_type == 'contract' %}Contract
-    {% elif request.GET.employment_type == 'daily' %}Daily
+    {% elif request.GET.employment_type == 'daily' %}Daily Wage
     {% elif jobs|length > 0 %}{{ jobs.0.get_employment_type_display }}
     {% else %}jobs{% endif %}
     job{% if jobs|length != 1 %}s{% endif %}
