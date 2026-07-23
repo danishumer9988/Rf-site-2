@@ -1130,7 +1130,7 @@
 
 <!-- ===== RESULTS COUNT ===== -->
 <div class="jl-results-count jl-animate delay-1">
-    Found <strong id="resultCount">{{ jobs|length }}</strong>
+     <strong id="resultCount">{{ jobs|length }}</strong>
     {% if request.GET.employment_type == 'full_time' %}Full-Time
     {% elif request.GET.employment_type == 'part_time' %}Part-Time
     {% elif request.GET.employment_type == 'contract' %}Contract
@@ -1138,7 +1138,7 @@
     {% elif jobs|length > 0 %}{{ jobs.0.get_employment_type_display }}
     {% else %}jobs{% endif %}
     job{% if jobs|length != 1 %}s{% endif %}
-    out of <strong>{{ total_jobs }}</strong> total jobs
+    out of <strong>{{ total_jobs }}</strong> jobs
     {% if request.GET.query %} matching "<strong>{{ request.GET.query }}</strong>"{% endif %}
     {% if request.GET.location %} in "<strong>{{ request.GET.location }}</strong>"{% endif %}
     {% if request.GET.work_type == 'remote' %} <strong>(Remote)</strong>{% endif %}

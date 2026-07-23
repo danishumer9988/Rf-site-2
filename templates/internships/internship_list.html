@@ -1030,13 +1030,13 @@
 
 <!-- ===== RESULTS COUNT ===== -->
 <div class="il-results-count il-animate delay-1">
-    Found <strong id="resultCount">{{ internships|length }}</strong>
+     <strong id="resultCount">{{ internships|length }}</strong>
     {% if request.GET.internship_type == 'full_time' %}Full-Time
     {% elif request.GET.internship_type == 'part_time' %}Part-Time
     {% elif internships|length > 0 %}{{ internships.0.get_internship_type_display }}
     {% else %}internships{% endif %}
     internship{% if internships|length != 1 %}s{% endif %}
-    out of <strong>{{ total_internships }}</strong> total internships
+    out of <strong>{{ total_internships }}</strong> internships
     {% if request.GET.search %} matching "<strong>{{ request.GET.search }}</strong>"{% endif %}
     {% if request.GET.type == 'remote' %} <strong>(Remote)</strong>{% endif %}
     {% if request.GET.type == 'physical' %} <strong>(On-Site)</strong>{% endif %}
