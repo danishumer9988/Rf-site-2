@@ -95,21 +95,25 @@
         color: #64748b;
     }
 
+    /* ===== BUTTON – MATCH LOGIN BUTTON ===== */
     .newsletter-btn-modern {
         padding: 0.9rem 2rem;
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
         color: white;
         border: none;
         border-radius: var(--radius-sm);
         font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         white-space: nowrap;
         position: relative;
         overflow: hidden;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+        font-family: inherit;
     }
 
+    /* Ripple animation */
     .newsletter-btn-modern::before {
         content: '';
         position: absolute;
@@ -129,11 +133,16 @@
     }
 
     .newsletter-btn-modern:hover {
-        background: var(--primary-dark);
-        box-shadow: 0 8px 30px rgba(37, 99, 235, 0.4);
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
         transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
     }
 
+    .newsletter-btn-modern:active {
+        transform: scale(0.97);
+    }
+
+    /* ===== FEATURES ===== */
     .newsletter-features-modern {
         display: flex;
         gap: 2rem;
@@ -170,6 +179,11 @@
             flex-direction: column;
         }
 
+        .newsletter-btn-modern {
+            width: 100%;
+            justify-content: center;
+        }
+
         .newsletter-features-modern {
             gap: 1rem;
         }
@@ -185,7 +199,6 @@
             Never miss out on your dream opportunity.
         </p>
 
-        <!-- ✅ FIX: added action and method -->
         <form class="newsletter-form-modern"
               id="newsletterFormModern"
               action="{% url 'subscribe' %}"
@@ -217,6 +230,7 @@
         const form = document.getElementById('newsletterFormModern');
         const formData = new FormData(form);
         const btn = form.querySelector('.newsletter-btn-modern');
+        const originalText = btn.textContent;
 
         btn.textContent = 'Subscribing...';
         btn.disabled = true;
@@ -231,7 +245,6 @@
         })
         .then(response => {
             if (!response.ok) {
-                // Try to get error message from response
                 return response.text().then(text => {
                     throw new Error(text || 'Server error');
                 });
@@ -252,21 +265,49 @@
             showToast('Something went wrong. Please try again.', 'error');
         })
         .finally(() => {
-            btn.innerHTML = 'Subscribe Free';
+            btn.textContent = originalText;
             btn.disabled = false;
         });
     }
 
-    // Toast helper (if not already defined globally)
+    // Toast helper
     function showToast(message, type = 'success') {
-        // ... (your toast function – ensure it exists globally)
-        // If not, you can use the one from base.html or define it here.
+        const colors = { success: '#10b981', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' };
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed; bottom: 30px; right: 30px;
+            background: ${colors[type] || colors.success}; color: white;
+            padding: 1rem 1.5rem; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 9999;
+            animation: slideInToast 0.3s ease-out;
+            font-weight: 500; display: flex; align-items: center;
+            gap: 0.75rem; font-size: 0.95rem; max-width: 400px;
+        `;
+        toast.innerHTML = `<span>${message}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'slideOutToast 0.3s ease-out forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
     }
 
     function createParticles(btn, emoji) {
-        // Optional celebration effect
         if (typeof confetti !== 'undefined') {
             confetti({ particleCount: 30, spread: 60 });
         }
     }
+
+    // Toast animations
+    const toastStyle = document.createElement('style');
+    toastStyle.textContent = `
+        @keyframes slideInToast {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutToast {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(toastStyle);
 </script>

@@ -79,29 +79,6 @@
         z-index: 2;
         max-width: 1200px;
         margin: 0 auto;
-        display: flex;
-        align-items: center;
-        gap: 3rem;
-    }
-
-    .jl-hero-icon {
-        font-size: 5rem;
-        width: 120px;
-        height: 120px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: var(--jl-radius-xl);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
-        flex-shrink: 0;
-        animation: iconFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes iconFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
     }
 
     .jl-hero-text {
@@ -112,7 +89,8 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        font-size: 0.85rem;
+        font-size: 1.05rem;
+        font-weight: 600;
         color: #94a3b8;
         margin-bottom: 1rem;
     }
@@ -129,6 +107,12 @@
 
     .jl-hero-text .breadcrumb .separator {
         color: #475569;
+    }
+
+    .jl-hero-text .breadcrumb .current {
+        color: #e2e8f0;
+        font-weight: 700;
+        font-size: 1.1rem;
     }
 
     .jl-hero-text h1 {
@@ -151,31 +135,6 @@
         font-size: 1.1rem;
         max-width: 600px;
         line-height: 1.7;
-    }
-
-    .jl-hero-stats {
-        display: flex;
-        gap: 2rem;
-        margin-top: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .jl-hero-stat {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #94a3b8;
-        font-size: 0.95rem;
-    }
-
-    .jl-hero-stat .stat-number {
-        color: white;
-        font-weight: 700;
-        font-size: 1.2rem;
-    }
-
-    .jl-hero-stat .stat-label {
-        color: #94a3b8;
     }
 
     /* ===== SEARCH SECTION ===== */
@@ -269,7 +228,6 @@
         background-position: right 1rem center;
     }
 
-    /* ===== SIMPLE LOCATION DROPDOWN - No hover, No background image ===== */
     .jl-filter-right select {
         padding: 0.4rem 1rem;
         border: 2px solid var(--jl-gray-200);
@@ -455,7 +413,7 @@
         color: var(--jl-gray-800);
     }
 
-    /* ===== JOB CARDS - Max Width 1440px ===== */
+    /* ===== JOB CARDS ===== */
     .jl-cards-wrapper {
         max-width: 1440px;
         margin: 0 auto;
@@ -989,9 +947,7 @@
 
     @media (max-width: 768px) {
         .jl-hero-content {
-            flex-direction: column;
             text-align: center;
-            gap: 1.5rem;
         }
 
         .jl-hero-text h1 {
@@ -1000,16 +956,6 @@
 
         .jl-hero-text p {
             margin: 0 auto;
-        }
-
-        .jl-hero-stats {
-            justify-content: center;
-        }
-
-        .jl-hero-icon {
-            width: 80px;
-            height: 80px;
-            font-size: 3rem;
         }
 
         .jl-search-container {
@@ -1091,37 +1037,14 @@
 <!-- ===== HERO SECTION ===== -->
 <div class="jl-hero">
     <div class="jl-hero-content">
-        <div class="jl-hero-icon">💼</div>
         <div class="jl-hero-text">
             <div class="breadcrumb">
                 <a href="/">Home</a>
                 <span class="separator">›</span>
-                <span>Jobs</span>
+                <span class="current">Jobs</span>
             </div>
             <h1>Find Your <span>Dream Job</span></h1>
             <p>Discover thousands of job opportunities from top companies around the world. Full-Time, Part-Time, Contract, and Daily jobs available.</p>
-            <div class="jl-hero-stats">
-                <div class="jl-hero-stat">
-                    <span class="stat-number">{{ total_jobs }}</span>
-                    <span class="stat-label">Total Jobs</span>
-                </div>
-                <div class="jl-hero-stat">
-                    <span class="stat-number">{{ full_time_count|default:0 }}</span>
-                    <span class="stat-label">Full-Time</span>
-                </div>
-                <div class="jl-hero-stat">
-                    <span class="stat-number">{{ part_time_count|default:0 }}</span>
-                    <span class="stat-label">Part-Time</span>
-                </div>
-                <div class="jl-hero-stat">
-                    <span class="stat-number">{{ contract_count|default:0 }}</span>
-                    <span class="stat-label">Contract</span>
-                </div>
-                <div class="jl-hero-stat">
-                    <span class="stat-number">{{ daily_count|default:0 }}</span>
-                    <span class="stat-label">Daily</span>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -1134,7 +1057,7 @@
             <div class="jl-filter-tabs">
                 <a href="?{% if request.GET.query %}query={{ request.GET.query }}&{% endif %}{% if request.GET.location %}location={{ request.GET.location }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}{% endif %}"
                    class="jl-filter-tab {% if not request.GET.employment_type and not request.GET.work_type %}active{% endif %}">
-                    📌 All <span class="count">{{ total_jobs }}</span>
+                    All <span class="count">{{ total_jobs }}</span>
                 </a>
                 <a href="?employment_type=full_time{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
                    class="jl-filter-tab {% if request.GET.employment_type == 'full_time' %}active{% endif %}">
@@ -1207,16 +1130,17 @@
 
 <!-- ===== RESULTS COUNT ===== -->
 <div class="jl-results-count jl-animate delay-1">
-    Found <strong id="resultCount">{{ jobs|length }}</strong> job{% if jobs|length != 1 %}s{% endif %}
+    Found <strong id="resultCount">{{ jobs|length }}</strong>
+    {% if request.GET.employment_type == 'full_time' %}Full-Time
+    {% elif request.GET.employment_type == 'part_time' %}Part-Time
+    {% elif request.GET.employment_type == 'contract' %}Contract
+    {% elif request.GET.employment_type == 'daily' %}Daily
+    {% elif jobs|length > 0 %}{{ jobs.0.get_employment_type_display }}
+    {% else %}jobs{% endif %}
+    job{% if jobs|length != 1 %}s{% endif %}
+    out of <strong>{{ total_jobs }}</strong> total jobs
     {% if request.GET.query %} matching "<strong>{{ request.GET.query }}</strong>"{% endif %}
     {% if request.GET.location %} in "<strong>{{ request.GET.location }}</strong>"{% endif %}
-    {% if request.GET.employment_type %}
-    {% if request.GET.employment_type == 'full_time' %} <strong>(Full-Time)</strong>
-    {% elif request.GET.employment_type == 'part_time' %} <strong>(Part-Time)</strong>
-    {% elif request.GET.employment_type == 'contract' %} <strong>(Contract)</strong>
-    {% elif request.GET.employment_type == 'daily' %} <strong>(Daily)</strong>
-    {% endif %}
-    {% endif %}
     {% if request.GET.work_type == 'remote' %} <strong>(Remote)</strong>{% endif %}
     {% if request.GET.work_type == 'physical' %} <strong>(On-Site)</strong>{% endif %}
 </div>
@@ -1237,15 +1161,15 @@
                 <div class="jl-card-badges">
                     <!-- Employment Type Badge -->
                     <span class="jl-badge jl-badge-type jl-badge-{{ job.employment_type }}">
-                        {% if job.employment_type == 'full_time' %}💼 Full-Time
-                        {% elif job.employment_type == 'part_time' %}⏰ Part-Time
-                        {% elif job.employment_type == 'contract' %}📄 Contract
-                        {% elif job.employment_type == 'daily' %}⚡ Daily
+                        {% if job.employment_type == 'full_time' %}Full-Time
+                        {% elif job.employment_type == 'part_time' %}Part-Time
+                        {% elif job.employment_type == 'contract' %}Contract
+                        {% elif job.employment_type == 'daily' %}Daily
                         {% endif %}
                     </span>
                     <!-- Work Location Badge -->
                     <span class="jl-badge {% if job.work_type == 'remote' %}jl-badge-remote{% else %}jl-badge-onsite{% endif %}">
-                        {% if job.work_type == 'remote' %}🌐 Remote{% else %}🏢 On-Site{% endif %}
+                        {% if job.work_type == 'remote' %}Remote{% else %}On-Site{% endif %}
                     </span>
                     <!-- New Badge -->
                     {% if job.posted_at|date:"Y-m-d" == today|date:"Y-m-d" %}
@@ -1331,7 +1255,7 @@
                     </button>
                     {% endif %}
                     <a href="{% url 'job_detail' job.slug %}" class="jl-btn jl-btn-primary jl-btn-sm">
-                        View Details →
+                        View Details
                     </a>
                 </div>
             </div>

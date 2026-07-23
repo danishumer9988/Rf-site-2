@@ -78,29 +78,6 @@
         z-index: 2;
         max-width: 1200px;
         margin: 0 auto;
-        display: flex;
-        align-items: center;
-        gap: 3rem;
-    }
-
-    .il-hero-icon {
-        font-size: 5rem;
-        width: 120px;
-        height: 120px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: var(--il-radius-xl);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
-        flex-shrink: 0;
-        animation: iconFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes iconFloat {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
     }
 
     .il-hero-text {
@@ -111,7 +88,8 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        font-size: 0.85rem;
+        font-size: 1.05rem;
+        font-weight: 600;
         color: #94a3b8;
         margin-bottom: 1rem;
     }
@@ -128,6 +106,12 @@
 
     .il-hero-text .breadcrumb .separator {
         color: #475569;
+    }
+
+    .il-hero-text .breadcrumb .current {
+        color: #e2e8f0;
+        font-weight: 700;
+        font-size: 1.1rem;
     }
 
     .il-hero-text h1 {
@@ -150,31 +134,6 @@
         font-size: 1.1rem;
         max-width: 600px;
         line-height: 1.7;
-    }
-
-    .il-hero-stats {
-        display: flex;
-        gap: 2rem;
-        margin-top: 1.5rem;
-        flex-wrap: wrap;
-    }
-
-    .il-hero-stat {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #94a3b8;
-        font-size: 0.95rem;
-    }
-
-    .il-hero-stat .stat-number {
-        color: white;
-        font-weight: 700;
-        font-size: 1.2rem;
-    }
-
-    .il-hero-stat .stat-label {
-        color: #94a3b8;
     }
 
     .il-search-section {
@@ -211,7 +170,6 @@
         align-items: end;
     }
 
-    /* ===== SIMPLE SEARCH FIELD - No Hover Effects ===== */
     .il-search-field {
         position: relative;
     }
@@ -244,14 +202,12 @@
         font-size: 0.9rem;
     }
 
-    /* ===== SIMPLE SELECT - No arrow, No background image ===== */
     .il-search-field select {
         cursor: pointer;
         padding-right: 1rem;
         background-image: none;
     }
 
-    /* ===== SEARCH BUTTON - No Hover Effect ===== */
     .il-search-btn {
         padding: 0.8rem 2rem;
         background: linear-gradient(135deg, var(--il-cyan), var(--il-cyan-dark));
@@ -274,7 +230,6 @@
         transition: none;
     }
 
-    /* ===== DARK MODE ===== */
     body.dark-mode .il-search-field input,
     body.dark-mode .il-search-field select {
         background: rgba(30, 41, 59, 0.6);
@@ -293,7 +248,6 @@
         background-image: none;
     }
 
-    /* ===== FILTER TABS - NO UNDERLINE ===== */
     .il-filter-tabs-wrapper {
         display: flex;
         justify-content: space-between;
@@ -763,7 +717,6 @@
         pointer-events: none;
     }
 
-    /* ===== DARK MODE ===== */
     body.dark-mode .il-search-container {
         background: rgba(30, 41, 59, 0.6);
         border-color: rgba(255, 255, 255, 0.05);
@@ -911,7 +864,6 @@
         color: #e2e8f0;
     }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 1200px) {
         .il-cards-grid {
             grid-template-columns: repeat(2, 1fr);
@@ -944,17 +896,10 @@
 
     @media (max-width: 768px) {
         .il-hero-content {
-            flex-direction: column;
             text-align: center;
-            gap: 1.5rem;
         }
         .il-hero-text h1 {
             font-size: 2rem;
-        }
-        .il-hero-icon {
-            width: 80px;
-            height: 80px;
-            font-size: 3rem;
         }
         .il-search-container {
             padding: 1.25rem;
@@ -1008,30 +953,14 @@
 <!-- ===== HERO SECTION ===== -->
 <div class="il-hero">
     <div class="il-hero-content">
-        <div class="il-hero-icon">🎓</div>
         <div class="il-hero-text">
             <div class="breadcrumb">
                 <a href="/">Home</a>
                 <span class="separator">›</span>
-                <span>Internships</span>
+                <span class="current">Internships</span>
             </div>
             <h1>Find Your <span>Dream Internship</span></h1>
             <p>Discover thousands of internship opportunities from top companies around the world. Kickstart your career today.</p>
-            <div class="il-hero-stats">
-                <div class="il-hero-stat">
-                    <span class="stat-number">{{ total_internships|default:0 }}</span>
-                    <span class="stat-label">Total Internships</span>
-                </div>
-                <div class="il-hero-stat">
-                    <span class="stat-number">{{ full_time_count|default:0 }}</span>
-                    <span class="stat-label">Full-Time</span>
-                </div>
-                <div class="il-hero-stat">
-                    <span class="stat-number">{{ part_time_count|default:0 }}</span>
-                    <span class="stat-label">Part-Time</span>
-                </div>
-
-            </div>
         </div>
     </div>
 </div>
@@ -1039,7 +968,7 @@
 <!-- ===== SEARCH SECTION ===== -->
 <div class="il-search-section">
     <div class="il-search-container il-animate">
-        <!-- Filter Tabs - No Underline, Pill Style -->
+        <!-- Filter Tabs -->
         <div class="il-filter-tabs-wrapper">
             <div class="il-filter-tabs">
                 <button class="il-filter-tab {% if not request.GET.internship_type %}active{% endif %}"
@@ -1066,12 +995,10 @@
 
         <!-- Search Form -->
         <form class="il-search-form" id="mainSearchForm" action="{% url 'internship_list' %}" method="GET">
-            <!-- Search Input -->
             <div class="il-search-field">
                 <input type="text" name="search" id="searchQueryInput" placeholder="Internship title, company, or skills" value="{{ request.GET.search|default:'' }}">
             </div>
 
-            <!-- Category Dropdown - Simple (same as location dropdown) -->
             <div class="il-search-field">
                 <select name="category" id="categorySelect">
                     <option value="">All Categories</option>
@@ -1083,7 +1010,6 @@
                 </select>
             </div>
 
-            <!-- Hidden inputs -->
             <input type="hidden" name="internship_type" id="internshipTypeHidden" value="{{ request.GET.internship_type|default:'' }}">
             <input type="hidden" name="type" id="workTypeHidden" value="{{ request.GET.type|default:'' }}">
 
@@ -1104,10 +1030,14 @@
 
 <!-- ===== RESULTS COUNT ===== -->
 <div class="il-results-count il-animate delay-1">
-    Found <strong id="resultCount">{{ internships|length }}</strong> internship{% if internships|length != 1 %}s{% endif %}
+    Found <strong id="resultCount">{{ internships|length }}</strong>
+    {% if request.GET.internship_type == 'full_time' %}Full-Time
+    {% elif request.GET.internship_type == 'part_time' %}Part-Time
+    {% elif internships|length > 0 %}{{ internships.0.get_internship_type_display }}
+    {% else %}internships{% endif %}
+    internship{% if internships|length != 1 %}s{% endif %}
+    out of <strong>{{ total_internships }}</strong> total internships
     {% if request.GET.search %} matching "<strong>{{ request.GET.search }}</strong>"{% endif %}
-    {% if request.GET.internship_type == 'full_time' %} <strong>(Full-Time)</strong>{% endif %}
-    {% if request.GET.internship_type == 'part_time' %} <strong>(Part-Time)</strong>{% endif %}
     {% if request.GET.type == 'remote' %} <strong>(Remote)</strong>{% endif %}
     {% if request.GET.type == 'physical' %} <strong>(On-Site)</strong>{% endif %}
 </div>
@@ -1176,7 +1106,7 @@
                 </button>
                 {% endif %}
                 <a href="{% url 'internship_detail' internship.slug %}" class="il-btn il-btn-primary il-btn-sm">
-                    View Details →
+                    View Details
                 </a>
             </div>
         </div>
@@ -1233,15 +1163,12 @@
 
 <!-- ===== JAVASCRIPT ===== -->
 <script>
-    // ========== FILTER INTERNSHIPS BY TYPE ==========
     function filterInternships(type) {
         const hiddenInput = document.getElementById('internshipTypeHidden');
         const form = document.getElementById('mainSearchForm');
 
-        // Update hidden input value
         hiddenInput.value = type;
 
-        // Update active class on tabs
         const tabs = document.querySelectorAll('.il-filter-tab');
         tabs.forEach(tab => tab.classList.remove('active'));
 
@@ -1256,11 +1183,9 @@
             tabs[index].classList.add('active');
         }
 
-        // Submit the form
         form.submit();
     }
 
-    // ========== FILTER BY WORK TYPE ==========
     function filterByWorkType() {
         const hiddenInput = document.getElementById('workTypeHidden');
         const select = document.getElementById('workTypeFilter');
@@ -1270,13 +1195,11 @@
         form.submit();
     }
 
-    // ========== AUTO-SELECT FILTERS FROM URL ==========
     document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const internshipType = urlParams.get('internship_type');
         const workType = urlParams.get('type');
 
-        // Auto-select internship type tab
         if (internshipType) {
             const tabs = document.querySelectorAll('.il-filter-tab');
             tabs.forEach(tab => tab.classList.remove('active'));
@@ -1291,11 +1214,9 @@
                 tabs[index].classList.add('active');
             }
 
-            // Update hidden input
             document.getElementById('internshipTypeHidden').value = internshipType;
         }
 
-        // Auto-select work type dropdown
         if (workType) {
             const select = document.getElementById('workTypeFilter');
             if (select) {
@@ -1305,7 +1226,6 @@
         }
     });
 
-    // ========== SAVE TOGGLE ==========
     function toggleSave(slug, button) {
         {% if not user.is_authenticated %}
             window.location.href = '/login/';
