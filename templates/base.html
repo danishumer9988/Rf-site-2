@@ -1,0 +1,917 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}JobLidar - Find verified jobs and internships from real companies. Full-time, part-time, contract, and daily-wage roles updated weekly.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}jobs, internships, remote jobs, tech jobs, career, employment{% endblock %}">
+    <meta name="author" content="JobLidar">
+    <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+    <meta name="theme-color" content="#2563eb">
+
+    <meta property="og:site_name" content="JobLidar">
+    <meta property="og:title" content="{% block og_title %}JobLidar - Find Your Dream Career{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Discover verified job and internship opportunities from real companies.{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% static 'images/og-image.png' %}{% endblock %}">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}JobLidar{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{% endblock %}">
+
+    <link rel="canonical" href="{% block canonical_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}">
+
+    <title>{% block title %}JobLidar - Find Jobs & Internships{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=1">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<!-- ==================== PAGE LOADER ==================== -->
+<div class="page-loader" id="pageLoader">
+    <div class="loader-spinner"></div>
+</div>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav class="navbar" id="navbar">
+    <a href="/" class="nav-brand">
+        <img src="/static/images/logo/logo1.png" alt="JobLidar Logo" style="height: 100px; width: auto; object-fit: contain;">
+    </a>
+
+    <!-- ===== MOBILE TOGGLE BUTTON ===== -->
+    <button class="mobile-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <ul class="nav-menu" id="navMenu">
+
+        <!-- Home -->
+        <li class="nav-item">
+            <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                Home
+            </a>
+        </li>
+
+        <!-- ===== JOBS DROPDOWN ===== -->
+        <li class="nav-item dropdown">
+            <span class="nav-link dropdown-toggle" style="cursor:pointer;">
+                Jobs
+                <span class="nav-arrow"><i class="fas fa-chevron-down"></i></span>
+            </span>
+            <div class="dropdown-menu" style="min-width: 220px; padding: 0.3rem 0.2rem;">
+
+                <!-- Row 1: Full-Time Jobs -->
+                <div class="job-category-row">
+                    <span class="category-label">Full-Time</span>
+                    <span class="sub-arrow"><i class="fas fa-chevron-right"></i></span>
+                    <div class="sub-dropdown">
+                        <a href="{% url 'job_list' %}?employment_type=full_time">All</a>
+                        <a href="{% url 'job_list' %}?employment_type=full_time&work_type=physical">On-Site</a>
+                        <a href="{% url 'job_list' %}?employment_type=full_time&work_type=remote">Remote</a>
+                    </div>
+                </div>
+
+                <!-- Row 2: Part-Time Jobs -->
+                <div class="job-category-row">
+                    <span class="category-label">Part-Time</span>
+                    <span class="sub-arrow"><i class="fas fa-chevron-right"></i></span>
+                    <div class="sub-dropdown">
+                        <a href="{% url 'job_list' %}?employment_type=part_time">All</a>
+                        <a href="{% url 'job_list' %}?employment_type=part_time&work_type=physical">On-Site</a>
+                        <a href="{% url 'job_list' %}?employment_type=part_time&work_type=remote">Remote</a>
+                    </div>
+                </div>
+
+                <!-- Row 3: Contract Jobs -->
+                <div class="job-category-row">
+                    <span class="category-label">Contract</span>
+                    <span class="sub-arrow"><i class="fas fa-chevron-right"></i></span>
+                    <div class="sub-dropdown">
+                        <a href="{% url 'job_list' %}?employment_type=contract">All</a>
+                        <a href="{% url 'job_list' %}?employment_type=contract&work_type=physical">On-Site</a>
+                        <a href="{% url 'job_list' %}?employment_type=contract&work_type=remote">Remote</a>
+                    </div>
+                </div>
+
+                <!-- Row 4: Daily Wage Jobs -->
+                <div class="job-category-row">
+                    <span class="category-label">Daily Wage</span>
+                    <span class="sub-arrow"><i class="fas fa-chevron-right"></i></span>
+                    <div class="sub-dropdown">
+                        <a href="{% url 'job_list' %}?employment_type=daily">All</a>
+                        <a href="{% url 'job_list' %}?employment_type=daily&work_type=physical">On-Site</a>
+                        <a href="{% url 'job_list' %}?employment_type=daily&work_type=remote">Remote</a>
+                    </div>
+                </div>
+
+            </div>
+        </li>
+
+        <!-- ===== INTERNSHIPS DROPDOWN ===== -->
+        <li class="nav-item dropdown">
+            <span class="nav-link dropdown-toggle" style="cursor:pointer;">
+                Internships
+                <span class="nav-arrow"><i class="fas fa-chevron-down"></i></span>
+            </span>
+            <div class="dropdown-menu" style="min-width: 220px; padding: 0.3rem 0.2rem;">
+
+                <!-- Row 1: Full-Time Internships -->
+                <div class="job-category-row">
+                    <span class="category-label">Full-Time</span>
+                    <span class="sub-arrow"><i class="fas fa-chevron-right"></i></span>
+                    <div class="sub-dropdown">
+                        <a href="{% url 'internship_list' %}?internship_type=full_time">All</a>
+                        <a href="{% url 'internship_list' %}?internship_type=full_time&type=physical">On-Site</a>
+                        <a href="{% url 'internship_list' %}?internship_type=full_time&type=remote">Remote</a>
+                    </div>
+                </div>
+
+                <!-- Row 2: Part-Time Internships -->
+                <div class="job-category-row">
+                    <span class="category-label">Part-Time</span>
+                    <span class="sub-arrow"><i class="fas fa-chevron-right"></i></span>
+                    <div class="sub-dropdown">
+                        <a href="{% url 'internship_list' %}?internship_type=part_time">All</a>
+                        <a href="{% url 'internship_list' %}?internship_type=part_time&type=physical">On-Site</a>
+                        <a href="{% url 'internship_list' %}?internship_type=part_time&type=remote">Remote</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <!-- Post a Job -->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+            <a href="{% url 'post_job' %}" class="nav-link {% if '/jobs/post/' in request.path %}active{% endif %}">
+                Post a Job
+            </a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+            <a href="{% url 'login' %}?next={% url 'post_job' %}" class="nav-link">
+                Post a Job
+            </a>
+        </li>
+        {% endif %}
+
+        <!-- Contact -->
+        <li class="nav-item">
+            <a href="/contact/" class="nav-link {% if request.path == '/contact/' %}active{% endif %}">
+                Contact
+            </a>
+        </li>
+    </ul>
+
+    <!-- ===== NAV ACTIONS ===== -->
+    <div class="nav-actions">
+
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+            <button class="user-menu-btn" onclick="toggleUserMenu()">
+                <div class="user-avatar">
+                    {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}">
+                    {% else %}
+                    {{ user.username|slice:":1"|upper }}
+                    {% endif %}
+                </div>
+                <span>{{ user.username|truncatechars:12 }}</span>
+                <span class="nav-arrow"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="dropdown-menu" id="userDropdown" style="min-width: 200px;">
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'dashboard_profile' %}">My Profile</a>
+                <a href="{% url 'dashboard_saved_jobs' %}">Saved Jobs</a>
+                <a href="{% url 'dashboard_saved_internships' %}">Saved Internships</a>
+                <a href="{% url 'my_job_posts' %}">My Job Posts</a>
+                <a href="{% url 'dashboard_settings' %}">Settings</a>
+                {% if user.is_staff %}
+                <div class="dropdown-divider"></div>
+                <a href="{% url 'admin_dashboard' %}">Admin Panel</a>
+                <a href="/admin/">Django Admin</a>
+                {% endif %}
+                <div class="dropdown-divider"></div>
+                <a href="{% url 'logout' %}" style="color: var(--danger);">Logout</a>
+            </div>
+        </div>
+        {% else %}
+        <!-- ===== LOGIN BUTTON – MATCHES FOOTER NEWSLETTER BUTTON ===== -->
+        <a href="{% url 'login' %}" class="btn btn-primary" style="padding: 0.6rem 1.5rem; font-size: 0.95rem;">
+            <i class="fas fa-sign-in-alt"></i> Dashboard
+        </a>
+        {% endif %}
+
+    </div>
+
+</nav>
+
+<!-- ==================== MOBILE MENU ==================== -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="/" class="nav-link">Home</a>
+
+    <!-- Jobs Section -->
+    <div style="padding: 0.5rem 0;">
+        <div style="font-weight: 600; color: #2563eb; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.2rem 1.5rem; margin-bottom: 0.3rem;">Jobs</div>
+        <a href="{% url 'job_list' %}" class="nav-link">All Jobs</a>
+        <a href="{% url 'job_list' %}?employment_type=full_time" class="nav-link">Full-Time</a>
+        <a href="{% url 'job_list' %}?employment_type=part_time" class="nav-link">Part-Time</a>
+        <a href="{% url 'job_list' %}?employment_type=contract" class="nav-link">Contract</a>
+        <a href="{% url 'job_list' %}?employment_type=daily" class="nav-link">Daily Wage</a>
+        <div style="height: 1px; background: rgba(0,0,0,0.06); margin: 0.3rem 1.5rem;"></div>
+        <a href="{% url 'job_list' %}?work_type=remote" class="nav-link">Remote Jobs</a>
+        <a href="{% url 'job_list' %}?work_type=physical" class="nav-link">On-Site Jobs</a>
+    </div>
+
+    <!-- Internships Section -->
+    <div style="padding: 0.5rem 0;">
+        <div style="font-weight: 600; color: #06b6d4; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 0.2rem 1.5rem; margin-bottom: 0.3rem;">Internships</div>
+        <a href="{% url 'internship_list' %}" class="nav-link">All Internships</a>
+        <a href="{% url 'internship_list' %}?internship_type=full_time" class="nav-link">Full-Time</a>
+        <a href="{% url 'internship_list' %}?internship_type=part_time" class="nav-link">Part-Time</a>
+        <div style="height: 1px; background: rgba(0,0,0,0.06); margin: 0.3rem 1.5rem;"></div>
+        <a href="{% url 'internship_list' %}?type=remote" class="nav-link">Remote</a>
+        <a href="{% url 'internship_list' %}?type=physical" class="nav-link">On-Site</a>
+    </div>
+
+    {% if user.is_authenticated %}
+    <a href="{% url 'post_job' %}" class="nav-link">Post a Job</a>
+    {% endif %}
+
+    <a href="/contact/" class="nav-link">Contact</a>
+
+    <div class="mobile-divider"></div>
+
+    {% if user.is_authenticated %}
+    <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
+    <a href="{% url 'dashboard_profile' %}" class="nav-link">Profile</a>
+    <a href="{% url 'dashboard_saved_jobs' %}" class="nav-link">Saved Jobs</a>
+    <a href="{% url 'dashboard_saved_internships' %}" class="nav-link">Saved Internships</a>
+    <a href="{% url 'my_job_posts' %}" class="nav-link">My Posts</a>
+    <a href="{% url 'dashboard_settings' %}" class="nav-link">Settings</a>
+    {% if user.is_staff %}
+    <a href="{% url 'admin_dashboard' %}" class="nav-link">Admin Panel</a>
+    {% endif %}
+    <a href="{% url 'logout' %}" class="nav-link" style="color: var(--danger);">Logout</a>
+    {% else %}
+    <a href="{% url 'login' %}" class="btn btn-outline" style="width: 100%; justify-content: center; padding: 0.7rem 1.5rem; font-size: 1rem;">
+        <i class="fas fa-sign-in-alt"></i> Dashboard
+    </a>
+    {% endif %}
+</div>
+
+<!-- ==================== MESSAGES ==================== -->
+<div class="messages-container" id="messagesContainer">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}" onclick="this.remove()">
+                <span class="alert-icon">
+                    {% if message.tags == 'success' %}✅
+                    {% elif message.tags == 'error' or message.tags == 'danger' %}❌
+                    {% elif message.tags == 'warning' %}⚠️
+                    {% elif message.tags == 'info' %}ℹ️
+                    {% else %}💬{% endif %}
+                </span>
+        <span class="alert-content">{{ message }}</span>
+        <button class="alert-close" onclick="event.stopPropagation(); this.parentElement.remove();">×</button>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- ===== FEEDBACK FLOATING BUTTON ===== -->
+<button class="feedback-float-btn" id="feedbackFloatBtn" aria-label="Send feedback" onclick="document.getElementById('feedbackModal').classList.add('active'); document.body.style.overflow='hidden';">
+    💬
+</button>
+
+<!-- ===== FEEDBACK MODAL ===== -->
+<div class="feedback-modal-overlay" id="feedbackModal">
+    <div class="feedback-modal">
+        <button class="feedback-modal-close" id="feedbackModalClose" aria-label="Close">&times;</button>
+        <h2>Send Feedback</h2>
+        <p>We'd love to hear your thoughts. Help us improve!</p>
+
+        <div id="feedbackFormContainer">
+            <form id="feedbackForm">
+                {% csrf_token %}
+                <input type="hidden" id="feedbackSubmitUrl" value="{% url 'feedback_submit' %}">
+
+                <div class="form-group">
+                    <label for="fb_message">Message <span class="required">*</span></label>
+                    <textarea id="fb_message" name="message" placeholder="What do you think?" required></textarea>
+                    <div class="form-error" id="fb_message_error">Please enter your message.</div>
+                </div>
+
+                <!-- STAR RATING -->
+                <div class="form-group">
+                    <label for="fb_rating">Rating (1–5) <span class="required">*</span></label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                    </div>
+                    <input type="hidden" name="rating" id="fb_rating" value="0">
+                    <div class="form-error" id="fb_rating_error">Please select a rating.</div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="fbSubmitBtn">Send Feedback</button>
+            </form>
+        </div>
+
+        <div class="success-message" id="feedbackSuccess">
+            <span class="check">✅</span>
+            <p style="font-weight: 600; color: var(--success);">Thank you for your feedback!</p>
+            <p style="font-size: 0.9rem; color: var(--gray-500);">We appreciate your input.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+    <div class="footer-grid">
+        <!-- Brand Column -->
+        <div class="footer-col">
+            <div class="footer-brand">
+<!--                <img src="/static/images/logo/logo1.png" alt="JobLidar Logo" style="height: 35px; width: auto; object-fit: contain; margin-right: 0.5rem;">-->
+                JobLidar
+            </div>
+            <p class="footer-desc">
+                Your trusted source for finding the best jobs and internships.
+                We connect talented professionals with top companies worldwide.
+            </p>
+            <div class="footer-social">
+                <a href="#" class="social-link" title="Twitter" aria-label="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-link" title="LinkedIn" aria-label="LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a href="#" class="social-link" title="GitHub" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#" class="social-link" title="Instagram" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="social-link" title="Facebook" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul class="footer-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'job_list' %}">Find Jobs</a></li>
+                <li><a href="{% url 'internship_list' %}">Internships</a></li>
+                <li>{% if user.is_authenticated %}<a href="{% url 'post_job' %}" class="{% if '/jobs/post/' in request.path %}active{% endif %}">Post a Job</a>{% else %}<a href="{% url 'login' %}?next={% url 'post_job' %}">Post a Job</a>{% endif %}</li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+            </ul>
+        </div>
+
+        <!-- Job Types -->
+        <div class="footer-col">
+            <h4>Job Types</h4>
+            <ul class="footer-links">
+                <li><a href="{% url 'job_list' %}?employment_type=full_time">Full-Time</a></li>
+                <li><a href="{% url 'job_list' %}?employment_type=part_time">Part-Time</a></li>
+                <li><a href="{% url 'job_list' %}?employment_type=contract">Contract</a></li>
+                <li><a href="{% url 'job_list' %}?employment_type=daily">Daily Wage</a></li>
+                <li><a href="{% url 'job_list' %}?work_type=physical">On-Site Jobs</a></li>
+                <li><a href="{% url 'job_list' %}?work_type=remote">Remote Jobs</a></li>
+            </ul>
+        </div>
+
+        <!-- Internship Types -->
+        <div class="footer-col">
+            <h4>Internship Types</h4>
+            <ul class="footer-links">
+                <li><a href="{% url 'internship_list' %}">All Internships</a></li>
+                <li><a href="{% url 'internship_list' %}?internship_type=full_time">Full-Time</a></li>
+                <li><a href="{% url 'internship_list' %}?internship_type=part_time">Part-Time</a></li>
+                <li><a href="{% url 'internship_list' %}?type=physical">On-Site Internships</a></li>
+                <li><a href="{% url 'internship_list' %}?type=remote">Remote Internships</a></li>
+            </ul>
+        </div>
+
+        <!-- Newsletter -->
+        <div class="footer-col">
+            <h4>Newsletter</h4>
+            <div class="footer-newsletter">
+                <p>Subscribe to get weekly job alerts and career tips.</p>
+                <form class="footer-newsletter-form"
+                      action="{% url 'subscribe' %}"
+                      method="POST"
+                      onsubmit="subscribeFooter(event)">
+                    {% csrf_token %}
+                    <input type="email" name="email" class="footer-newsletter-input"
+                           placeholder="Your email" required>
+                    <button type="submit" class="footer-newsletter-btn">
+                        <i class="fas fa-paper-plane"></i> Subscribe
+                    </button>
+                </form>
+            </div>
+            <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.8rem;">
+                We respect your privacy. Unsubscribe anytime.
+            </p>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div>
+            &copy; {% now "Y" %} Job Reference Hub. All rights reserved.
+        </div>
+        <div class="footer-bottom-links">
+            <a href="{% url 'privacy' %}">Privacy Policy</a>
+            <a href="{% url 'terms' %}">Terms of Service</a>
+            <a href="{% url 'faq' %}">FAQ</a>
+        </div>
+    </div>
+</footer>
+
+<!-- ==================== SCROLL TO TOP ==================== -->
+<button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()" aria-label="Scroll to top">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+    // ... (all scripts remain the same)
+    // ========== PAGE LOADER ==========
+    window.addEventListener('load', function() {
+        const loader = document.getElementById('pageLoader');
+        setTimeout(function() {
+            loader.classList.add('hidden');
+        }, 500);
+    });
+
+    // ========== NAVBAR SCROLL EFFECT ==========
+    window.addEventListener('scroll', function() {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 10) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    }, { passive: true });
+
+    // ========== MOBILE MENU TOGGLE ==========
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobileMenu');
+        const toggleBtn = document.querySelector('.mobile-toggle');
+
+        mobileMenu.classList.toggle('active');
+
+        if (mobileMenu.classList.contains('active')) {
+            toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
+            document.body.style.overflow = 'hidden';
+        } else {
+            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            document.body.style.overflow = '';
+        }
+    }
+
+    document.getElementById('mobileMenu').addEventListener('click', function(e) {
+        if (e.target.closest('a')) {
+            toggleMobileMenu();
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu && mobileMenu.classList.contains('active')) {
+                toggleMobileMenu();
+            }
+        }
+    });
+
+    // ========== USER MENU TOGGLE ==========
+    function toggleUserMenu() {
+        const dropdown = document.getElementById('userDropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', function(e) {
+        const userDropdown = document.getElementById('userDropdown');
+        const userMenuBtn = document.querySelector('.user-menu-btn');
+
+        if (userDropdown && userMenuBtn &&
+            !userMenuBtn.contains(e.target) &&
+            !userDropdown.contains(e.target)) {
+            userDropdown.style.display = 'none';
+        }
+    });
+
+    // ========== SCROLL TO TOP + FEEDBACK BUTTON VISIBILITY ==========
+    window.addEventListener('scroll', function() {
+        const scrollBtn = document.getElementById('scrollToTop');
+        const feedbackBtn = document.getElementById('feedbackFloatBtn');
+        const threshold = 400;
+
+        if (window.scrollY > threshold) {
+            scrollBtn.classList.add('visible');
+            if (feedbackBtn) feedbackBtn.classList.add('visible');
+        } else {
+            scrollBtn.classList.remove('visible');
+            if (feedbackBtn) feedbackBtn.classList.remove('visible');
+        }
+    }, { passive: true });
+
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // ========== FEEDBACK MODAL & STAR RATING ==========
+(function() {
+    const modal = document.getElementById('feedbackModal');
+    const openBtn = document.getElementById('feedbackFloatBtn');
+    const closeBtn = document.getElementById('feedbackModalClose');
+    const form = document.getElementById('feedbackForm');
+    const formContainer = document.getElementById('feedbackFormContainer');
+    const successMsg = document.getElementById('feedbackSuccess');
+    const submitBtn = document.getElementById('fbSubmitBtn');
+    const submitUrl = document.getElementById('feedbackSubmitUrl').value;
+
+    // ---- Star Rating ----
+    const stars = document.querySelectorAll('#starRating .star');
+    const ratingInput = document.getElementById('fb_rating');
+    let currentRating = 0;
+
+    function updateStars(rating) {
+        stars.forEach((star, index) => {
+            const icon = star.querySelector('i');
+            if (index < rating) {
+                icon.className = 'fas fa-star';
+                star.classList.add('active');
+            } else {
+                icon.className = 'far fa-star';
+                star.classList.remove('active');
+            }
+        });
+        ratingInput.value = rating;
+        currentRating = rating;
+    }
+
+    // Click handler
+    stars.forEach(star => {
+        star.addEventListener('click', function(e) {
+            const val = parseInt(this.dataset.value);
+            updateStars(val);
+            stars.forEach(s => s.classList.remove('hover'));
+            document.getElementById('fb_rating_error').classList.remove('show');
+        });
+
+        star.addEventListener('mouseenter', function() {
+            const val = parseInt(this.dataset.value);
+            stars.forEach((s, idx) => {
+                if (idx < val) {
+                    s.classList.add('hover');
+                } else {
+                    s.classList.remove('hover');
+                }
+            });
+        });
+
+        star.addEventListener('mouseleave', function() {
+            stars.forEach(s => s.classList.remove('hover'));
+        });
+    });
+
+    // ---- Modal open/close ----
+    function openModal() {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        updateStars(0);
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // ---- EXPOSE GLOBALLY ----
+    window.openModal = openModal;
+    window.closeModal = closeModal;
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+    });
+
+    // Reset form state on close
+    modal.addEventListener('transitionend', function() {
+        if (!modal.classList.contains('active')) {
+            form.reset();
+            formContainer.style.display = 'block';
+            successMsg.classList.remove('show');
+            document.querySelectorAll('.form-error').forEach(el => el.classList.remove('show'));
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Feedback';
+            updateStars(0);
+        }
+    });
+
+    // ---- Form submission ----
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const message = document.getElementById('fb_message').value.trim();
+        const rating = parseInt(ratingInput.value);
+
+        let valid = true;
+        if (!message) {
+            document.getElementById('fb_message_error').classList.add('show');
+            valid = false;
+        } else {
+            document.getElementById('fb_message_error').classList.remove('show');
+        }
+        if (rating === 0) {
+            document.getElementById('fb_rating_error').classList.add('show');
+            valid = false;
+        } else {
+            document.getElementById('fb_rating_error').classList.remove('show');
+        }
+        if (!valid) return;
+
+        const formData = new FormData(form);
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+
+        fetch(submitUrl, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(text || 'Server error');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                formContainer.style.display = 'none';
+                successMsg.classList.add('show');
+                setTimeout(closeModal, 2500);
+            } else {
+                alert('Error: ' + (data.error || 'Something went wrong.'));
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Feedback';
+            }
+        })
+        .catch(error => {
+            console.error('Feedback error:', error);
+            alert('Network error. Please try again.\n\n' + error.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Feedback';
+        });
+    });
+})();
+
+    // ========== TOAST NOTIFICATION ==========
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        const colors = {
+            success: '#10b981',
+            error: '#ef4444',
+            warning: '#f59e0b',
+            info: '#3b82f6'
+        };
+
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: ${colors[type] || colors.info};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 9999;
+            animation: slideUpToast 0.3s ease-out;
+            font-weight: 500;
+            font-size: 0.9rem;
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        `;
+        toast.innerHTML = `<span>${message}</span>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.animation = 'slideDownToast 0.3s ease-out forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, 3500);
+    }
+
+    const toastStyles = document.createElement('style');
+    toastStyles.textContent = `
+        @keyframes slideUpToast {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes slideDownToast {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(20px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(toastStyles);
+
+    // ========== COOKIE CONSENT ==========
+    function checkCookieConsent() {
+        const consent = localStorage.getItem('cookieConsent');
+        if (!consent) {
+            document.getElementById('cookieBanner').classList.add('show');
+        }
+    }
+
+    function acceptCookies() {
+        localStorage.setItem('cookieConsent', 'accepted');
+        document.getElementById('cookieBanner').classList.remove('show');
+        showToast('Cookie preferences saved! 🍪', 'success');
+    }
+
+    function declineCookies() {
+        localStorage.setItem('cookieConsent', 'declined');
+        document.getElementById('cookieBanner').classList.remove('show');
+        showToast('Cookie preferences saved.', 'info');
+    }
+
+    document.addEventListener('DOMContentLoaded', checkCookieConsent);
+
+    // ========== CSRF TOKEN HELPER ==========
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // ========== KEYBOARD SHORTCUTS ==========
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const searchInput = document.querySelector('input[name="query"]');
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        if (e.shiftKey && e.key === '?') {
+            e.preventDefault();
+            showToast('Keyboard Shortcuts: Ctrl+K to search', 'info');
+        }
+    });
+
+    // ========== ACTIVE NAV LINK HIGHLIGHT ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href !== '#' && href !== '/') {
+                if (currentPath === href || currentPath.startsWith(href + '/')) {
+                    link.classList.add('active');
+                }
+            }
+        });
+    });
+
+    // ========== INTERSECTION OBSERVER FOR ANIMATIONS ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        const animateElements = document.querySelectorAll('.animate-on-scroll');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        animateElements.forEach(el => observer.observe(el));
+    });
+
+    // ========== THEME TOGGLE ==========
+    (function() {
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const icon = themeToggle.querySelector('i');
+
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            body.classList.add('dark-mode');
+            icon.className = 'fas fa-sun';
+            themeToggle.classList.add('sun');
+            themeToggle.classList.remove('moon');
+        } else {
+            icon.className = 'fas fa-moon';
+            themeToggle.classList.add('moon');
+            themeToggle.classList.remove('sun');
+        }
+
+        themeToggle.addEventListener('click', function() {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun';
+                themeToggle.classList.add('sun');
+                themeToggle.classList.remove('moon');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.className = 'fas fa-moon';
+                themeToggle.classList.add('moon');
+                themeToggle.classList.remove('sun');
+                localStorage.setItem('theme', 'light');
+            }
+
+            if (navigator.vibrate) {
+                navigator.vibrate(10);
+            }
+        });
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (!localStorage.getItem('theme')) {
+                if (e.matches) {
+                    body.classList.add('dark-mode');
+                    icon.className = 'fas fa-sun';
+                    themeToggle.classList.add('sun');
+                    themeToggle.classList.remove('moon');
+                } else {
+                    body.classList.remove('dark-mode');
+                    icon.className = 'fas fa-moon';
+                    themeToggle.classList.add('moon');
+                    themeToggle.classList.remove('sun');
+                }
+            }
+        });
+
+        console.log('🌓 Theme toggle initialized');
+    })();
+
+    console.log('🚀 Job Reference Hub - Ready');
+    console.log('💡 Tip: Press Ctrl+K to focus search');
+    console.log('💡 Tip: Press Shift+? for keyboard shortcuts help');
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5RXFJ6X521"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5RXFJ6X521');
+</script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

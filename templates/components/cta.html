@@ -1,0 +1,306 @@
+{% load static %}
+
+<!-- ============================================================ -->
+<!-- ===== CTA POPUP – SHOWS IN EACH NEW TAB ===== -->
+<!-- ============================================================ -->
+
+<style>
+    /* ===== OVERLAY ===== */
+    .cta-popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 999999;
+        display: none; /* hidden by default */
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .cta-popup-overlay.visible {
+        display: flex !important;
+    }
+
+    /* ===== POPUP BOX ===== */
+    .cta-popup {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        max-width: 580px;
+        width: 100%;
+        padding: 3rem 2.5rem 2.5rem;
+        border-radius: 20px;
+        text-align: center;
+        color: white;
+        position: relative;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+        display: block;
+        opacity: 1;
+        transform: scale(1);
+        animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8) translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    /* ===== CLOSE BUTTON ===== */
+    .cta-popup-close {
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        font-size: 1.4rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: inherit;
+        line-height: 1;
+    }
+
+    .cta-popup-close:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: rotate(90deg);
+    }
+
+    /* ===== CONTENT ===== */
+    .cta-popup-icon {
+        font-size: 3.5rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .cta-popup-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .cta-popup-desc {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin-bottom: 1.75rem;
+        line-height: 1.7;
+    }
+
+    .cta-popup-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-white-popup {
+        background: white;
+        color: #2563eb;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        font-family: inherit;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-white-popup:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        gap: 0.75rem;
+    }
+
+    .btn-outline-white-popup {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: inherit;
+        cursor: pointer;
+    }
+
+    .btn-outline-white-popup:hover {
+        background: white;
+        color: #2563eb;
+        transform: translateY(-3px);
+        gap: 0.75rem;
+        border-color: white;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+        .cta-popup {
+            padding: 2rem 1.5rem 1.8rem;
+        }
+
+        .cta-popup-title {
+            font-size: 1.5rem;
+        }
+
+        .cta-popup-desc {
+            font-size: 0.9rem;
+        }
+
+        .cta-popup-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .btn-white-popup,
+        .btn-outline-white-popup {
+            justify-content: center;
+            width: 100%;
+            padding: 0.7rem 1.5rem;
+        }
+
+        .cta-popup-close {
+            top: 8px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            font-size: 1.1rem;
+        }
+
+        .cta-popup-icon {
+            font-size: 2.8rem;
+        }
+    }
+
+    body.cta-popup-open {
+        overflow: hidden;
+    }
+</style>
+
+<!-- ===== POPUP HTML ===== -->
+<div class="cta-popup-overlay" id="ctaPopupOverlay">
+    <div class="cta-popup" id="ctaPopupBox">
+        <button class="cta-popup-close" id="ctaPopupClose" aria-label="Close popup">✕</button>
+        <h2 class="cta-popup-title">Ready to Advance Your Career?</h2>
+        <p class="cta-popup-desc">
+            Join thousands of professionals who found their dream jobs through Job Reference Hub.
+            Create your account and start applying today!
+        </p>
+        <div class="cta-popup-buttons">
+            {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}" class="btn-white-popup">Create Free Account →</a>
+            <a href="{% url 'job_list' %}" class="btn-outline-white-popup">Browse Jobs →</a>
+            {% else %}
+            <a href="{% url 'dashboard' %}" class="btn-white-popup">Go to Dashboard →</a>
+            <a href="{% url 'job_list' %}" class="btn-outline-white-popup">Find New Jobs →</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        var overlay = document.getElementById('ctaPopupOverlay');
+        var closeBtn = document.getElementById('ctaPopupClose');
+        var SESSION_KEY = 'cta_popup_shown_session';
+
+        // ===== Attach overlay directly to <html> to avoid position: fixed issues =====
+        if (overlay && overlay.parentElement !== document.documentElement) {
+            document.documentElement.appendChild(overlay);
+        }
+
+        // ===== Check if popup was already shown in this tab (sessionStorage) =====
+        function wasPopupShown() {
+            return sessionStorage.getItem(SESSION_KEY) === 'true';
+        }
+
+        // ===== Show popup =====
+        function showPopup() {
+            if (!overlay) return;
+
+            // Check sessionStorage - each tab has its own session
+            if (wasPopupShown()) {
+                // Already shown in this tab, hide it
+                overlay.style.display = 'none';
+                document.body.classList.remove('cta-popup-open');
+                return;
+            }
+
+            // Show the popup
+            overlay.classList.add('visible');
+            overlay.style.display = 'flex';
+            document.body.classList.add('cta-popup-open');
+
+            // Mark as shown for this tab session
+            sessionStorage.setItem(SESSION_KEY, 'true');
+
+            console.log('✅ CTA Popup shown in this tab.');
+        }
+
+        // ===== Close popup =====
+        function closePopup() {
+            if (!overlay) return;
+            overlay.classList.remove('visible');
+            overlay.style.display = 'none';
+            document.body.classList.remove('cta-popup-open');
+            console.log('❌ CTA Popup closed.');
+        }
+
+        // ===== Event listeners =====
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closePopup);
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) closePopup();
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && overlay && overlay.style.display !== 'none') {
+                closePopup();
+            }
+        });
+
+        // ===== Show popup on load =====
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', showPopup);
+        } else {
+            showPopup();
+        }
+
+        // Also try after a tiny delay (for safety)
+        setTimeout(showPopup, 100);
+
+        console.log('✅ CTA Popup script loaded.');
+    })();
+</script>

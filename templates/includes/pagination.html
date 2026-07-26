@@ -1,0 +1,141 @@
+<style>
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.3rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+
+    .page-item {
+        list-style: none;
+        display: inline-block;
+    }
+
+    .page-link {
+        padding: 0.6rem 1.2rem;
+        border: 2px solid var(--gray-200);
+        border-radius: var(--radius-sm);
+        color: var(--gray-700);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.9rem;
+        min-width: 44px;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    .page-link:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-bg);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .page-link.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .page-link.disabled {
+        opacity: 0.4;
+        pointer-events: none;
+        cursor: not-allowed;
+        border-color: var(--gray-200);
+        color: var(--gray-500);
+        transform: none !important;
+    }
+
+    .page-info {
+        color: var(--gray-500);
+        font-size: 0.85rem;
+        margin: 0 0.75rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    /* Dark Mode */
+    body.dark-mode .page-link {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: #334155;
+        color: #94a3b8;
+    }
+
+    body.dark-mode .page-link:hover {
+        border-color: #60a5fa;
+        color: #60a5fa;
+        background: rgba(96, 165, 250, 0.1);
+    }
+
+    body.dark-mode .page-link.active {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+
+    body.dark-mode .page-link.disabled {
+        border-color: #334155;
+        color: #64748b;
+    }
+
+    body.dark-mode .page-info {
+        background: rgba(30, 41, 59, 0.3);
+        border-color: rgba(255, 255, 255, 0.05);
+        color: #94a3b8;
+    }
+
+    @media (max-width: 640px) {
+        .page-link {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            min-width: 36px;
+        }
+
+        .page-info {
+            width: 100%;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+    }
+</style>
+
+<div class="pagination-container">
+    {% if page_obj.has_previous %}
+    <a href="?page=1" class="page-link">« First</a>
+    <a href="?page={{ page_obj.previous_page_number }}" class="page-link">‹ Previous</a>
+    {% else %}
+    <span class="page-link disabled">« First</span>
+    <span class="page-link disabled">‹ Previous</span>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+    {% if page_obj.number == num %}
+    <span class="page-link active">{{ num }}</span>
+    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+    <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+    {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next ›</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Last »</a>
+    {% else %}
+    <span class="page-link disabled">Next ›</span>
+    <span class="page-link disabled">Last »</span>
+    {% endif %}
+
+    <span class="page-info">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        ({{ page_obj.paginator.count }} total items)
+    </span>
+</div>

@@ -1,0 +1,118 @@
+<!-- ===== SIDEBAR OVERLAY ===== -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+        <div>
+            <h2>⚙️ Admin <span class="admin-badge">Staff</span></h2>
+        </div>
+        <a href="/" class="home-btn"><i class="fas fa-home"></i> Home</a>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Main</div>
+            <a href="{% url 'admin_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                <span class="icon">📊</span> Dashboard
+            </a>
+            <a href="{% url 'admin_analytics' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_analytics' %}active{% endif %}">
+                <span class="icon">📈</span> Analytics
+            </a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Content</div>
+            <a href="{% url 'admin_jobs' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_jobs' %}active{% endif %}">
+                <span class="icon">💼</span> Jobs
+            </a>
+            <a href="{% url 'admin_internships' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_internships' %}active{% endif %}">
+                <span class="icon">🎓</span> Internships
+            </a>
+            <a href="{% url 'admin_categories' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_categories' %}active{% endif %}">
+                <span class="icon">📂</span> Categories
+            </a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Applications</div>
+            <a href="{% url 'admin_job_applications' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_job_applications' %}active{% endif %}">
+                <span class="icon">📝</span> Job Applications
+            </a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Users & Comms</div>
+            <a href="{% url 'admin_users' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}">
+                <span class="icon">👥</span> Users
+            </a>
+            <a href="{% url 'admin_contacts' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_contacts' %}active{% endif %}">
+                <span class="icon">📧</span> Messages
+            </a>
+            <a href="{% url 'admin_subscribers' %}" class="sidebar-link {% if request.resolver_match.url_name == 'admin_subscribers' %}active{% endif %}">
+                <span class="icon">📬</span> Subscribers
+            </a>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">System</div>
+            <a href="/admin/" class="sidebar-link" target="_blank">
+                <span class="icon">🔧</span> Django Admin
+                <span style="font-size:0.65rem;margin-left:auto;">↗</span>
+            </a>
+            <a href="{% url 'dashboard' %}" class="sidebar-link">
+                <span class="icon">👤</span> User Dashboard
+            </a>
+        </div>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="{% url 'logout' %}" class="sidebar-link" style="color:#fca5a5;">
+            <span class="icon">🚪</span> Logout
+        </a>
+    </div>
+</aside>
+
+<!-- ===== SIDEBAR TOGGLE BUTTON ===== -->
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+<!-- ===== SIDEBAR JAVASCRIPT ===== -->
+<script>
+    function toggleSidebar() {
+        const s = document.getElementById('adminSidebar');
+        const b = document.getElementById('sidebarToggle');
+        const o = document.getElementById('sidebarOverlay');
+        s.classList.toggle('open');
+        b.innerHTML = s.classList.contains('open') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        o.classList.toggle('active');
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+            e.preventDefault();
+            toggleSidebar();
+        }
+        if (e.key === 'Escape') {
+            const s = document.getElementById('adminSidebar');
+            if (s.classList.contains('open')) toggleSidebar();
+        }
+    });
+
+    // Update time on all pages
+    function updateDateTime() {
+        const el = document.getElementById('currentDateTime');
+        if (el) {
+            const now = new Date();
+            el.innerHTML = '<i class="far fa-clock"></i> ' + now.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+    }
+    if (document.getElementById('currentDateTime')) {
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    }
+
+    console.log('✅ Admin Sidebar Loaded');
+    console.log('💡 Press Ctrl+B to toggle sidebar');
+</script>

@@ -1,0 +1,270 @@
+{% load static %}
+<!-- ============================================================ -->
+<!-- ===== COMPANY SLIDER SECTION ===== -->
+<!-- ============================================================ -->
+
+<section class="company-slider-section">
+    <div class="company-slider-container">
+        <!-- Heading -->
+        <div class="company-slider-header">
+            <span class="company-slider-subtitle">INDUSTRIES WE COVER</span>
+        </div>
+
+        <!-- Slider -->
+        <div class="company-slider-wrapper">
+            <div class="company-slider-track">
+                <!-- Category chips, generated from real platform categories -->
+                {% for category in categories %}
+                <div class="company-item industry-chip">
+                    {% if category.icon %}<i class="{{ category.icon }}"></i>{% endif %}
+                    <span>{{ category.name }}</span>
+                </div>
+                {% endfor %}
+                {% for category in categories %}
+                <div class="company-item industry-chip">
+                    {% if category.icon %}<i class="{{ category.icon }}"></i>{% endif %}
+                    <span>{{ category.name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* ==========================
+       COMPANY SLIDER SECTION - NO PADDING
+    ========================== */
+
+    .company-slider-section {
+        width: 100%;
+        padding: 30px;               /* removed top/bottom padding */
+        overflow: hidden;
+        position: relative;
+    }
+
+    .company-slider-container {
+        width: 90%;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* ===== HEADER ===== */
+
+    .company-slider-header {
+        text-align: center;
+        margin-bottom: 40px;      /* reduced spacing */
+    }
+
+    .industry-chip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 9999px;
+        background: #f8fafc;
+        color: #334155;
+        font-weight: 600;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .industry-chip i {
+        color: #2563eb;
+    }
+
+    .company-slider-subtitle {
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #60a5fa;
+        padding: 6px 20px;
+        border-radius: 50px;
+        background: rgba(96, 165, 250, 0.1);
+        border: 1px solid rgba(96, 165, 250, 0.15);
+    }
+
+    .company-slider-title {
+        font-size: 36px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 15px;
+    }
+
+    .company-slider-description {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.6);
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* ===== SLIDER ===== */
+
+    .company-slider-wrapper {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        padding: 10px;               /* removed vertical padding */
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .company-slider-track {
+        display: flex;
+        align-items: center;
+        gap: 60px;
+        animation: scrollCompanies 20s linear infinite;
+        width: max-content;
+        will-change: transform;
+    }
+
+    /* ===== COMPANY ITEMS (Icons Only - No Transparency) ===== */
+    .company-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 0;
+        background: transparent !important;
+        border: none !important;
+        backdrop-filter: none !important;
+        box-shadow: none !important;
+        min-width: auto;
+        transition: none !important;
+        transform: none !important;
+    }
+
+    .company-logo-img {
+        width: 100px;
+        height: 60px;
+        object-fit: contain;
+        filter: none !important;
+        opacity: 1 !important;
+        transition: none;
+        display: block;
+    }
+
+    /* Remove all hover effects - keep logos clean */
+    .company-item:hover,
+    .company-item:hover .company-logo-img {
+        background: transparent !important;
+        border-color: transparent !important;
+        transform: none !important;
+        filter: none !important;
+        opacity: 1 !important;
+        box-shadow: none !important;
+    }
+
+    /* ===== ANIMATION (Right to Left) ===== */
+    @keyframes scrollCompanies {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    /* ===== RESPONSIVE ===== */
+
+    @media (max-width: 992px) {
+        .company-slider-title {
+            font-size: 30px;
+        }
+
+        .company-slider-description {
+            font-size: 16px;
+        }
+
+        .company-slider-track {
+            gap: 45px;
+        }
+        .company-logo-img {
+            width: 80px;
+            height: 50px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .company-slider-section {
+            padding: 0;
+        }
+
+        .company-slider-header {
+            margin-bottom: 15px;
+        }
+
+        .company-slider-title {
+            font-size: 26px;
+        }
+
+        .company-slider-description {
+            font-size: 15px;
+        }
+
+        .company-slider-wrapper {
+            padding: 0;
+        }
+
+        .company-slider-track {
+            gap: 35px;
+            animation-duration: 15s;
+        }
+        .company-logo-img {
+            width: 65px;
+            height: 40px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .company-slider-section {
+            padding: 0;
+        }
+
+        .company-slider-title {
+            font-size: 22px;
+        }
+
+        .company-slider-description {
+            font-size: 14px;
+        }
+
+        .company-slider-subtitle {
+            font-size: 11px;
+            padding: 4px 14px;
+        }
+
+        .company-slider-wrapper {
+            padding: 0;
+        }
+
+        .company-slider-track {
+            gap: 25px;
+            animation-duration: 12s;
+        }
+        .company-logo-img {
+            width: 50px;
+            height: 32px;
+        }
+    }
+
+    /* ===== DARK MODE SUPPORT ===== */
+    body.dark-mode .company-slider-section {
+        background: transparent;
+    }
+
+    body.dark-mode .company-slider-wrapper {
+        background: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.04);
+    }
+
+    body.dark-mode .company-logo-img {
+        filter: none !important;
+        opacity: 1 !important;
+    }
+</style>
