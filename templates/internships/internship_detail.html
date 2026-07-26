@@ -10,12 +10,12 @@
 {% block og_title %}{{ internship.title }} at {{ internship.company }}{% endblock %}
 {% block og_description %}{{ internship.get_internship_type_display }} internship in {{ internship.location }}. {{ internship.description|striptags|truncatewords:30 }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}
+{% block og_url %}https://rf-site-3-kappa.vercel.app{{ request.path }}{% endblock %}
 
 {% block twitter_title %}{{ internship.title }} at {{ internship.company }}{% endblock %}
 {% block twitter_description %}{{ internship.get_internship_type_display }} internship in {{ internship.location }}. Apply now.{% endblock %}
 
-{% block canonical_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}
+{% block canonical_url %}https://rf-site-3-kappa.vercel.app{{ request.path }}{% endblock %}
 
 {% block extra_css %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -757,15 +757,6 @@
                         <i class="fas fa-paper-plane"></i> Apply Now
                     </a>
                 </div>
-            </div>
-
-            <!-- Poster info -->
-            <div class="jd-poster">
-                <span><i class="fas fa-user-circle"></i> By <span class="name">{{ internship.posted_by.username|default:'Admin' }}</span></span>
-                <span class="dot">•</span>
-                <span><i class="fas fa-map-pin"></i> <span class="location">{{ internship.posted_by.profile.location|default:'Worldwide' }}</span></span>
-                <span class="dot">•</span>
-                <span class="date"><i class="far fa-calendar-alt"></i> Posted {{ internship.posted_at|date:"M d, Y" }}</span>
             </div>
 
             {% if internship.category %}

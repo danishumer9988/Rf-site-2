@@ -10,12 +10,12 @@
 {% block og_title %}{{ job.title }} at {{ job.company }}{% endblock %}
 {% block og_description %}{{ job.get_employment_type_display }} role in {{ job.location }}. {{ job.description|striptags|truncatewords:30 }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}
+{% block og_url %}https://rf-site-3-kappa.vercel.app{{ request.path }}{% endblock %}
 
 {% block twitter_title %}{{ job.title }} at {{ job.company }}{% endblock %}
 {% block twitter_description %}{{ job.get_employment_type_display }} role in {{ job.location }}. Apply now.{% endblock %}
 
-{% block canonical_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}
+{% block canonical_url %}https://rf-site-3-kappa.vercel.app{{ request.path }}{% endblock %}
 
 {% block extra_css %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -955,16 +955,6 @@
                     {% endif %}
                 </div>
             </div>
-
-            <!-- Poster info -->
-            <div class="jd-poster">
-                <span><i class="fas fa-user-circle"></i> By <span class="name">{{ job.posted_by.username|default:'Admin' }}</span></span>
-                <span class="dot">•</span>
-                <span><i class="fas fa-map-pin"></i> <span class="location">{{ job.posted_by.profile.location|default:'Worldwide' }}</span></span>
-                <span class="dot">•</span>
-                <span class="date"><i class="far fa-calendar-alt"></i> Posted {{ job.posted_at|date:"M d, Y" }}</span>
-            </div>
-
             {% if job.category %}
             <div class="jd-category">
                 <i class="fas fa-tag"></i> {{ job.category.name }}
