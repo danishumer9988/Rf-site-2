@@ -1,7 +1,7 @@
 from django.utils import timezone
 from apps.jobs.models import Job
 from apps.internships.models import Internship
-
+from django.conf import settings
 
 def last_updated_context(request):
     latest_job = Job.objects.filter(is_active=True).order_by("-posted_at").first()
@@ -20,3 +20,8 @@ def last_updated_context(request):
     return {
         "last_updated": last_updated
     }
+
+
+
+def site_url(request):
+    return {'SITE_URL': settings.SITE_URL}

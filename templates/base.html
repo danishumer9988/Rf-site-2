@@ -14,14 +14,14 @@
     <meta property="og:title" content="{% block og_title %}JobLidar - Find Your Dream Career{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Discover verified job and internship opportunities from real companies.{% endblock %}">
     <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-    <meta property="og:url" content="{% block og_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}">
-    <meta property="og:image" content="{% block og_image %}{% static 'images/og-image.png' %}{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ SITE_URL }}{{ request.path }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ SITE_URL }}{% static 'images/og-image.png' %}{% endblock %}">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{% block twitter_title %}JobLidar{% endblock %}">
-    <meta name="twitter:description" content="{% block twitter_description %}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Discover verified jobs and internships from trusted employers, updated weekly.{% endblock %}">
 
-    <link rel="canonical" href="{% block canonical_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}">
+    <link rel="canonical" href="{% block canonical_url %}{{ SITE_URL }}{{ request.path }}{% endblock %}">
 
     <title>{% block title %}JobLidar - Find Jobs & Internships{% endblock %}</title>
 
@@ -33,6 +33,35 @@
 
 
     <link rel="stylesheet" href="{% static 'css/main.css' %}?v=1">
+
+    <!-- ==================== STRUCTURED DATA (Organization + WebSite) ==================== -->
+    <!-- Sitewide schema.org markup — helps Google understand the brand/entity and can enable a sitelinks searchbox -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "JobLidar",
+            "url": "{{ SITE_URL }}",
+            "logo": "{{ SITE_URL }}{% static 'images/logo/logo1.png' %}",
+            "description": "JobLidar connects job seekers with verified full-time, part-time, contract, and daily-wage jobs, plus internships, updated weekly."
+        }
+    </script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "JobLidar",
+            "url": "{{ SITE_URL }}",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "{{ SITE_URL }}/jobs/?query={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
+    </script>
+
+    <!-- Per-page structured data (e.g. JobPosting on job detail pages) plugs in here -->
+    {% block structured_data %}{% endblock %}
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -348,7 +377,7 @@
         <!-- Brand Column -->
         <div class="footer-col">
             <div class="footer-brand">
-<!--                <img src="/static/images/logo/logo1.png" alt="JobLidar Logo" style="height: 35px; width: auto; object-fit: contain; margin-right: 0.5rem;">-->
+                <!--                <img src="/static/images/logo/logo1.png" alt="JobLidar Logo" style="height: 35px; width: auto; object-fit: contain; margin-right: 0.5rem;">-->
                 JobLidar
             </div>
             <p class="footer-desc">
@@ -356,6 +385,10 @@
                 We connect talented professionals with top companies worldwide.
             </p>
             <div class="footer-social">
+                <!-- TODO: replace href="#" with your real profile URLs before launch.
+                     Dead "#" links hurt user trust and are a minor negative crawl signal.
+                     If you don't have a profile yet for one of these, remove that <a> entirely
+                     rather than leaving it as "#". -->
                 <a href="#" class="social-link" title="Twitter" aria-label="Twitter">
                     <i class="fab fa-twitter"></i>
                 </a>

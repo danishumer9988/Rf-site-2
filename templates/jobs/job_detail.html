@@ -10,12 +10,58 @@
 {% block og_title %}{{ job.title }} at {{ job.company }}{% endblock %}
 {% block og_description %}{{ job.get_employment_type_display }} role in {{ job.location }}. {{ job.description|striptags|truncatewords:30 }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_url %}https://rf-site-3-j2ip3ax.vercel.app{{ request.path }}{% endblock %}
+{# og_url and canonical_url are intentionally NOT overridden here — they inherit
+   {{ SITE_URL }}{{ request.path }} from base.html. Do not hardcode a domain in
+   this file again: it previously caused three different domains to be advertised
+   across job pages, social previews, and the sitewide canonical tag. Change the
+   domain in ONE place only — settings.SITE_URL. #}
 
 {% block twitter_title %}{{ job.title }} at {{ job.company }}{% endblock %}
 {% block twitter_description %}{{ job.get_employment_type_display }} role in {{ job.location }}. Apply now.{% endblock %}
 
-{% block canonical_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org/",
+    "@type": "JobPosting",
+    "title": "{{ job.title|escapejs }}",
+    "description": "{{ job.description|escapejs }}",
+    "identifier": {
+        "@type": "PropertyValue",
+        "name": "JobLidar",
+        "value": "{{ job.id }}"
+    },
+    "datePosted": "{{ job.posted_at|date:'c' }}",
+    {% if job.expires_at %}"validThrough": "{{ job.expires_at|date:'c' }}",{% endif %}
+    "employmentType": "{{ job.employment_type|upper|default:'FULL_TIME' }}",
+    "hiringOrganization": {
+        "@type": "Organization",
+        "name": "{{ job.company|escapejs }}"
+        {% if job.company_website %},"sameAs": "{{ job.company_website }}"{% endif %}
+    },
+    "jobLocation": {
+        "@type": "Place",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "{{ job.location|escapejs }}"
+        }
+    }
+    {% if job.is_remote or job.work_type == 'remote' %},"jobLocationType": "TELECOMMUTE"{% endif %}
+    {% if job.salary_min or job.salary_max %}
+    ,"baseSalary": {
+        "@type": "MonetaryAmount",
+        "currency": "{{ job.salary_currency|default:'USD' }}",
+        "value": {
+            "@type": "QuantitativeValue"
+            {% if job.salary_min %},"minValue": {{ job.salary_min }}{% endif %}
+            {% if job.salary_max %},"maxValue": {{ job.salary_max }}{% endif %}
+            ,"unitText": "{% if job.salary_period == 'monthly' %}MONTH{% else %}YEAR{% endif %}"
+        }
+    }
+    {% endif %}
+}
+</script>
+{% endblock %}
 
 {% block extra_css %}
 <link rel="preconnect" href="https://fonts.googleapis.com">

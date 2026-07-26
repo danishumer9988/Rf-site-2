@@ -88,8 +88,6 @@ DATABASES = {
 }
 
 
-
-
 DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
 
 
@@ -144,3 +142,6 @@ SECURE_HSTS_PRELOAD = True
 SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
+
+
+SITE_URL = "https://rf-site-2.vercel.app"  # update to your real domain later, one place only

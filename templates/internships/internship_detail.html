@@ -10,12 +10,44 @@
 {% block og_title %}{{ internship.title }} at {{ internship.company }}{% endblock %}
 {% block og_description %}{{ internship.get_internship_type_display }} internship in {{ internship.location }}. {{ internship.description|striptags|truncatewords:30 }}{% endblock %}
 {% block og_type %}article{% endblock %}
-{% block og_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}
+{# og_url and canonical_url are intentionally NOT overridden here — they inherit
+   {{ SITE_URL }}{{ request.path }} from base.html. Change the domain in ONE
+   place only — settings.SITE_URL — never hardcode it per-template. #}
 
 {% block twitter_title %}{{ internship.title }} at {{ internship.company }}{% endblock %}
 {% block twitter_description %}{{ internship.get_internship_type_display }} internship in {{ internship.location }}. Apply now.{% endblock %}
 
-{% block canonical_url %}https://rf-site-2.vercel.app{{ request.path }}{% endblock %}
+{% block structured_data %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org/",
+    "@type": "JobPosting",
+    "title": "{{ internship.title|escapejs }}",
+    "description": "{{ internship.description|escapejs }}",
+    "identifier": {
+        "@type": "PropertyValue",
+        "name": "JobLidar",
+        "value": "{{ internship.id }}"
+    },
+    "datePosted": "{{ internship.posted_at|date:'c' }}",
+    {% if internship.expires_at %}"validThrough": "{{ internship.expires_at|date:'c' }}",{% endif %}
+    "employmentType": "INTERN",
+    "hiringOrganization": {
+        "@type": "Organization",
+        "name": "{{ internship.company|escapejs }}"
+        {% if internship.company_website %},"sameAs": "{{ internship.company_website }}"{% endif %}
+    },
+    "jobLocation": {
+        "@type": "Place",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "{{ internship.location|escapejs }}"
+        }
+    }
+    {% if internship.type == 'remote' %},"jobLocationType": "TELECOMMUTE"{% endif %}
+}
+</script>
+{% endblock %}
 
 {% block extra_css %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
