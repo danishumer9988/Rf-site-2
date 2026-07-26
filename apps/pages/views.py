@@ -17,3 +17,4 @@ def faq(request):
     Renders the FAQ page.
     """
     return render(request, 'pages/faq.html')
+

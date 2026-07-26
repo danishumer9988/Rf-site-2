@@ -104,3 +104,4 @@ class InternshipView(models.Model):
 
     def __str__(self):
         return f"{self.internship.title} - {self.viewed_at}"
+

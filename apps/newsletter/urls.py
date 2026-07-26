@@ -8,3 +8,4 @@ urlpatterns = [
     path('feedback/', views.feedback_chat, name='feedback_chat'),
     path('feedback/submit/', views.feedback_submit, name='feedback_submit'),
 ]
+

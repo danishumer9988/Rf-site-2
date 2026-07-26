@@ -40,3 +40,4 @@ urlpatterns = [
     # Comments
     path('comment/delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
 ]
+

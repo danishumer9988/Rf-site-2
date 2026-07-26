@@ -45,3 +45,4 @@ class ContactMessageAdmin(admin.ModelAdmin):
         updated = queryset.update(is_read=False)
         self.message_user(request, f'{updated} message(s) marked as unread.')
     mark_as_unread.short_description = "Mark selected messages as unread"
+

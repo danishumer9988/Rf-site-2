@@ -25,3 +25,4 @@ def last_updated_context(request):
 
 def site_url(request):
     return {'SITE_URL': settings.SITE_URL}
+

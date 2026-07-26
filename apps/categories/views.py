@@ -125,3 +125,4 @@ class CategoryDetailView(DetailView):
         })
 
         return context
+

@@ -509,7 +509,7 @@ Your {job_type_name.lower()} post "{obj.title}" at {obj.company} has been approv
 📅 Your job will expire on: {job.expires_at.strftime('%B %d, %Y')}
 
 Best regards,
-The Job Reference Hub Team
+The JobLidar Team
 """,
                         from_email=settings.DEFAULT_FROM_EMAIL,
                         recipient_list=[obj.contact_email, obj.user.email],
@@ -535,3 +535,4 @@ The Job Reference Hub Team
             rejected += 1
         self.message_user(request, f'❌ {rejected} job(s) rejected.')
     reject_selected.short_description = "Reject Selected Jobs"
+

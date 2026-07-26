@@ -52,3 +52,4 @@ def debug_jobs(request):
         })
 
     return JsonResponse(data, safe=False)
+

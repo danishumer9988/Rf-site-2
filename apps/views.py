@@ -1,4 +1,4 @@
-﻿from django.shortcuts import render
+from django.shortcuts import render
 from django.utils import timezone
 from datetime import timedelta
 from apps.jobs.models import Job, SavedJob
@@ -25,7 +25,7 @@ def home_view(request):
         # If no jobs or internships, use current time
         last_updated = timezone.now()
 
-    # ✅ SHOW 20 ITEMS (4 per row = 5 rows)
+    # ? SHOW 20 ITEMS (4 per row = 5 rows)
     latest_jobs = Job.objects.filter(is_active=True).order_by('-posted_at')[:20]
     latest_internships = Internship.objects.filter(is_active=True).order_by('-posted_at')[:20]
 
@@ -45,8 +45,8 @@ def home_view(request):
         ).values_list('internship_id', flat=True))
 
     context = {
-        'latest_jobs': latest_jobs,  # ✅ 20 jobs
-        'latest_internships': latest_internships,  # ✅ 20 internships
+        'latest_jobs': latest_jobs,  # ? 20 jobs
+        'latest_internships': latest_internships,  # ? 20 internships
         'categories': categories,
         'user_saved_jobs': user_saved_jobs,
         'user_saved_internships': user_saved_internships,
@@ -58,3 +58,4 @@ def home_view(request):
     }
 
     return render(request, 'home.html', context)
+

@@ -70,3 +70,4 @@ class ProfileAdmin(admin.ModelAdmin):
             return "✅ Verified"
         return "❌ Not Verified"
     email_verified_display.short_description = 'Email Verified'
+

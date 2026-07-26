@@ -61,3 +61,4 @@ urlpatterns = [
 
     path('analytics/', views.user_analytics, name='user_analytics'),
 ]
+

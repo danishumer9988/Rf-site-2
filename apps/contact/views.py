@@ -15,3 +15,4 @@ class ContactCreateView(CreateView):
         response = super().form_valid(form)
         messages.success(self.request, 'Your message has been sent successfully! We will get back to you soon.')
         return response
+

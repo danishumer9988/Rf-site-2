@@ -23,3 +23,4 @@ urlpatterns = [
     path('profile/edit/', views.ProfileUpdateView.as_view(), name='edit_profile'),
     path('change-password/', views.change_password, name='change_password'),
 ]
+

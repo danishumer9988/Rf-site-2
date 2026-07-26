@@ -11,3 +11,4 @@ class ContactForm(forms.ModelForm):
             'subject': forms.TextInput(attrs={'placeholder': 'Subject'}),
             'message': forms.Textarea(attrs={'placeholder': 'Your Message', 'rows': 5}),
         }
+

@@ -23,3 +23,4 @@ urlpatterns = [
     # Detail (must be last)
     path('<slug:slug>/', views.InternshipDetailView.as_view(), name='internship_detail'),
 ]
+

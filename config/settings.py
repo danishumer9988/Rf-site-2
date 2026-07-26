@@ -145,3 +145,5 @@ CSRF_COOKIE_SECURE = not DEBUG
 
 
 SITE_URL = "https://rf-site-2.vercel.app"  # update to your real domain later, one place only
+
+

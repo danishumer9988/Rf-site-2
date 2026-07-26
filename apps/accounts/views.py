@@ -50,7 +50,7 @@ def password_reset_request(request):
                     html_message = render_to_string('emails/password_reset_email.html', {
                         'user': user,
                         'reset_link': reset_link,
-                        'site_name': 'Job Reference Hub',
+                        'site_name': 'JobLidar',
                         'site_url': request.build_absolute_uri('/'),
                         'request': request,
                     })
@@ -60,7 +60,7 @@ def password_reset_request(request):
                     plain_message = f"""
 Hello {user.first_name or user.username},
 
-We received a request to reset your password for your Job Reference Hub account.
+We received a request to reset your password for your JobLidar account.
 
 To reset your password, click the link below:
 {reset_link}
@@ -70,13 +70,13 @@ This link will expire in 24 hours for security reasons.
 If you didn't request this, please ignore this email.
 
 Best regards,
-The Job Reference Hub Team
+The JobLidar Team
 """
                     html_message = None
 
                 if html_message:
                     send_mail(
-                        subject='Password Reset Request - Job Reference Hub',
+                        subject='Password Reset Request - JobLidar',
                         message=plain_message,
                         html_message=html_message,
                         from_email=settings.DEFAULT_FROM_EMAIL,
@@ -85,7 +85,7 @@ The Job Reference Hub Team
                     )
                 else:
                     send_mail(
-                        subject='Password Reset Request - Job Reference Hub',
+                        subject='Password Reset Request - JobLidar',
                         message=plain_message,
                         from_email=settings.DEFAULT_FROM_EMAIL,
                         recipient_list=[email],
@@ -182,12 +182,12 @@ class RegisterView(View):
                 html_message = render_to_string('emails/verification_email.html', {
                     'username': username,
                     'verification_code': verification_code,
-                    'site_name': 'Job Reference Hub',
+                    'site_name': 'JobLidar',
                 })
                 plain_message = strip_tags(html_message)
 
                 send_mail(
-                    subject='Verify Your Email - Job Reference Hub',
+                    subject='Verify Your Email - JobLidar',
                     message=plain_message,
                     html_message=html_message,
                     from_email=settings.DEFAULT_FROM_EMAIL,
@@ -239,12 +239,12 @@ class VerifyEmailView(View):
                             html_message = render_to_string('emails/verification_email.html', {
                                 'username': user.username,
                                 'verification_code': new_code,
-                                'site_name': 'Job Reference Hub',
+                                'site_name': 'JobLidar',
                             })
                             plain_message = strip_tags(html_message)
 
                             send_mail(
-                                subject='New Verification Code - Job Reference Hub',
+                                subject='New Verification Code - JobLidar',
                                 message=plain_message,
                                 html_message=html_message,
                                 from_email=settings.DEFAULT_FROM_EMAIL,
@@ -331,12 +331,12 @@ class ResendVerificationView(View):
                 html_message = render_to_string('emails/verification_email.html', {
                     'username': user.username,
                     'verification_code': new_code,
-                    'site_name': 'Job Reference Hub',
+                    'site_name': 'JobLidar',
                 })
                 plain_message = strip_tags(html_message)
 
                 send_mail(
-                    subject='New Verification Code - Job Reference Hub',
+                    subject='New Verification Code - JobLidar',
                     message=plain_message,
                     html_message=html_message,
                     from_email=settings.DEFAULT_FROM_EMAIL,
@@ -438,3 +438,4 @@ def change_password(request):
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'accounts/change_password.html', {'form': form})
+

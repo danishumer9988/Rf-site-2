@@ -1,4 +1,4 @@
-﻿from django import forms
+from django import forms
 from .models import Internship
 
 
@@ -40,3 +40,4 @@ class InternshipSearchForm(forms.Form):
         required=False
     )
     category = forms.ChoiceField(required=False)
+

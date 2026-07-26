@@ -40,3 +40,4 @@ class CategoryAdmin(admin.ModelAdmin):
         url = f"/admin/internships/internship/?category__id__exact={obj.id}"
         return format_html('<a href="{}">{} internships</a>', url, count)
     internship_count.short_description = 'Active Internships'
+

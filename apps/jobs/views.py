@@ -434,10 +434,10 @@ Hello {job.posted_by.username},
 💬 Comment:
 "{comment.comment}"
 
-View the comment here: https://jobreferencehub.com/jobs/{job.slug}/
+View the comment here: https://joblidar.com/jobs/{job.slug}/
 
 Best regards,
-The Job Reference Hub Team
+The JobLidar Team
 """,
                         from_email=settings.DEFAULT_FROM_EMAIL,
                         recipient_list=[job.posted_by.email],
@@ -623,10 +623,10 @@ Thank you for submitting your job post "{application.title}" at {application.com
 
 You can track the status of your submission on your dashboard.
 
-Thank you for choosing Job Reference Hub!
+Thank you for choosing JobLidar!
 
 Best regards,
-The Job Reference Hub Team
+The JobLidar Team
 """,
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[application.contact_email, request.user.email],
@@ -722,3 +722,4 @@ def search_jobs(request):
         context['saved_ids'] = []
 
     return render(request, 'jobs/job_list.html', context)
+

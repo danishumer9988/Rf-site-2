@@ -58,3 +58,5 @@ sitemaps = {
     "internships": InternshipSitemap,
     "static": StaticViewSitemap,
 }
+
+

@@ -327,3 +327,4 @@ def user_analytics(request):
     }
 
     return render(request, 'dashboard/analytics.html', context)
+

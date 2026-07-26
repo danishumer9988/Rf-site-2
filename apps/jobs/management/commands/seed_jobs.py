@@ -1,4 +1,4 @@
-﻿import random
+import random
 from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -35,8 +35,8 @@ class Command(BaseCommand):
         internship_count = options['internships']
         delete_existing = options['delete']
 
-        self.stdout.write(self.style.WARNING('🚀 Generating data...'))
-        self.stdout.write(self.style.WARNING(f'📊 Jobs: {job_count} | Internships: {internship_count}'))
+        self.stdout.write(self.style.WARNING('?? Generating data...'))
+        self.stdout.write(self.style.WARNING(f'?? Jobs: {job_count} | Internships: {internship_count}'))
 
         # Get or create a test user
         user, created = User.objects.get_or_create(
@@ -49,7 +49,7 @@ class Command(BaseCommand):
         if created:
             user.set_password('testpass123')
             user.save()
-            self.stdout.write(self.style.SUCCESS(f'✅ Created test user: {user.username}'))
+            self.stdout.write(self.style.SUCCESS(f'? Created test user: {user.username}'))
 
         # Delete existing fake data if requested
         if delete_existing:
@@ -59,38 +59,38 @@ class Command(BaseCommand):
             internships_deleted = fake_internships.count()
             fake_jobs.delete()
             fake_internships.delete()
-            self.stdout.write(self.style.WARNING(f'🗑️ Deleted {jobs_deleted} jobs and {internships_deleted} internships'))
+            self.stdout.write(self.style.WARNING(f'??? Deleted {jobs_deleted} jobs and {internships_deleted} internships'))
 
         # Get or create categories
         categories = self._get_or_create_categories()
 
         # --- CREATE RICH JOBS ---
-        self.stdout.write(self.style.WARNING(f'📝 Creating {job_count} rich job(s)...'))
+        self.stdout.write(self.style.WARNING(f'?? Creating {job_count} rich job(s)...'))
         jobs_created = self._create_rich_jobs(job_count, user, categories)
-        self.stdout.write(self.style.SUCCESS(f'✅ Created {jobs_created} job(s)'))
+        self.stdout.write(self.style.SUCCESS(f'? Created {jobs_created} job(s)'))
 
         # --- CREATE RICH INTERNSHIPS ---
-        self.stdout.write(self.style.WARNING(f'📝 Creating {internship_count} rich internship(s)...'))
+        self.stdout.write(self.style.WARNING(f'?? Creating {internship_count} rich internship(s)...'))
         internships_created = self._create_rich_internships(internship_count, user, categories)
-        self.stdout.write(self.style.SUCCESS(f'✅ Created {internships_created} internship(s)'))
+        self.stdout.write(self.style.SUCCESS(f'? Created {internships_created} internship(s)'))
 
-        self.stdout.write(self.style.SUCCESS('🎉 Data generation complete!'))
+        self.stdout.write(self.style.SUCCESS('?? Data generation complete!'))
 
     def _get_or_create_categories(self):
         """Get or create default categories"""
         categories_data = [
-            {'name': 'Technology', 'slug': 'technology', 'icon': '💻'},
-            {'name': 'Healthcare', 'slug': 'healthcare', 'icon': '🏥'},
-            {'name': 'Finance', 'slug': 'finance', 'icon': '💰'},
-            {'name': 'Education', 'slug': 'education', 'icon': '📚'},
-            {'name': 'Retail', 'slug': 'retail', 'icon': '🛍️'},
-            {'name': 'Construction', 'slug': 'construction', 'icon': '🏗️'},
-            {'name': 'Marketing', 'slug': 'marketing', 'icon': '📢'},
-            {'name': 'Design', 'slug': 'design', 'icon': '🎨'},
-            {'name': 'Hospitality', 'slug': 'hospitality', 'icon': '🏨'},
-            {'name': 'Manufacturing', 'slug': 'manufacturing', 'icon': '🏭'},
-            {'name': 'Transportation', 'slug': 'transportation', 'icon': '🚚'},
-            {'name': 'Engineering', 'slug': 'engineering', 'icon': '⚙️'},
+            {'name': 'Technology', 'slug': 'technology', 'icon': '??'},
+            {'name': 'Healthcare', 'slug': 'healthcare', 'icon': '??'},
+            {'name': 'Finance', 'slug': 'finance', 'icon': '??'},
+            {'name': 'Education', 'slug': 'education', 'icon': '??'},
+            {'name': 'Retail', 'slug': 'retail', 'icon': '???'},
+            {'name': 'Construction', 'slug': 'construction', 'icon': '???'},
+            {'name': 'Marketing', 'slug': 'marketing', 'icon': '??'},
+            {'name': 'Design', 'slug': 'design', 'icon': '??'},
+            {'name': 'Hospitality', 'slug': 'hospitality', 'icon': '??'},
+            {'name': 'Manufacturing', 'slug': 'manufacturing', 'icon': '??'},
+            {'name': 'Transportation', 'slug': 'transportation', 'icon': '??'},
+            {'name': 'Engineering', 'slug': 'engineering', 'icon': '??'},
         ]
 
         categories = []
@@ -104,7 +104,7 @@ class Command(BaseCommand):
             )
             categories.append(category)
             if created:
-                self.stdout.write(self.style.SUCCESS(f'✅ Created category: {category.name}'))
+                self.stdout.write(self.style.SUCCESS(f'? Created category: {category.name}'))
 
         return categories
 
@@ -317,3 +317,4 @@ class Command(BaseCommand):
                 self.stdout.write(f'  Created {created} internship(s)...')
 
         return created
+

@@ -241,3 +241,5 @@ class Migration(migrations.Migration):
             index=models.Index(fields=['expires_at'], name='jobs_job_expires_1dbc32_idx'),
         ),
     ]
+
+

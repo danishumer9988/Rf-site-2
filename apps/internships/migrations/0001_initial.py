@@ -97,3 +97,5 @@ class Migration(migrations.Migration):
             index=models.Index(fields=['company'], name='internships_company_83aaf7_idx'),
         ),
     ]
+
+

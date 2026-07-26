@@ -118,3 +118,4 @@ def feedback_submit(request):
             'sender': 'bot'
         }
     })
+

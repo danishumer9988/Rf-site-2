@@ -919,7 +919,7 @@ Good news! Your job post "{application.title}" at {application.company} has been
 - View Job: /jobs/{job.slug}/
 
 Best regards,
-The Job Reference Hub Team
+The JobLidar Team
 """,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[application.contact_email, application.user.email],
@@ -956,7 +956,7 @@ def admin_reject_application(request, pk):
                 message=f"""
 Dear {application.user.username},
 
-Thank you for submitting your job post "{application.title}" at {application.company} to Job Reference Hub.
+Thank you for submitting your job post "{application.title}" at {application.company} to JobLidar.
 
 After careful review, we have decided not to approve this job post at this time.
 
@@ -966,7 +966,7 @@ After careful review, we have decided not to approve this job post at this time.
 If you have any questions, please contact us.
 
 Best regards,
-The Job Reference Hub Team
+The JobLidar Team
 """,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[application.contact_email, application.user.email],
@@ -1372,3 +1372,4 @@ def time_ago(dt):
         return f"{diff.seconds // 60} minutes ago"
     else:
         return "Just now"
+

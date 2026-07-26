@@ -8,3 +8,4 @@ def splitlines(value):
     if not value:
         return []
     return [line.strip() for line in value.splitlines() if line.strip()]
+

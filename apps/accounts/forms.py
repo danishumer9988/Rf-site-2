@@ -199,3 +199,4 @@ class ProfileUpdateForm(forms.ModelForm):
         if phone and len(phone) < 10:
             raise ValidationError('Please enter a valid phone number.')
         return phone
+

@@ -6,3 +6,4 @@ urlpatterns = [
     path('terms/', views.terms_of_service, name='terms'),
     path('faq/', views.faq, name='faq'),
 ]
+

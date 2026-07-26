@@ -150,3 +150,4 @@ class InternshipViewAdmin(admin.ModelAdmin):
     readonly_fields = ('viewed_at',)
     date_hierarchy = 'viewed_at'
     list_per_page = 50
+

@@ -32,3 +32,4 @@ class FeedbackForm(forms.ModelForm):
             'message': 'Your feedback',
             'rating': 'Rating'
         }
+

@@ -25,3 +25,4 @@ class Category(models.Model):
 
     def internship_count(self):
         return self.internships.filter(is_active=True).count()
+

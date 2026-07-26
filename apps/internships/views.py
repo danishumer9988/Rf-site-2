@@ -361,3 +361,4 @@ def search_internships(request):
         context['saved_ids'] = []
 
     return render(request, 'internships/internship_list.html', context)
+

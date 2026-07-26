@@ -1,4 +1,4 @@
-﻿# apps/jobs/forms.py
+# apps/jobs/forms.py
 from django import forms
 from .models import Job, JobComment, JobApplication
 from apps.categories.models import Category
@@ -364,3 +364,4 @@ class JobApplicationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['category'].queryset = Category.objects.all()
         self.fields['category'].empty_label = 'Select a category'
+
