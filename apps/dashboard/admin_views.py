@@ -881,22 +881,70 @@ def admin_approve_application(request, pk):
             slug = f"{base_slug}-{counter}"
             counter += 1
 
-        job = Job.objects.create(
-            title=application.title,
-            slug=slug,
-            company=application.company,
-            location=application.location,
-            description=application.description,
-            requirements=application.requirements,
-            salary=application.salary,
-            type=application.job_type,
-            category=application.category,
-            apply_url=application.apply_url,
-            company_website=application.company_website,
-            is_active=True,
-            posted_by=application.user,
-            is_user_submitted=True
-        )
+        # Prepare job data
+        job_data = {
+            'title': application.title,
+            'slug': slug,
+            'company': application.company,
+            'location': application.location,
+            'description': application.description,
+            'requirements': application.requirements,
+            'work_type': application.work_type,
+            'category': application.category,
+            'apply_url': application.apply_url,
+            'company_website': application.company_website,
+            'contact_email': application.contact_email,
+            'contact_phone': application.contact_phone,
+            'is_active': True,
+            'posted_by': application.user,
+            'is_user_submitted': True,
+            'expires_at': timezone.now() + timezone.timedelta(days=30),
+
+            # Full Time / Part Time fields
+            'employment_type': application.employment_type,
+            'experience_level': application.experience_level,
+            'salary_min': application.salary_min,  # ✅ Fixed: use salary_min
+            'salary_max': application.salary_max,  # ✅ Fixed: use salary_max
+            'salary_currency': application.salary_currency,
+            'salary_period': application.salary_period,
+            'benefits': application.benefits,
+            'is_remote': application.is_remote,
+            'shift_type': application.shift_type,
+            'hours_per_week': application.hours_per_week,
+            'hourly_rate': application.hourly_rate,
+            'salary_range': application.salary_range,
+            'currency': application.currency,
+            'is_flexible_schedule': application.is_flexible_schedule,
+            'is_weekend_available': application.is_weekend_available,
+            'is_immediate': application.is_immediate,
+
+            # Daily Wage fields
+            'payment_method': application.payment_method,
+            'payment_amount': application.payment_amount,
+            'start_date': application.start_date,
+            'end_date': application.end_date,
+            'working_hours': application.working_hours,
+            'is_immediate_joining': application.is_immediate_joining,
+
+            # Contract fields
+            'contract_type': application.contract_type,
+            'budget_min': application.budget_min,
+            'budget_max': application.budget_max,
+            'contract_currency': application.contract_currency,
+            'contract_experience_level': application.contract_experience_level,
+            'duration_type': application.duration_type,
+            'estimated_duration': application.estimated_duration,
+            'contract_start_date': application.contract_start_date,
+            'contract_end_date': application.contract_end_date,
+            'is_contract_remote': application.is_contract_remote,
+            'is_contract_urgent': application.is_contract_urgent,
+        }
+
+        # Remove None values to avoid field conflicts
+        job_data = {k: v for k, v in job_data.items() if v is not None}
+
+        # Create the job
+        job = Job.objects.create(**job_data)
 
         application.created_job = job
         application.status = 'approved'
@@ -933,7 +981,6 @@ The JobLidar Team
         messages.warning(request, f'This application is already {application.status}.')
 
     return redirect('admin_job_applications')
-
 
 @login_required
 @user_passes_test(is_admin)
