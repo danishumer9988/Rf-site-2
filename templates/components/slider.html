@@ -7,25 +7,103 @@
     <div class="company-slider-container">
         <!-- Heading -->
         <div class="company-slider-header">
-            <span class="company-slider-subtitle">INDUSTRIES WE COVER</span>
+            <span class="company-slider-subtitle">FEATURED COMPANIES</span>
         </div>
 
         <!-- Slider -->
         <div class="company-slider-wrapper">
             <div class="company-slider-track">
-                <!-- Category chips, generated from real platform categories -->
-                {% for category in categories %}
-                <div class="company-item industry-chip">
-                    {% if category.icon %}<i class="{{ category.icon }}"></i>{% endif %}
-                    <span>{{ category.name }}</span>
+                <!-- Company Icons -->
+                <div class="company-item">
+                    <img src="{% static 'images/companies/google.svg' %}" alt="Google" class="company-logo-img">
                 </div>
-                {% endfor %}
-                {% for category in categories %}
-                <div class="company-item industry-chip">
-                    {% if category.icon %}<i class="{{ category.icon }}"></i>{% endif %}
-                    <span>{{ category.name }}</span>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/microsoft.svg' %}" alt="Microsoft" class="company-logo-img">
                 </div>
-                {% endfor %}
+                <div class="company-item">
+                    <img src="{% static 'images/companies/amazon.svg' %}" alt="Amazon" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/apple.svg' %}" alt="Apple" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/meta.svg' %}" alt="Meta" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/nvidia.svg' %}" alt="NVIDIA" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/adobe.svg' %}" alt="Adobe" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/openai.svg' %}" alt="OpenAI" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/ibm.svg' %}" alt="IBM" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/oracle.svg' %}" alt="Oracle" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/salesforce.svg' %}" alt="Salesforce" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/intel.svg' %}" alt="Intel" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/tesla.svg' %}" alt="Tesla" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/deloitte.svg' %}" alt="Deloitte" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/accenture.svg' %}" alt="Accenture" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/google.svg' %}" alt="Google" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/microsoft.svg' %}" alt="Microsoft" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/amazon.svg' %}" alt="Amazon" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/apple.svg' %}" alt="Apple" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/meta.svg' %}" alt="Meta" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/nvidia.svg' %}" alt="NVIDIA" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/adobe.svg' %}" alt="Adobe" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/openai.svg' %}" alt="OpenAI" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/ibm.svg' %}" alt="IBM" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/oracle.svg' %}" alt="Oracle" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/salesforce.svg' %}" alt="Salesforce" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/intel.svg' %}" alt="Intel" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/tesla.svg' %}" alt="Tesla" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/deloitte.svg' %}" alt="Deloitte" class="company-logo-img">
+                </div>
+                <div class="company-item">
+                    <img src="{% static 'images/companies/accenture.svg' %}" alt="Accenture" class="company-logo-img">
+                </div>
             </div>
         </div>
     </div>
@@ -54,24 +132,6 @@
     .company-slider-header {
         text-align: center;
         margin-bottom: 40px;      /* reduced spacing */
-    }
-
-    .industry-chip {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        border: 1px solid #e2e8f0;
-        border-radius: 9999px;
-        background: #f8fafc;
-        color: #334155;
-        font-weight: 600;
-        font-size: 14px;
-        white-space: nowrap;
-    }
-
-    .industry-chip i {
-        color: #2563eb;
     }
 
     .company-slider-subtitle {
@@ -268,4 +328,3 @@
         opacity: 1 !important;
     }
 </style>
-
