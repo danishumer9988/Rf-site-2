@@ -155,6 +155,19 @@
 
         .chart-placeholder { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: var(--radius-sm); padding: 2rem; text-align: center; color: var(--primary); font-weight: 600; }
 
+        /* ===== CHART CONTAINERS (new) ===== */
+        .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .chart-container { position: relative; width: 100%; height: 280px; }
+        .chart-container.small { height: 240px; }
+        .chart-empty {
+            display: flex; align-items: center; justify-content: center;
+            height: 100%; color: var(--gray-400); font-size: 0.85rem;
+            background: var(--gray-50); border-radius: var(--radius-sm);
+        }
+        @media (max-width: 968px) {
+            .charts-row { grid-template-columns: 1fr; }
+        }
+
         .sidebar-toggle {
             display: none; background: var(--primary); color: white;
             border: none; width: 44px; height: 44px; border-radius: 50%;
@@ -208,6 +221,21 @@
         <div class="stat-card orange"><div class="value">{{ jobs_month|default:0 }}</div><div class="label">Jobs This Month</div><div class="period">Last 30 days</div></div>
     </div>
 
+    <div class="charts-row animate-in">
+        <div class="section-card" style="margin-bottom:0;">
+            <h3><i class="fas fa-chart-line"></i> Weekly Jobs Trend (Last 12 Weeks)</h3>
+            <div class="chart-container">
+                <canvas id="weeklyJobsChart"></canvas>
+            </div>
+        </div>
+        <div class="section-card" style="margin-bottom:0;">
+            <h3><i class="fas fa-briefcase"></i> Job Work Type</h3>
+            <div class="chart-container small">
+                <canvas id="jobTypeChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <h2 style="margin-bottom:1rem;">🎓 Internships</h2>
     <div class="stats-grid animate-in">
         <div class="stat-card"><div class="value">{{ internships_today|default:0 }}</div><div class="label">Internships Today</div></div>
@@ -219,6 +247,9 @@
         <h3><i class="fas fa-users"></i> User Growth</h3>
         <div class="info-row"><span class="info-label">New Users (Week)</span><span class="info-value">{{ new_users_week|default:0 }}</span></div>
         <div class="info-row"><span class="info-label">New Users (Month)</span><span class="info-value">{{ new_users_month|default:0 }}</span></div>
+        <div class="chart-container" style="margin-top:1rem;">
+            <canvas id="monthlySignupsChart"></canvas>
+        </div>
     </div>
 
     <div class="section-card animate-in">
@@ -228,11 +259,205 @@
     </div>
 
     <div class="section-card animate-in">
+        <h3><i class="fas fa-layer-group"></i> Category Distribution (Top 10)</h3>
+        <div class="chart-container">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+
+    <div class="section-card animate-in">
         <h3><i class="fas fa-chart-line"></i> Trends</h3>
-        <div class="chart-placeholder">📈 Chart visualization coming soon!<br><small style="color:#64748b;">Integration with Chart.js planned for next update</small></div>
+        <div class="chart-container">
+            <canvas id="dailyViewsChart"></canvas>
+        </div>
     </div>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+    (function () {
+        // ===== Data passed from the view (already JSON-serialized via json.dumps) =====
+        const weeklyJobsData = {{ weekly_jobs|default:"[]"|safe }};
+        const monthlySignupsData = {{ monthly_signups|default:"[]"|safe }};
+        const dailyViewsData = {{ daily_views|default:"{}"|safe }};
+        const categoryData = {{ category_distribution|default:"[]"|safe }};
+        const jobTypeData = {{ job_type_distribution|default:"[]"|safe }};
+
+        // Shared Chart.js defaults matching the site's design tokens
+        Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        const colors = {
+            primary: '#2563eb',
+            primaryLight: 'rgba(37,99,235,0.12)',
+            success: '#10b981',
+            successLight: 'rgba(16,185,129,0.12)',
+            warning: '#f59e0b',
+            danger: '#ef4444',
+            info: '#3b82f6',
+            gray: '#94a3b8'
+        };
+
+        function showEmpty(canvasId, message) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const wrap = canvas.parentElement;
+            wrap.innerHTML = '<div class="chart-empty">' + message + '</div>';
+        }
+
+        // ===== 1. Weekly Jobs Trend (line chart) =====
+        if (weeklyJobsData.length > 0) {
+            new Chart(document.getElementById('weeklyJobsChart'), {
+                type: 'line',
+                data: {
+                    labels: weeklyJobsData.map(d => d.week),
+                    datasets: [{
+                        label: 'Jobs Posted',
+                        data: weeklyJobsData.map(d => d.count),
+                        borderColor: colors.primary,
+                        backgroundColor: colors.primaryLight,
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 3,
+                        pointBackgroundColor: colors.primary
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        } else {
+            showEmpty('weeklyJobsChart', 'No job posting data yet');
+        }
+
+        // ===== 2. Job Work Type (doughnut) =====
+        if (jobTypeData.length > 0 && jobTypeData.some(d => d.jobs > 0)) {
+            new Chart(document.getElementById('jobTypeChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: jobTypeData.map(d => d.type),
+                    datasets: [{
+                        data: jobTypeData.map(d => d.jobs),
+                        backgroundColor: [colors.primary, colors.warning],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    cutout: '65%'
+                }
+            });
+        } else {
+            showEmpty('jobTypeChart', 'No work type data yet');
+        }
+
+        // ===== 3. Monthly Signups (bar chart) =====
+        if (monthlySignupsData.length > 0) {
+            new Chart(document.getElementById('monthlySignupsChart'), {
+                type: 'bar',
+                data: {
+                    labels: monthlySignupsData.map(d => d.label || d.month),
+                    datasets: [{
+                        label: 'New Users',
+                        data: monthlySignupsData.map(d => d.count),
+                        backgroundColor: colors.success,
+                        borderRadius: 6,
+                        maxBarThickness: 42
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        } else {
+            showEmpty('monthlySignupsChart', 'No signup data yet');
+        }
+
+        // ===== 4. Category Distribution (stacked bar: jobs + internships) =====
+        if (categoryData.length > 0) {
+            new Chart(document.getElementById('categoryChart'), {
+                type: 'bar',
+                data: {
+                    labels: categoryData.map(d => d.name),
+                    datasets: [
+                        {
+                            label: 'Jobs',
+                            data: categoryData.map(d => d.jobs),
+                            backgroundColor: colors.primary,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Internships',
+                            data: categoryData.map(d => d.internships),
+                            backgroundColor: colors.success,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#f1f5f9' } }
+                    }
+                }
+            });
+        } else {
+            showEmpty('categoryChart', 'No category data yet');
+        }
+
+        // ===== 5. Daily Views - last 30 days (line chart) =====
+        const dailyViewsEntries = Object.entries(dailyViewsData).reverse(); // oldest -> newest
+        if (dailyViewsEntries.length > 0) {
+            new Chart(document.getElementById('dailyViewsChart'), {
+                type: 'line',
+                data: {
+                    labels: dailyViewsEntries.map(([date]) => {
+                        const d = new Date(date);
+                        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    }),
+                    datasets: [{
+                        label: 'Job Views',
+                        data: dailyViewsEntries.map(([, count]) => count),
+                        borderColor: colors.info,
+                        backgroundColor: 'rgba(59,130,246,0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } }
+                    }
+                }
+            });
+        } else {
+            showEmpty('dailyViewsChart', 'No view data yet');
+        }
+    })();
+</script>
+
 </body>
 </html>
-
