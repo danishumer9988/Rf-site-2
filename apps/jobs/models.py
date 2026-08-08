@@ -19,8 +19,7 @@ EMPLOYMENT_TYPE_CHOICES = [
     ('full_time', 'Full Time'),
     ('part_time', 'Part Time'),
     ('contract', 'Contract'),
-    ('freelance', 'Freelance'),
-    ('temporary', 'Temporary'),
+    ('daily_wage', 'Daily Wage'),
 ]
 
 EXPERIENCE_LEVEL_CHOICES = [
@@ -40,7 +39,6 @@ PAYMENT_METHOD_CHOICES = [
 CONTRACT_TYPE_CHOICES = [
     ('fixed', 'Fixed Price'),
     ('hourly', 'Hourly Rate'),
-    ('milestone', 'Milestone Based'),
 ]
 
 DURATION_TYPE_CHOICES = [
