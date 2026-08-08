@@ -73,13 +73,13 @@ class JobAdmin(admin.ModelAdmin):
             ),
             'classes': ('fieldset-job-type-part_time',),
         }),
-        # ---- Daily Wage Details (visible only when employment_type == 'daily') ----
+        # ---- Daily Wage Details (visible only when employment_type == 'daily_wage') ----
         ('Daily Wage Details', {
             'fields': (
                 'payment_method', 'payment_amount', 'start_date', 'end_date',
                 'working_hours', 'is_immediate_joining'
             ),
-            'classes': ('fieldset-job-type-daily',),
+            'classes': ('fieldset-job-type-daily_wage',),
         }),
         # ---- Contract Details (visible only when employment_type == 'contract') ----
         ('Contract Details', {
@@ -117,21 +117,21 @@ class JobAdmin(admin.ModelAdmin):
 
                         // Hide all type-specific fieldsets
                         $('.fieldset-job-type-full_time, .fieldset-job-type-part_time, '
-                          + '.fieldset-job-type-daily, .fieldset-job-type-contract').hide();
+                          + '.fieldset-job-type-daily_wage, .fieldset-job-type-contract').hide();
 
                         // Show the relevant one based on selected value
                         if (val === 'full_time') {
                             $('.fieldset-job-type-full_time').show();
                         } else if (val === 'part_time') {
                             $('.fieldset-job-type-part_time').show();
-                        } else if (val === 'daily') {
-                            $('.fieldset-job-type-daily').show();
+                        } else if (val === 'daily_wage') {
+                            $('.fieldset-job-type-daily_wage').show();
                         } else if (val === 'contract') {
                             $('.fieldset-job-type-contract').show();
                         } else {
                             // If empty or unknown, show all (to avoid hiding existing data)
                             $('.fieldset-job-type-full_time, .fieldset-job-type-part_time, '
-                              + '.fieldset-job-type-daily, .fieldset-job-type-contract').show();
+                              + '.fieldset-job-type-daily_wage, .fieldset-job-type-contract').show();
                         }
                     }
 
@@ -158,9 +158,9 @@ class JobAdmin(admin.ModelAdmin):
             return '💼 Full Time'
         elif obj.employment_type == 'part_time':
             return '🕐 Part Time'
-        elif obj.payment_method:
+        elif obj.employment_type == 'daily_wage':
             return '⚡ Daily Wage'
-        elif obj.contract_type:
+        elif obj.employment_type == 'contract':
             return '📄 Contract'
         else:
             return '📌 Other'
@@ -406,9 +406,9 @@ class JobApplicationAdmin(admin.ModelAdmin):
             return '💼 Full Time'
         elif obj.employment_type == 'part_time':
             return '🕐 Part Time'
-        elif obj.payment_method:
+        elif obj.employment_type == 'daily_wage':
             return '⚡ Daily Wage'
-        elif obj.contract_type:
+        elif obj.employment_type == 'contract':
             return '📄 Contract'
         return '📌 Other'
     job_type_display.short_description = 'Job Type'
@@ -535,4 +535,3 @@ The JobLidar Team
             rejected += 1
         self.message_user(request, f'❌ {rejected} job(s) rejected.')
     reject_selected.short_description = "Reject Selected Jobs"
-
