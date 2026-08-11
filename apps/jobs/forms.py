@@ -131,9 +131,14 @@ class JobSearchForm(forms.Form):
         })
     )
 
-    # Work Type
+    # Work Type - UPDATED with Hybrid
     work_type = forms.ChoiceField(
-        choices=[('', 'All Types'), ('physical', 'On-Site'), ('remote', 'Remote')],
+        choices=[
+            ('', 'All Types'),
+            ('physical', 'On-Site'),
+            ('remote', 'Remote'),
+            ('hybrid', 'Hybrid'),  # ← ADDED HYBRID
+        ],
         required=False,
         widget=forms.Select(attrs={'class': 'search-select'})
     )
@@ -145,8 +150,7 @@ class JobSearchForm(forms.Form):
             ('full_time', 'Full Time'),
             ('part_time', 'Part Time'),
             ('contract', 'Contract'),
-            ('freelance', 'Freelance'),
-            ('temporary', 'Temporary')
+            ('daily_wage', 'Daily Wage'),
         ],
         required=False,
         widget=forms.Select(attrs={'class': 'search-select'})
@@ -364,4 +368,3 @@ class JobApplicationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['category'].queryset = Category.objects.all()
         self.fields['category'].empty_label = 'Select a category'
-

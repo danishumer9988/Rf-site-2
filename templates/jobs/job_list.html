@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}{{ total_jobs }} Jobs - Full-Time, Part-Time, Contract & Daily Wage | JobLidar{% endblock %}
-{% block meta_description %}Browse {{ total_jobs }} verified job openings on JobLidar. Filter by full-time, part-time, contract, or daily-wage work, remote or on-site.{% endblock %}
+{% block meta_description %}Browse {{ total_jobs }} verified job openings on JobLidar. Filter by full-time, part-time, contract, or daily-wage work, remote, on-site, or hybrid.{% endblock %}
 {% block og_title %}{{ total_jobs }} Jobs Available | JobLidar{% endblock %}
 {% block og_description %}Browse verified job openings across every category and employment type.{% endblock %}
 
@@ -534,6 +534,12 @@
         background: rgba(16, 185, 129, 0.1);
         color: #10b981;
         border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .jl-badge-hybrid {
+        background: rgba(139, 92, 246, 0.1);
+        color: #7c3aed;
+        border-color: rgba(139, 92, 246, 0.2);
     }
 
     .jl-badge-new {
@@ -1074,9 +1080,9 @@
                    class="jl-filter-tab {% if request.GET.employment_type == 'contract' %}active{% endif %}">
                     <span class="badge-dot badge-dot-contract"></span> Contract <span class="count">{{ contract_count|default:0 }}</span>
                 </a>
-                <a href="?employment_type=daily{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
-                   class="jl-filter-tab {% if request.GET.employment_type == 'daily' %}active{% endif %}">
-                    <span class="badge-dot badge-dot-daily"></span> Daily wage {{ daily_count|default:0 }}</span>
+                <a href="?employment_type=daily_wage{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}{% if request.GET.location %}&location={{ request.GET.location }}{% endif %}"
+                   class="jl-filter-tab {% if request.GET.employment_type == 'daily_wage' %}active{% endif %}">
+                    <span class="badge-dot badge-dot-daily"></span> Daily wage <span class="count">{{ daily_count|default:0 }}</span>
                 </a>
             </div>
             <div class="jl-filter-right">
@@ -1084,6 +1090,7 @@
                     <option value="">All Locations</option>
                     <option value="remote" {% if request.GET.work_type == 'remote' %}selected{% endif %}>Remote</option>
                     <option value="physical" {% if request.GET.work_type == 'physical' %}selected{% endif %}>On-Site</option>
+                    <option value="hybrid" {% if request.GET.work_type == 'hybrid' %}selected{% endif %}>Hybrid</option>
                 </select>
             </div>
         </div>
@@ -1133,11 +1140,11 @@
 
 <!-- ===== RESULTS COUNT ===== -->
 <div class="jl-results-count jl-animate delay-1">
-     <strong id="resultCount">{{ jobs|length }}</strong>
+    <strong id="resultCount">{{ jobs|length }}</strong>
     {% if request.GET.employment_type == 'full_time' %}Full-Time
     {% elif request.GET.employment_type == 'part_time' %}Part-Time
     {% elif request.GET.employment_type == 'contract' %}Contract
-    {% elif request.GET.employment_type == 'daily' %}Daily Wage
+    {% elif request.GET.employment_type == 'daily_wage' %}Daily Wage
     {% else %}{% endif %}
     job{% if jobs|length != 1 %}s{% endif %}
     out of <strong>{{ total_jobs }}</strong> jobs
@@ -1145,6 +1152,7 @@
     {% if request.GET.location %} in "<strong>{{ request.GET.location }}</strong>"{% endif %}
     {% if request.GET.work_type == 'remote' %} <strong>(Remote)</strong>{% endif %}
     {% if request.GET.work_type == 'physical' %} <strong>(On-Site)</strong>{% endif %}
+    {% if request.GET.work_type == 'hybrid' %} <strong>(Hybrid)</strong>{% endif %}
 </div>
 
 <!-- ===== JOB CARDS ===== -->
@@ -1166,12 +1174,14 @@
                         {% if job.employment_type == 'full_time' %}Full-Time
                         {% elif job.employment_type == 'part_time' %}Part-Time
                         {% elif job.employment_type == 'contract' %}Contract
-                        {% elif job.employment_type == 'daily' %}Daily
+                        {% elif job.employment_type == 'daily_wage' %}Daily
                         {% endif %}
                     </span>
                     <!-- Work Location Badge -->
-                    <span class="jl-badge {% if job.work_type == 'remote' %}jl-badge-remote{% else %}jl-badge-onsite{% endif %}">
-                        {% if job.work_type == 'remote' %}Remote{% else %}On-Site{% endif %}
+                    <span class="jl-badge {% if job.work_type == 'remote' %}jl-badge-remote{% elif job.work_type == 'hybrid' %}jl-badge-hybrid{% else %}jl-badge-onsite{% endif %}">
+                        {% if job.work_type == 'remote' %}Remote
+                        {% elif job.work_type == 'hybrid' %}Hybrid
+                        {% else %}On-Site{% endif %}
                     </span>
                     <!-- New Badge -->
                     {% if job.posted_at|date:"Y-m-d" == today|date:"Y-m-d" %}
@@ -1333,6 +1343,10 @@
 
         // Auto-select employment type tab
         if (employmentType) {
+            // Map 'daily' to 'daily_wage' for backward compatibility
+            let mappedType = employmentType;
+            if (employmentType === 'daily') mappedType = 'daily_wage';
+
             const tabs = document.querySelectorAll('.jl-filter-tab');
             tabs.forEach(tab => tab.classList.remove('active'));
 
@@ -1340,16 +1354,16 @@
                 'full_time': 1,
                 'part_time': 2,
                 'contract': 3,
-                'daily': 4
+                'daily_wage': 4
             };
 
-            const index = tabMap[employmentType] || 0;
+            const index = tabMap[mappedType] || 0;
             if (tabs[index]) {
                 tabs[index].classList.add('active');
             }
 
             // Update hidden input
-            document.getElementById('employmentTypeHidden').value = employmentType;
+            document.getElementById('employmentTypeHidden').value = mappedType;
         }
 
         // Auto-select work type dropdown
@@ -1474,4 +1488,3 @@
     console.log('💡 Tip: Press Ctrl+K to focus search');
 </script>
 {% endblock %}
-

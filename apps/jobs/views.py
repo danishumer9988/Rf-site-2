@@ -30,7 +30,7 @@ class JobListView(ListView):
         query = self.request.GET.get('query', '')
         location = self.request.GET.get('location', '')
         employment_type = self.request.GET.get('employment_type', '')
-        work_type = self.request.GET.get('work_type', '')  # Changed from work_location
+        work_type = self.request.GET.get('work_type', '')
         category_id = self.request.GET.get('category', '')
 
         # Apply filters
@@ -47,6 +47,9 @@ class JobListView(ListView):
 
         # Filter by employment_type (Full-Time, Part-Time, Contract, Daily)
         if employment_type:
+            # Map 'daily' to 'daily_wage' for backward compatibility
+            if employment_type == 'daily':
+                employment_type = 'daily_wage'
             queryset = queryset.filter(employment_type=employment_type)
 
         # Filter by work_type (Remote, On-Site, Hybrid)
@@ -69,9 +72,10 @@ class JobListView(ListView):
         full_time_count = Job.objects.filter(is_active=True, employment_type='full_time').count()
         part_time_count = Job.objects.filter(is_active=True, employment_type='part_time').count()
         contract_count = Job.objects.filter(is_active=True, employment_type='contract').count()
-        daily_count = Job.objects.filter(is_active=True, employment_type='daily').count()
+        daily_count = Job.objects.filter(is_active=True, employment_type='daily_wage').count()
         remote_count = Job.objects.filter(is_active=True, work_type='remote').count()
         physical_count = Job.objects.filter(is_active=True, work_type='physical').count()
+        hybrid_count = Job.objects.filter(is_active=True, work_type='hybrid').count()
 
         # Get the most recent job post time
         latest_job = Job.objects.filter(is_active=True).order_by('-posted_at').first()
@@ -84,6 +88,7 @@ class JobListView(ListView):
         context['daily_count'] = daily_count
         context['remote_count'] = remote_count
         context['physical_count'] = physical_count
+        context['hybrid_count'] = hybrid_count
 
         # Get categories for dropdown
         context['categories'] = Category.objects.all()
@@ -119,10 +124,11 @@ class PhysicalJobListView(ListView):
         context['total_jobs'] = Job.objects.filter(is_active=True).count()
         context['remote_count'] = Job.objects.filter(is_active=True, work_type='remote').count()
         context['physical_count'] = Job.objects.filter(is_active=True, work_type='physical').count()
+        context['hybrid_count'] = Job.objects.filter(is_active=True, work_type='hybrid').count()
         context['full_time_count'] = Job.objects.filter(is_active=True, employment_type='full_time').count()
         context['part_time_count'] = Job.objects.filter(is_active=True, employment_type='part_time').count()
         context['contract_count'] = Job.objects.filter(is_active=True, employment_type='contract').count()
-        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily').count()
+        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily_wage').count()
         context['categories'] = Category.objects.all()
         context['new_count'] = Job.objects.filter(
             is_active=True, work_type='physical',
@@ -157,13 +163,53 @@ class RemoteJobListView(ListView):
         context['total_jobs'] = Job.objects.filter(is_active=True).count()
         context['remote_count'] = Job.objects.filter(is_active=True, work_type='remote').count()
         context['physical_count'] = Job.objects.filter(is_active=True, work_type='physical').count()
+        context['hybrid_count'] = Job.objects.filter(is_active=True, work_type='hybrid').count()
         context['full_time_count'] = Job.objects.filter(is_active=True, employment_type='full_time').count()
         context['part_time_count'] = Job.objects.filter(is_active=True, employment_type='part_time').count()
         context['contract_count'] = Job.objects.filter(is_active=True, employment_type='contract').count()
-        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily').count()
+        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily_wage').count()
         context['categories'] = Category.objects.all()
         context['new_count'] = Job.objects.filter(
             is_active=True, work_type='remote',
+            posted_at__date=timezone.now().date()
+        ).count()
+
+        if self.request.user.is_authenticated:
+            context['saved_ids'] = list(SavedJob.objects.filter(
+                user=self.request.user
+            ).values_list('job_id', flat=True))
+        else:
+            context['saved_ids'] = []
+
+        return context
+
+
+class HybridJobListView(ListView):
+    model = Job
+    template_name = 'jobs/hybrid_jobs.html'
+    context_object_name = 'jobs'
+    paginate_by = 15
+
+    def get_queryset(self):
+        return Job.objects.filter(is_active=True, work_type='hybrid')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        latest_job = Job.objects.filter(is_active=True, work_type='hybrid').order_by('-posted_at').first()
+        context['last_updated'] = latest_job.posted_at if latest_job else timezone.now()
+        context['today'] = timezone.now().date()
+        context['total_jobs'] = Job.objects.filter(is_active=True).count()
+        context['remote_count'] = Job.objects.filter(is_active=True, work_type='remote').count()
+        context['physical_count'] = Job.objects.filter(is_active=True, work_type='physical').count()
+        context['hybrid_count'] = Job.objects.filter(is_active=True, work_type='hybrid').count()
+        context['full_time_count'] = Job.objects.filter(is_active=True, employment_type='full_time').count()
+        context['part_time_count'] = Job.objects.filter(is_active=True, employment_type='part_time').count()
+        context['contract_count'] = Job.objects.filter(is_active=True, employment_type='contract').count()
+        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily_wage').count()
+        context['categories'] = Category.objects.all()
+        context['new_count'] = Job.objects.filter(
+            is_active=True, work_type='hybrid',
             posted_at__date=timezone.now().date()
         ).count()
 
@@ -197,10 +243,11 @@ class FullTimeJobListView(ListView):
         context['total_jobs'] = Job.objects.filter(is_active=True).count()
         context['remote_count'] = Job.objects.filter(is_active=True, work_type='remote').count()
         context['physical_count'] = Job.objects.filter(is_active=True, work_type='physical').count()
+        context['hybrid_count'] = Job.objects.filter(is_active=True, work_type='hybrid').count()
         context['full_time_count'] = Job.objects.filter(is_active=True, employment_type='full_time').count()
         context['part_time_count'] = Job.objects.filter(is_active=True, employment_type='part_time').count()
         context['contract_count'] = Job.objects.filter(is_active=True, employment_type='contract').count()
-        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily').count()
+        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily_wage').count()
         context['categories'] = Category.objects.all()
 
         if self.request.user.is_authenticated:
@@ -228,10 +275,11 @@ class PartTimeJobListView(ListView):
         context['total_jobs'] = Job.objects.filter(is_active=True).count()
         context['remote_count'] = Job.objects.filter(is_active=True, work_type='remote').count()
         context['physical_count'] = Job.objects.filter(is_active=True, work_type='physical').count()
+        context['hybrid_count'] = Job.objects.filter(is_active=True, work_type='hybrid').count()
         context['full_time_count'] = Job.objects.filter(is_active=True, employment_type='full_time').count()
         context['part_time_count'] = Job.objects.filter(is_active=True, employment_type='part_time').count()
         context['contract_count'] = Job.objects.filter(is_active=True, employment_type='contract').count()
-        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily').count()
+        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily_wage').count()
         context['categories'] = Category.objects.all()
 
         if self.request.user.is_authenticated:
@@ -259,10 +307,11 @@ class ContractJobListView(ListView):
         context['total_jobs'] = Job.objects.filter(is_active=True).count()
         context['remote_count'] = Job.objects.filter(is_active=True, work_type='remote').count()
         context['physical_count'] = Job.objects.filter(is_active=True, work_type='physical').count()
+        context['hybrid_count'] = Job.objects.filter(is_active=True, work_type='hybrid').count()
         context['full_time_count'] = Job.objects.filter(is_active=True, employment_type='full_time').count()
         context['part_time_count'] = Job.objects.filter(is_active=True, employment_type='part_time').count()
         context['contract_count'] = Job.objects.filter(is_active=True, employment_type='contract').count()
-        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily').count()
+        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily_wage').count()
         context['categories'] = Category.objects.all()
         context['urgent_count'] = Job.objects.filter(is_active=True, employment_type='contract', is_urgent=True).count()
         context['expert_count'] = Job.objects.filter(is_active=True, employment_type='contract', experience_level='expert').count()
@@ -284,7 +333,7 @@ class DailyJobListView(ListView):
     paginate_by = 15
 
     def get_queryset(self):
-        return Job.objects.filter(is_active=True, employment_type='daily')
+        return Job.objects.filter(is_active=True, employment_type='daily_wage')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -292,12 +341,13 @@ class DailyJobListView(ListView):
         context['total_jobs'] = Job.objects.filter(is_active=True).count()
         context['remote_count'] = Job.objects.filter(is_active=True, work_type='remote').count()
         context['physical_count'] = Job.objects.filter(is_active=True, work_type='physical').count()
+        context['hybrid_count'] = Job.objects.filter(is_active=True, work_type='hybrid').count()
         context['full_time_count'] = Job.objects.filter(is_active=True, employment_type='full_time').count()
         context['part_time_count'] = Job.objects.filter(is_active=True, employment_type='part_time').count()
         context['contract_count'] = Job.objects.filter(is_active=True, employment_type='contract').count()
-        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily').count()
+        context['daily_count'] = Job.objects.filter(is_active=True, employment_type='daily_wage').count()
         context['categories'] = Category.objects.all()
-        context['immediate_count'] = Job.objects.filter(is_active=True, employment_type='daily', is_immediate=True).count()
+        context['immediate_count'] = Job.objects.filter(is_active=True, employment_type='daily_wage', is_immediate=True).count()
 
         if self.request.user.is_authenticated:
             context['saved_ids'] = list(SavedJob.objects.filter(
@@ -676,6 +726,8 @@ def search_jobs(request):
         if location:
             jobs = jobs.filter(location__icontains=location)
         if employment_type:
+            if employment_type == 'daily':
+                employment_type = 'daily_wage'
             jobs = jobs.filter(employment_type=employment_type)
         if work_type:
             jobs = jobs.filter(work_type=work_type)
@@ -703,10 +755,11 @@ def search_jobs(request):
         'total_jobs': Job.objects.filter(is_active=True).count(),
         'remote_count': Job.objects.filter(is_active=True, work_type='remote').count(),
         'physical_count': Job.objects.filter(is_active=True, work_type='physical').count(),
+        'hybrid_count': Job.objects.filter(is_active=True, work_type='hybrid').count(),
         'full_time_count': Job.objects.filter(is_active=True, employment_type='full_time').count(),
         'part_time_count': Job.objects.filter(is_active=True, employment_type='part_time').count(),
         'contract_count': Job.objects.filter(is_active=True, employment_type='contract').count(),
-        'daily_count': Job.objects.filter(is_active=True, employment_type='daily').count(),
+        'daily_count': Job.objects.filter(is_active=True, employment_type='daily_wage').count(),
         'categories': Category.objects.all(),
         'today': timezone.now().date(),
         'is_paginated': jobs.has_other_pages(),
@@ -722,4 +775,3 @@ def search_jobs(request):
         context['saved_ids'] = []
 
     return render(request, 'jobs/job_list.html', context)
-

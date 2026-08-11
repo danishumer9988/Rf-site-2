@@ -14,6 +14,7 @@ urlpatterns = [
 
     # By work location
     path('remote/', views.RemoteJobListView.as_view(), name='remote_jobs'),
+    path('hybrid/', views.HybridJobListView.as_view(), name='hybrid_jobs'),
     path('physical/', views.PhysicalJobListView.as_view(), name='physical_jobs'),
     path('onsite/', views.OnSiteJobListView.as_view(), name='onsite_jobs'),
 

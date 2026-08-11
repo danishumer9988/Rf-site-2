@@ -104,6 +104,7 @@
                         <a href="{% url 'job_list' %}?employment_type=full_time">All</a>
                         <a href="{% url 'job_list' %}?employment_type=full_time&work_type=physical">On-Site</a>
                         <a href="{% url 'job_list' %}?employment_type=full_time&work_type=remote">Remote</a>
+                        <a href="{% url 'job_list' %}?employment_type=full_time&work_type=hybrid">Hybrid</a>
                     </div>
                 </div>
 
@@ -115,6 +116,7 @@
                         <a href="{% url 'job_list' %}?employment_type=part_time">All</a>
                         <a href="{% url 'job_list' %}?employment_type=part_time&work_type=physical">On-Site</a>
                         <a href="{% url 'job_list' %}?employment_type=part_time&work_type=remote">Remote</a>
+                        <a href="{% url 'job_list' %}?employment_type=full_time&work_type=hybrid">Hybrid</a>
                     </div>
                 </div>
 
@@ -126,6 +128,7 @@
                         <a href="{% url 'job_list' %}?employment_type=contract">All</a>
                         <a href="{% url 'job_list' %}?employment_type=contract&work_type=physical">On-Site</a>
                         <a href="{% url 'job_list' %}?employment_type=contract&work_type=remote">Remote</a>
+                        <a href="{% url 'job_list' %}?employment_type=full_time&work_type=hybrid">Hybrid</a>
                     </div>
                 </div>
 
@@ -137,6 +140,7 @@
                         <a href="{% url 'job_list' %}?employment_type=daily">All</a>
                         <a href="{% url 'job_list' %}?employment_type=daily&work_type=physical">On-Site</a>
                         <a href="{% url 'job_list' %}?employment_type=daily&work_type=remote">Remote</a>
+                        <a href="{% url 'job_list' %}?employment_type=full_time&work_type=hybrid">Hybrid</a>
                     </div>
                 </div>
 
@@ -256,6 +260,7 @@
         <div style="height: 1px; background: rgba(0,0,0,0.06); margin: 0.3rem 1.5rem;"></div>
         <a href="{% url 'job_list' %}?work_type=remote" class="nav-link">Remote Jobs</a>
         <a href="{% url 'job_list' %}?work_type=physical" class="nav-link">On-Site Jobs</a>
+        <a href="{% url 'job_list' %}?work_type=hybrid" class="nav-link">Hybrid Jobs</a>
     </div>
 
     <!-- Internships Section -->
@@ -426,6 +431,7 @@
                 <li><a href="{% url 'job_list' %}?employment_type=daily">Daily Wage</a></li>
                 <li><a href="{% url 'job_list' %}?work_type=physical">On-Site Jobs</a></li>
                 <li><a href="{% url 'job_list' %}?work_type=remote">Remote Jobs</a></li>
+                <li><a href="{% url 'job_list' %}?work_type=hybrid">Hybrid Jobs</a></li>
             </ul>
         </div>
 

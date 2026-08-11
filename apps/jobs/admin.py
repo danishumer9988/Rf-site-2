@@ -162,6 +162,8 @@ class JobAdmin(admin.ModelAdmin):
             return '⚡ Daily Wage'
         elif obj.employment_type == 'contract':
             return '📄 Contract'
+        elif obj.employment_type == 'hybrid':
+            return '🔄 Hybrid'  # ← ADDED HYBRID
         else:
             return '📌 Other'
     job_type_display.short_description = 'Job Type'
@@ -410,6 +412,8 @@ class JobApplicationAdmin(admin.ModelAdmin):
             return '⚡ Daily Wage'
         elif obj.employment_type == 'contract':
             return '📄 Contract'
+        elif obj.employment_type == 'hybrid':
+            return '🔄 Hybrid'  # ← ADDED HYBRID
         return '📌 Other'
     job_type_display.short_description = 'Job Type'
 

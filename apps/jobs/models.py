@@ -13,6 +13,7 @@ from apps.categories.models import Category
 WORK_TYPE_CHOICES = [
     ('physical', 'On-Site'),
     ('remote', 'Remote'),
+    ('hybrid', 'Hybrid'),  # ← Add this
 ]
 
 EMPLOYMENT_TYPE_CHOICES = [
